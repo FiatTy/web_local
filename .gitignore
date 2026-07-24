@@ -10,8 +10,7 @@ dist-ssr
 .DS_Store
 Thumbs.db
 .playwright-mcp
-landing-light.png
-landing-dark.png
+landing*.png
 .vscode/*
 !.vscode/extensions.json
 .idea

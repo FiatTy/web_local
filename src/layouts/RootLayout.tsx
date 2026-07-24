@@ -21,6 +21,7 @@ import {
   X,
 } from 'lucide-react';
 import { useAuth } from '@/lib/auth/auth-context';
+import { BrandMark } from '@/components/common/BrandMark';
 import { LanguageSwitcher } from '@/components/common/LanguageSwitcher';
 import { ThemeToggle } from '@/components/common/ThemeToggle';
 
@@ -100,15 +101,7 @@ export function RootLayout() {
         }`}
       >
         <div className="flex h-14 items-center justify-between border-b border-border px-5">
-          <div className="flex items-center gap-2.5">
-            <div className="flex h-7 w-7 items-center justify-center rounded-md bg-primary font-mono text-xs font-bold text-primary-fg">
-              CR
-            </div>
-            <div className="flex flex-col leading-none">
-              <span className="text-sm font-semibold tracking-tight text-fg">Code Review</span>
-              <span className="font-mono text-[9px] uppercase tracking-[0.2em] text-faint">PCCTH</span>
-            </div>
-          </div>
+          <BrandMark size={28} />
           <button
             type="button"
             aria-label="Close menu"

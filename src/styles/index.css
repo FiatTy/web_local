@@ -5,17 +5,18 @@
 :root {
   --bg: #f5f6f8;
   --surface: #ffffff;
-  --surface-2: #f1f3f6;
-  --border: #e5e8ec;
-  --border-strong: #d2d7de;
-  --fg: #0d1117;
-  --muted: #5b6472;
-  --faint: #949ca8;
-  --primary: #4f46e5;
-  --primary-hover: #4338ca;
+  --surface-2: #eef1f4;
+  --border: #e3e7ec;
+  --border-strong: #cfd5dd;
+  --fg: #0e1620;
+  --muted: #55606f;
+  --faint: #8b95a3;
+  --primary: #0d9488;
+  --primary-hover: #0f766e;
   --primary-fg: #ffffff;
-  --primary-subtle: #eef0ff;
-  --ring: #4f46e5;
+  --primary-subtle: #e5f6f2;
+  --accent: #b08d57;
+  --ring: #0d9488;
 
   --blocker: #b42318;
   --critical: #d92d20;
@@ -28,19 +29,20 @@
 }
 
 .dark {
-  --bg: #0a0d13;
-  --surface: #10141c;
-  --surface-2: #171d28;
-  --border: #212836;
-  --border-strong: #2d3543;
-  --fg: #e7eaf0;
-  --muted: #939cab;
-  --faint: #6b7482;
-  --primary: #6366f1;
-  --primary-hover: #7f82f5;
-  --primary-fg: #ffffff;
-  --primary-subtle: #191d31;
-  --ring: #6366f1;
+  --bg: #080b11;
+  --surface: #0f141c;
+  --surface-2: #161d28;
+  --border: #212a37;
+  --border-strong: #2d3745;
+  --fg: #e8ebf1;
+  --muted: #97a1b0;
+  --faint: #69737f;
+  --primary: #2dd4bf;
+  --primary-hover: #5eead4;
+  --primary-fg: #05302c;
+  --primary-subtle: #0f2b28;
+  --accent: #cbb083;
+  --ring: #2dd4bf;
 
   --blocker: #f97066;
   --critical: #f97066;
@@ -69,6 +71,7 @@
   --color-primary-hover: var(--primary-hover);
   --color-primary-fg: var(--primary-fg);
   --color-primary-subtle: var(--primary-subtle);
+  --color-accent: var(--accent);
   --color-ring: var(--ring);
 
   --color-blocker: var(--blocker);
@@ -97,5 +100,21 @@
   :focus-visible {
     outline: 2px solid var(--ring);
     outline-offset: 2px;
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    html {
+      scroll-behavior: smooth;
+    }
+  }
+}
+
+@layer components {
+  .landing-hero-glow {
+    background: radial-gradient(60% 60% at 50% -10%, color-mix(in oklab, var(--primary) 16%, transparent), transparent);
+  }
+
+  .landing-cta {
+    background: linear-gradient(135deg, var(--primary), color-mix(in oklab, var(--primary) 68%, #0b3b38));
   }
 }
