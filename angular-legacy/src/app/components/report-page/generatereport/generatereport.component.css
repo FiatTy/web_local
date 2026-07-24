@@ -1,0 +1,758 @@
+/* ===========================================================
+   📄 REPORT PAGE STYLE
+   สีเหมือน repositories / technicaldebt / analysis
+   =========================================================== */
+
+/* =========================
+   VARIABLES (เหมือน repositories)
+   ========================= */
+:host {
+  --primary: #2563eb;
+  --primary-hover: #1d4ed8;
+  --bg-main: #f8fafc;
+  --card-bg: #ffffff;
+  --text-main: #1e293b;
+  --text-sub: #64748b;
+  --border-color: #e2e8f0;
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.05);
+  --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+  --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+  --title-color: #2563eb;
+}
+
+:host-context(.dark-mode) {
+  --primary: #3b82f6;
+  --primary-hover: #60a5fa;
+  --bg-main: #0f172a;
+  --card-bg: #1e293b;
+  --text-main: #f1f5f9;
+  --text-sub: #94a3b8;
+  --border-color: #334155;
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.3);
+  --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.4);
+  --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.3);
+  --title-color: #ffffff;
+}
+
+/* =========================
+   HOST
+   ========================= */
+:host {
+  display: block;
+  color: var(--text-main);
+  font-family: "Inter", "Prompt", sans-serif;
+}
+
+/* ===============================
+   Container
+   =============================== */
+.report-wrapper {
+  max-width: 900px;
+  margin: 30px auto;
+  background: transparent;
+  border: none;
+  box-shadow: none;
+}
+
+/* ===============================
+   Title
+   =============================== */
+.report-title,
+.report-container h2 {
+  border: 1px solid var(--border-color);
+  border-radius: 16px;
+  background-color: var(--card-bg);
+  padding: 14px 18px;
+  font-size: 1.5rem;
+  font-weight: 800;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  color: var(--title-color);
+}
+
+.report-title {
+  margin-bottom: 20px;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
+
+}
+
+.report-container h2 {
+  margin-bottom: 24px;
+}
+
+/* ===============================
+   Form Box
+   =============================== */
+.report-box {
+  background: var(--card-bg);
+  border: 1px solid var(--border-color);
+  border-radius: 16px;
+  padding: 24px 28px;
+  box-shadow: var(--shadow-sm);
+  color: var(--text-main);
+}
+
+/* ===============================
+   Sections
+   =============================== */
+.report-section {
+  margin-bottom: 20px;
+}
+
+.report-section label {
+  font-weight: 600;
+  display: block;
+  margin-bottom: 6px;
+  color: var(--text-main);
+}
+
+/* Divider Between Sections */
+.report-section:not(:last-child) {
+  padding-bottom: 16px;
+  border-bottom: 1px dashed var(--border-color);
+}
+
+/* ===============================
+   Inputs & Select
+   =============================== */
+input[type="date"],
+select,
+input[type="email"],
+.form-control {
+  padding: 8px 10px;
+  border-radius: 8px;
+  border: 1px solid var(--border-color);
+  background-color: var(--bg-main);
+  color: var(--text-main);
+  width: 100%;
+  max-width: 320px;
+  margin-right: 10px;
+  font-size: 0.95rem;
+  transition: all 0.2s ease;
+}
+
+/* Inline Input Group */
+.input-group-inline {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+}
+
+/* Stretch date inputs */
+.input-group-inline input[type="date"],
+.input-group-inline select,
+.input-group-inline .form-control {
+  max-width: none;
+  flex-grow: 1;
+  margin-right: 0;
+}
+
+/* Hover & Focus */
+input:focus,
+select:focus,
+.form-control:focus {
+  outline: none;
+  border-color: var(--primary);
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.2);
+}
+
+input[type="date"]:hover,
+select:hover,
+input[type="email"]:hover,
+.form-control:hover {
+  border-color: var(--primary-hover);
+}
+
+/* ===============================
+   Checkbox / Radio
+   =============================== */
+.checkbox-group label,
+.form-check-label {
+  display: block;
+  font-weight: 400;
+  margin-bottom: 4px;
+  color: var(--text-sub);
+  cursor: pointer;
+}
+
+/* form-label */
+.form-label {
+  color: var(--text-main);
+}
+
+/* Checkbox Animation */
+.form-check-input {
+  width: 18px;
+  height: 18px;
+  cursor: pointer;
+  transform-origin: center;
+  transition: transform 0.15s ease, background-color 0.2s ease, border-color 0.2s ease;
+}
+
+.form-check-input:hover {
+  transform: scale(1.1);
+  border-color: var(--primary);
+}
+
+.form-check-input:checked {
+  background-color: var(--primary);
+  border-color: var(--primary);
+  transform: scale(1.1);
+}
+
+.project-select-wrapper {
+  position: relative;
+  max-width: 420px;
+}
+
+.project-select-toggle {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  padding: 9px 12px;
+  border-radius: 8px;
+  border: 1px solid var(--border-color);
+  background-color: var(--bg-main);
+  color: var(--text-main);
+  font-size: 0.95rem;
+  cursor: pointer;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.project-select-toggle:hover {
+  border-color: var(--primary-hover);
+}
+
+.project-select-toggle.is-open {
+  border-color: var(--primary);
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.2);
+}
+
+.project-select-toggle .placeholder-text {
+  color: var(--text-sub);
+}
+
+.project-select-toggle .caret {
+  font-size: 0.8rem;
+  color: var(--text-sub);
+  transition: transform 0.2s ease;
+}
+
+.project-select-toggle.is-open .caret {
+  transform: rotate(180deg);
+}
+
+.project-dropdown-panel {
+  position: absolute;
+  top: calc(100% + 4px);
+  left: 0;
+  right: 0;
+  z-index: 20;
+  background: var(--card-bg);
+  border: 1px solid var(--border-color);
+  border-radius: 10px;
+  box-shadow: var(--shadow-lg);
+  overflow: hidden;
+}
+
+.project-search {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 10px;
+  border-bottom: 1px solid var(--border-color);
+}
+
+.project-search i {
+  color: var(--text-sub);
+  font-size: 0.9rem;
+}
+
+.project-search input {
+  border: none;
+  outline: none;
+  background: transparent;
+  width: 100%;
+  max-width: none;
+  margin: 0;
+  padding: 2px 0;
+  color: var(--text-main);
+  font-size: 0.9rem;
+}
+
+.project-search input:focus {
+  box-shadow: none;
+}
+
+.project-options {
+  list-style: none;
+  margin: 0;
+  padding: 4px;
+  max-height: 240px;
+  overflow-y: auto;
+}
+
+.project-option {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 10px;
+  border-radius: 6px;
+  cursor: pointer;
+  color: var(--text-main);
+  font-size: 0.92rem;
+  transition: background-color 0.15s ease;
+}
+
+.project-option:hover {
+  background-color: rgba(37, 99, 235, 0.08);
+}
+
+.project-option.active {
+  background-color: rgba(37, 99, 235, 0.12);
+  font-weight: 600;
+}
+
+.project-option i {
+  color: var(--primary);
+  font-size: 0.95rem;
+}
+
+.project-option-empty {
+  padding: 12px 10px;
+  text-align: center;
+  color: var(--text-sub);
+  font-size: 0.88rem;
+}
+
+:host-context(.dark-mode) .project-option:hover {
+  background-color: rgba(59, 130, 246, 0.15);
+}
+
+:host-context(.dark-mode) .project-option.active {
+  background-color: rgba(59, 130, 246, 0.22);
+}
+
+/* ===============================
+   Actions
+   =============================== */
+.report-actions,
+.d-flex.justify-content-end {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+  margin-top: 20px;
+}
+
+.report-btn {
+  padding: 9px 18px;
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+  font-weight: 600;
+  color: #fff;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+/* Button Colors */
+.report-actions button:nth-child(1),
+.btn-secondary {
+  background: #9ca3af;
+}
+
+.report-actions button:nth-child(2),
+.btn-primary {
+  background: var(--primary);
+}
+
+.report-actions button:nth-child(3),
+.btn-success {
+  background: #16a34a;
+}
+
+/* Hover Effect */
+.report-actions button:hover,
+.d-flex.justify-content-end button:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-md);
+  opacity: 0.95;
+}
+
+/* Loading State */
+button.loading {
+  opacity: 0.7;
+  cursor: not-allowed;
+  pointer-events: none;
+  position: relative;
+}
+
+button.loading::after {
+  content: "";
+  position: absolute;
+  right: 12px;
+  top: 50%;
+  width: 14px;
+  height: 14px;
+  border: 2px solid rgba(255, 255, 255, 0.6);
+  border-top-color: #fff;
+  border-radius: 50%;
+  animation: spin 0.6s linear infinite;
+  transform: translateY(-50%);
+}
+
+@keyframes spin {
+  from {
+    transform: translateY(-50%) rotate(0);
+  }
+
+  to {
+    transform: translateY(-50%) rotate(360deg);
+  }
+}
+
+/* ===============================
+   Error Text
+   =============================== */
+.text-danger.small {
+  margin-top: 4px;
+  font-size: 0.8rem;
+  color: #dc2626;
+}
+
+/* ===============================
+   Output Format Options
+   =============================== */
+.format-option {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-top: 10px;
+}
+
+/* Format Buttons */
+.format-option .btn-check+.btn {
+  min-width: 120px;
+  flex-grow: 1;
+  text-align: center;
+  padding: 10px 18px;
+  font-size: 1rem;
+}
+
+/* --- Format Button Colors (Light & Dark) --- */
+.format-option .pdf.btn-check:checked+.btn,
+.format-option .pdf.btn-check+.btn:hover {
+  background-color: #dc2626;
+  border-color: #dc2626;
+  color: white;
+  box-shadow: 0 0 8px rgba(220, 38, 38, 0.5);
+}
+
+.format-option .excel.btn-check:checked+.btn,
+.format-option .excel.btn-check+.btn:hover {
+  background-color: #16a34a;
+  border-color: #16a34a;
+  color: white;
+  box-shadow: 0 0 8px rgba(22, 163, 74, 0.5);
+}
+
+.format-option .word.btn-check:checked+.btn,
+.format-option .word.btn-check+.btn:hover {
+  background-color: var(--primary);
+  border-color: var(--primary);
+  color: white;
+  box-shadow: 0 0 8px rgba(37, 99, 235, 0.5);
+}
+
+.format-option .ppt.btn-check:checked+.btn,
+.format-option .ppt.btn-check+.btn:hover {
+  background-color: #ea580c;
+  border-color: #ea580c;
+  color: white;
+  box-shadow: 0 0 8px rgba(234, 88, 12, 0.5);
+}
+
+/* ===============================
+   DARK MODE OVERRIDES
+   สีเหมือน repositories / technicaldebt
+   =============================== */
+
+/* Full Container */
+:host-context(.dark-mode) .report-container {
+  background: var(--card-bg) !important;
+  border: 1px solid var(--border-color) !important;
+  color: var(--text-main) !important;
+  box-shadow: var(--shadow-md) !important;
+}
+
+/* Labels */
+:host-context(.dark-mode) .report-section label,
+:host-context(.dark-mode) .form-label {
+  color: var(--text-main) !important;
+}
+
+:host-context(.dark-mode) .checkbox-group label,
+:host-context(.dark-mode) .form-check-label {
+  color: var(--text-sub) !important;
+}
+
+/* text-muted */
+:host-context(.dark-mode) .text-muted {
+  color: var(--text-sub) !important;
+}
+
+/* Inputs */
+:host-context(.dark-mode) input[type="date"],
+:host-context(.dark-mode) input[type="email"],
+:host-context(.dark-mode) select,
+:host-context(.dark-mode) .form-control {
+  background-color: var(--bg-main) !important;
+  color: var(--text-main) !important;
+  border: 1px solid var(--border-color) !important;
+}
+
+:host-context(.dark-mode) input::placeholder,
+:host-context(.dark-mode) .form-control::placeholder {
+  color: var(--text-sub) !important;
+  opacity: 1 !important;
+}
+
+:host-context(.dark-mode) input[type="date"]::-webkit-calendar-picker-indicator {
+  filter: invert(1);
+}
+
+:host-context(.dark-mode) input:focus,
+:host-context(.dark-mode) select:focus,
+:host-context(.dark-mode) .form-control:focus {
+  border-color: var(--primary) !important;
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.4) !important;
+}
+
+/* Section Dividers */
+:host-context(.dark-mode) .report-section:not(:last-child) {
+  border-bottom: 1px dashed var(--border-color) !important;
+}
+
+/* Buttons */
+:host-context(.dark-mode) .report-actions button,
+:host-context(.dark-mode) .d-flex.justify-content-end button {
+  color: #fff !important;
+}
+
+:host-context(.dark-mode) .btn-secondary,
+:host-context(.dark-mode) .btn-primary,
+:host-context(.dark-mode) .btn-success {
+  color: #fff !important;
+}
+
+:host-context(.dark-mode) .report-actions button:hover {
+  opacity: 0.9 !important;
+  box-shadow: var(--shadow-md) !important;
+}
+
+/* Checkbox */
+:host-context(.dark-mode) .form-check-input {
+  background-color: var(--bg-main);
+  border: 2px solid var(--border-color);
+}
+
+:host-context(.dark-mode) .form-check-input:checked {
+  background-color: var(--primary);
+  border-color: var(--primary);
+}
+
+/* Error */
+:host-context(.dark-mode) .text-danger.small {
+  color: #f87171 !important;
+}
+
+/* Select Override */
+:host-context(.dark-mode) select.form-select {
+  appearance: none !important;
+  background-color: var(--bg-main) !important;
+  color: var(--text-main) !important;
+  border: 1px solid var(--border-color) !important;
+  border-radius: 8px;
+  padding-right: 2rem;
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' fill='white' viewBox='0 0 24 24' width='16' height='16'><path d='M7 10l5 5 5-5z'/></svg>");
+  background-repeat: no-repeat;
+  background-position: right 0.75rem center;
+  background-size: 16px 16px;
+}
+
+:host-context(.dark-mode) select.form-select option[disabled] {
+  color: var(--text-sub) !important;
+}
+
+:host-context(.dark-mode) select.form-select::-ms-expand {
+  display: none;
+}
+
+/* --- Dark Mode Format Buttons --- */
+:host-context(.dark-mode) .format-option .pdf.btn-check:checked+.btn,
+:host-context(.dark-mode) .format-option .pdf.btn-check+.btn:hover {
+  background-color: #b91c1c;
+  border-color: #b91c1c;
+  color: white;
+  box-shadow: 0 0 8px rgba(185, 28, 28, 0.6);
+}
+
+:host-context(.dark-mode) .format-option .excel.btn-check:checked+.btn,
+:host-context(.dark-mode) .format-option .excel.btn-check+.btn:hover {
+  background-color: #15803d;
+  border-color: #15803d;
+  color: white;
+  box-shadow: 0 0 8px rgba(21, 128, 61, 0.6);
+}
+
+:host-context(.dark-mode) .format-option .word.btn-check:checked+.btn,
+:host-context(.dark-mode) .format-option .word.btn-check+.btn:hover {
+  background-color: #1d4ed8;
+  border-color: #1d4ed8;
+  color: white;
+  box-shadow: 0 0 8px rgba(29, 78, 216, 0.6);
+}
+
+:host-context(.dark-mode) .format-option .ppt.btn-check:checked+.btn,
+:host-context(.dark-mode) .format-option .ppt.btn-check+.btn:hover {
+  background-color: #c2410c;
+  border-color: #c2410c;
+  color: white;
+  box-shadow: 0 0 8px rgba(194, 65, 12, 0.6);
+}
+
+/* ===========================================================
+   📱 Responsive Layout
+   =========================================================== */
+
+/* ≤768px */
+@media (max-width: 768px) {
+  .report-wrapper {
+    margin: 15px auto;
+    padding: 0;
+    max-width: 95%;
+  }
+
+  .report-box {
+    padding: 16px 18px;
+  }
+
+  input[type="date"],
+  select,
+  input[type="email"],
+  .form-control {
+    width: 100%;
+    max-width: 100%;
+    margin-right: 0;
+    box-sizing: border-box;
+  }
+
+  .input-group-inline {
+    flex-direction: column;
+    gap: 0;
+  }
+
+  .input-group-inline input[type="date"],
+  .input-group-inline select,
+  .input-group-inline .form-control {
+    margin-bottom: 10px;
+  }
+
+  /* 2-column grid for format buttons */
+  .format-option {
+    display: grid !important;
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: 10px !important;
+    justify-items: stretch;
+  }
+
+  .format-option .btn-check+.btn {
+    width: 100% !important;
+    min-width: 0 !important;
+    flex: none !important;
+    padding: 10px 0 !important;
+    font-size: 0.9rem !important;
+  }
+
+  .checkbox-group label,
+  .form-check-label {
+    margin-left: 8px;
+    cursor: pointer;
+    font-size: 1rem;
+  }
+
+  .report-actions,
+  .d-flex.justify-content-end {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 8px;
+  }
+
+  .report-actions button,
+  .d-flex.justify-content-end button {
+    width: 100%;
+    font-size: 1rem;
+  }
+
+  .report-title,
+  .report-container h2 {
+    font-size: 1.2rem;
+    padding: 12px 14px;
+  }
+}
+
+/* ≤480px */
+@media (max-width: 480px) {
+  .report-box {
+    padding: 14px;
+  }
+
+  .report-section label {
+    font-size: 0.9rem;
+  }
+
+  .report-actions button {
+    padding: 10px 0;
+    font-size: 0.95rem;
+  }
+
+  input[type="date"],
+  input[type="email"],
+  select,
+  .form-control {
+    font-size: 0.9rem;
+    padding: 6px 8px;
+  }
+
+  .form-check-label {
+    font-size: 0.85rem;
+  }
+
+  .format-option {
+    gap: 8px !important;
+  }
+
+  .format-option .btn-check+.btn {
+    font-size: 0.85rem !important;
+    padding: 8px 0 !important;
+  }
+}
+
+/* 768–1024px (Tablet) */
+@media (min-width: 768px) and (max-width: 1024px) {
+  .report-wrapper {
+    padding: 0 20px !important;
+    margin: 30px auto !important;
+    max-width: 95% !important;
+  }
+
+  .report-box {
+    width: 100%;
+    box-sizing: border-box;
+  }
+
+  .main-content {
+    padding: 0 20px !important;
+  }
+}

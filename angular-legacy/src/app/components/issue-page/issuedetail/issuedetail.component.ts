@@ -1,0 +1,691 @@
+import { Component, inject, OnInit, ViewChild } from '@angular/core';
+import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
+import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
+import { ActivatedRoute, Router } from '@angular/router';
+import { IssuemodalComponent } from '../issuemodal/issuemodal.component';
+import { IssueService, Issue as ApiIssue } from '../../../services/issueservice/issue.service';
+import { filter, map } from 'rxjs/operators';
+import { AuthService } from '../../../services/authservice/auth.service';
+import { RepositoryService } from '../../../services/reposervice/repository.service';
+import { AssignhistoryService } from '../../../services/assignservice/assignhistory.service';
+import { LoginUser, UserInfo } from '../../../interface/user_interface';
+import { TokenStorageService } from '../../../services/tokenstorageService/token-storage.service';
+import { UserService } from '../../../services/userservice/user.service';
+import { WebSocketService } from '../../../services/websocket/websocket.service';
+import { Subscription, interval } from 'rxjs';
+/** === เพิ่มสำหรับคอมเมนต์ === */
+import { CommentService, IssueCommentModel, AddIssueCommentPayload } from '../../../services/commentservice/comment.service';
+import { SharedDataService } from '../../../services/shared-data/shared-data.service';
+import { IssuesDetailResponseDTO, IssuesRequestDTO, IssuesResponseDTO } from '../../../interface/issues_interface';
+import { commentRequestDTO, commentResponseDTO } from '../../../interface/comment_interface';
+import { MarkdownPipe } from '../../../pipes/markdown.pipe';
+type SortOrder = 'ASC' | 'DESC';
+interface Attachment { filename: string; url: string; }
+interface IssueComment {
+  issueId: string; userId: string; comment: string; timestamp: Date | string;
+  attachments?: Attachment[]; mentions?: string[];
+}
+interface Issue {
+  id: string;
+  type: string;
+  title: string;
+  severity: string;
+  priority: 'Low' | 'Medium' | 'High' | 'Critical';
+  status: 'open' | 'in-progress' | 'done' | 'reject' | 'pending';
+  project: string; file: string; line: number; created: string;
+  assignedTo?: string; dueDate: string; description: string;
+  assignedName?: string;
+  vulnerableCode: string; recommendedFix: string; comments: IssueComment[];
+}
+
+interface StatusUpdate {
+  id: string;                  // Issue ID
+  status: Issue['status'];     // New status
+  annotation?: string;         // Optional remark
+}
+
+const isUUID = (s: string) =>
+  /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(s);
+
+import { TranslatePipe } from '@ngx-translate/core';
+
+@Component({
+  selector: 'app-issuedetail',
+  standalone: true,
+  imports: [CommonModule, FormsModule, IssuemodalComponent, MarkdownPipe, MatSnackBarModule, TranslatePipe],
+  templateUrl: './issuedetail.component.html',
+  styleUrl: './issuedetail.component.css',
+})
+export class IssuedetailComponent implements OnInit {
+
+  @ViewChild(IssuemodalComponent) assignModal!: IssuemodalComponent;
+
+  trackByComment = (_: number, c: any) => c?.id || c?.timestamp || _;
+
+  // FE options (เดิม)
+  priorityLevels: Array<'Low' | 'Medium' | 'High' | 'Critical'> = ['Low', 'Medium', 'High', 'Critical'];
+
+  loading = true;
+  error: string | null = null;
+  issue!: Issue;
+  nextStatus: Issue['status'] | undefined;
+  private readonly auth = inject(AuthService);
+
+  currentUserId = '';
+  currentUserName = '';
+
+  newComment: commentRequestDTO = { comment: '' };
+
+  /** === state คอมเมนต์ === */
+  comments: IssueComment[] = [];
+  loadingComments = false;
+  sendingComment = false;
+  issuesResult: IssuesResponseDTO | null = null;
+  issueForModal: IssuesRequestDTO = { id: '', status: '', assignedTo: '' };
+  UserLogin: LoginUser | null = null;
+  UserData: UserInfo[] = [];
+  filteredUsers: UserInfo[] = [];
+  issuesDetails: IssuesDetailResponseDTO | null = null;
+  rootComments: commentResponseDTO[] = [];
+  replies = new Map<string, commentResponseDTO[]>();
+  replyTo: { commentId: string; username: string, parentCommentId: string } | null = null;
+  sortedComments: commentResponseDTO[] = [];
+  selectedScans: any[] = [];
+  isAiLoading = false;
+  private _pendingAiFix = false; // Set only by triggerAiFix(), cleared on FAILED/SUCCESS
+
+  /**
+   * Detect if AI fix actually failed.
+   * Backend may return status:'SUCCESS' with recommendedFixByAi:null when the AI workflow fails.
+   */
+  private isAiFixFailed(data: IssuesDetailResponseDTO): boolean {
+    if (data.status === 'FAILED') return true;
+    if (data.status === 'SUCCESS' && !data.recommendedFixByAi) return true;
+    return false;
+  }
+
+  constructor(
+    private readonly router: Router,
+    private readonly route: ActivatedRoute,
+    private readonly issueApi: IssueService,
+    private readonly repositoryService: RepositoryService,
+    private readonly assignService: AssignhistoryService,
+    private readonly commentService: CommentService,
+    private readonly authService: AuthService,
+    private readonly sharedData: SharedDataService,
+    private readonly issesService: IssueService,
+    private readonly tokenStorage: TokenStorageService,
+    private readonly userDataService: UserService,
+    private readonly ws: WebSocketService,
+    private readonly snack: MatSnackBar
+  ) { }
+
+  ngOnInit(): void {
+    this.sharedData.AllUser$.subscribe(data => {
+      this.UserData = data ?? [];
+      // this.applyFilter();
+    });
+    if (!this.sharedData.hasUserCache) {
+      this.loadUser();
+    }
+    this.route.paramMap.subscribe(pm => {
+      const id = pm.get('issuesId');
+      if (!id) return;
+
+      const cached = this.sharedData.selectIssueValue;
+      const isSame = cached?.id === id;
+
+      // Reset loading state when switching to a different issue
+      if (!isSame) {
+        this.isAiLoading = false;
+        this.loadIssueDetails(id);
+        this.loadIssueById(id);
+      } else {
+        this.issuesResult = cached;
+        this.issuesDetails = this.sharedData.selectIssueDetailValue;
+        // Check if AI fix is currently pending
+        if (this.issuesDetails?.status === 'PENDING') {
+          this.isAiLoading = true;
+        }
+        this.applyUserFilter();
+        this.sortedComments = this.sortComments(this.issuesResult?.commentData ?? [], 'ASC');
+      }
+    });
+
+    this.sharedData.selectedIssues$.subscribe(data => {
+      this.issuesResult = data;
+      this.replycomment(this.issuesResult?.commentData ?? []); // Update rootComments for empty state check
+      this.applyUserFilter();
+      this.sortedComments = this.sortComments(this.issuesResult?.commentData ?? [], 'ASC');
+    });
+
+    // Subscribe to issueDetail$ from SharedData for reactive updates
+    this.sharedData.issueDetail$.subscribe(data => {
+      if (data) {
+        this.issuesDetails = data;
+
+        // Handle AI fix status transitions
+        if (this.isAiFixFailed(data)) {
+          this.isAiLoading = false;
+          if (this._pendingAiFix) {
+            this._pendingAiFix = false;
+            this.snack.open('❌ AI Fix generation failed. Please try again. Ai Token is expired.', '', {
+              duration: 4000,
+              horizontalPosition: 'right',
+              verticalPosition: 'top',
+              panelClass: ['app-snack', 'app-snack-red']
+            });
+          }
+        } else if (data.status === 'PENDING') {
+          this.isAiLoading = true;
+        } else if (data.status === 'SUCCESS' && data.recommendedFixByAi) {
+          this._pendingAiFix = false;
+          this.isAiLoading = false;
+        } else {
+          this.isAiLoading = false;
+        }
+      }
+    });
+
+    const user = this.tokenStorage.getLoginUser();
+    if (user) {
+      this.sharedData.LoginUserShared = user;
+    }
+    this.sharedData.LoginUser$.subscribe(data => {
+      this.UserLogin = data;
+
+    });
+
+    // Subscribe to Real-time Comments
+    this.route.paramMap.subscribe(pm => {
+      const id = pm.get('issuesId');
+      if (id) {
+        this.subscribeToRealtimeComments(id);
+      }
+    });
+
+    // Subscribe to issue changes (WebSocket) for AI recommend fix updates
+    this.issueSub = this.ws.subscribeIssueChanges().subscribe(event => {
+      if (event.action === 'UPDATED' && event.issueId === this.issuesResult?.id) {
+        this.loadIssueDetails(this.issuesResult.id);
+      }
+    });
+  }
+
+  private commentSub?: Subscription;
+  private issueSub?: Subscription;
+  private pollAiFixSub?: Subscription;
+
+  subscribeToRealtimeComments(issueId: string) {
+    // Unsubscribe previous if exists
+    if (this.commentSub) {
+      this.commentSub.unsubscribe();
+    }
+
+    const topicId = issueId.toLowerCase();
+
+    this.commentSub = this.ws.subscribeToIssueComments(topicId).subscribe({
+      next: (comment: any) => {
+        // Add to SharedData to update UI
+        this.sharedData.addComments(comment);
+      },
+      error: (err: any) => { }
+    });
+  }
+
+  private startAiFixPolling(issueId: string) {
+    this.pollAiFixSub?.unsubscribe();
+    this.pollAiFixSub = interval(5000).subscribe(() => {
+      if (!this._pendingAiFix) {
+        this.pollAiFixSub?.unsubscribe();
+        return;
+      }
+      this.loadIssueDetails(issueId);
+    });
+  }
+
+  ngOnDestroy() {
+    if (this.commentSub) {
+      this.commentSub.unsubscribe();
+    }
+    if (this.issueSub) {
+      this.issueSub.unsubscribe();
+    }
+    this.pollAiFixSub?.unsubscribe();
+  }
+
+  loadIssueById(issueId: string) {
+    this.sharedData.setLoading(true);
+    this.issesService.getAllIssuesById(issueId).subscribe({
+      next: (data) => {
+        this.sharedData.SelectedIssues = data;
+        this.sharedData.setLoading(false);
+        this.replycomment(this.issuesResult?.commentData ?? []);
+        this.applyUserFilter();
+      },
+      error: () => this.sharedData.setLoading(false)
+    });
+  }
+  loadIssueDetails(issueId: string) {
+    this.issesService.getAllIssuesDetails(issueId).subscribe({
+      next: (data) => {
+        console.log('[IssueDetail] loadIssueDetails response:', { status: data.status, recommendedFixByAi: data.recommendedFixByAi, pendingFlag: this._pendingAiFix, isAiLoading: this.isAiLoading });
+        this.sharedData.SelectedIssueDetail = data;
+        this.sharedData.setLoading(false);
+        this.issuesDetails = data;
+
+        // Direct handling as safety net
+        if (this.isAiFixFailed(data) && this._pendingAiFix) {
+          this._pendingAiFix = false;
+          this.isAiLoading = false;
+          this.snack.open('❌ AI Fix generation failed. Please try again. Ai Token is expired.', '', {
+            duration: 4000,
+            horizontalPosition: 'right',
+            verticalPosition: 'top',
+            panelClass: ['app-snack', 'app-snack-red']
+          });
+        } else if (data.status === 'SUCCESS' && data.recommendedFixByAi) {
+          this._pendingAiFix = false;
+          this.isAiLoading = false;
+        } else if (data.status === 'PENDING') {
+          this.isAiLoading = true;
+        } else {
+          this.isAiLoading = false;
+        }
+
+        this.applyUserFilter();
+      },
+      error: () => this.sharedData.setLoading(false)
+    });
+  }
+
+  loadUser() {
+    this.sharedData.setLoading(true);
+    this.userDataService.getUser().subscribe({
+      next: (data) => {
+        this.sharedData.UserShared = data;
+        this.sharedData.setLoading(false);
+      },
+      error: () => this.sharedData.setLoading(false)
+    });
+  }
+  applyUserFilter() {
+    if (!this.issuesResult || !this.UserData.length) {
+      return;
+    }
+    this.filteredUsers = this.UserData.filter(u =>
+      this.issuesResult?.commentData?.some(c => c.user.id === u.id)
+    );
+  }
+  sortComments(list: commentResponseDTO[], order: string) {
+    // 1. Deduplicate by ID to ensure UI never doubless
+    const uniqueMap = new Map<string, commentResponseDTO>();
+    (list ?? []).forEach(c => {
+      const id = String(c.id).toLowerCase();
+      if (!uniqueMap.has(id)) {
+        uniqueMap.set(id, c);
+      }
+    });
+
+    // 2. Sort
+    return Array.from(uniqueMap.values()).sort((a, b) => {
+      const timeA = new Date(a.createdAt).getTime();
+      const timeB = new Date(b.createdAt).getTime();
+      return order === 'ASC'
+        ? timeA - timeB
+        : timeB - timeA;
+    });
+  }
+
+
+  triggerAiFix() {
+    const projectId = this.issuesResult?.projectId;
+    const issueId = this.issuesResult?.id;
+    if (!projectId || !issueId) return;
+
+    this.isAiLoading = true;
+    this._pendingAiFix = true;
+
+    // Update SharedData with PENDING status immediately
+    if (this.issuesDetails) {
+      const pendingDetail = { ...this.issuesDetails, status: 'PENDING' };
+      this.sharedData.SelectedIssueDetail = pendingDetail;
+    }
+
+    this.issesService.triggerRecommendFixAi(projectId, issueId).subscribe({
+      next: (res) => {
+        this.startAiFixPolling(issueId);
+      },
+      error: (err) => {
+        this.isAiLoading = false;
+        this._pendingAiFix = false;
+        // Revert status in SharedData
+        if (this.issuesDetails) {
+          const revertDetail = { ...this.issuesDetails, status: null };
+          this.sharedData.SelectedIssueDetail = revertDetail;
+        }
+        this.snack.open('❌ Failed to trigger AI Fix. Please try again. Ai Token is expired. ', '', {
+          duration: 4000,
+          horizontalPosition: 'right',
+          verticalPosition: 'top',
+          panelClass: ['app-snack', 'app-snack-red']
+        });
+      }
+    });
+  }
+
+  /* ===================== Mapper (BE -> FE) ===================== */
+  private toIssue(r: ApiIssue): Issue {
+    return {
+      id: (r as any).id ?? r.issueId ?? '',
+      type: (r as any).type ?? 'Issue',
+      title: (r as any).title ?? (r as any).message ?? '(no title)',
+      severity: r.severity ?? 'Major',
+      priority: 'Medium',
+      status: this.mapStatusBeToFe(r.status),
+      project: r.projectName ?? '',
+      file: r.component ?? '',
+      line: 0, // ถ้า BE มี lineNumber ให้แทนด้วย Number(r.lineNumber)
+      created: (r.createdAt as any) ?? '',
+      assignedTo: r.assignedTo ?? '',
+      dueDate: r.dueDate ? new Date(r.dueDate).toISOString() : '',
+      assignedName: r.assignedName ?? '',
+      description: (r as any).description ?? '',
+      vulnerableCode: (r as any).vulnerableCode ?? '',
+      recommendedFix: (r as any).recommendedFix ?? '',
+      comments: []
+    };
+  }
+
+  private mapStatusBeToFe(s: ApiIssue['status'] | undefined): Issue['status'] {
+    if (!s) return 'open';
+    const clean = s.toString().trim().toUpperCase();
+    switch (clean) {
+      case 'OPEN': return 'open';
+      case 'PENDING': return 'pending';
+      case 'IN PROGRESS': return 'in-progress';
+      case 'DONE': return 'done';
+      case 'REJECT': return 'reject';
+      default: return 'open';
+    }
+  }
+
+  private mapStatusFeToBe(s: Issue['status']): ApiIssue['status'] {
+    switch (s) {
+      case 'open': return 'OPEN';
+      case 'pending': return 'PENDING';
+      case 'in-progress': return 'IN PROGRESS';
+      case 'done': return 'DONE';
+      case 'reject': return 'REJECT';
+      default: return 'OPEN';
+    }
+  }
+
+  /* ===================== Comments ===================== */
+  private mapComment(r: IssueCommentModel): IssueComment {
+    return {
+      issueId: r.issueId,
+      userId: r.username || r.userId,
+      comment: r.comment,
+      timestamp: r.createdAt,
+    };
+  }
+
+
+  loadComments() {
+    if (!this.issue?.id) return;
+    this.loadingComments = true;
+    this.commentService.getIssueComments(this.issue.id).subscribe({
+      next: (list: IssueCommentModel[]) => {
+        this.comments = (list ?? []).map((x: IssueCommentModel) => this.mapComment(x));
+      },
+      error: (e: unknown) => { },
+      complete: () => (this.loadingComments = false),
+    });
+  }
+
+
+  postComment() {
+    const text = (this.newComment?.comment ?? '').trim();
+    if (!text || this.sendingComment) return;
+
+    const payload: commentRequestDTO = {
+      issueId: this.issuesResult?.id,
+      userId: this.UserLogin?.id || '',
+      comment: text,
+      parentCommentId: this.replyTo?.commentId || ''
+    };
+
+    this.sendingComment = true;
+
+    this.commentService.updateComments(payload).subscribe({
+      next: (updated) => {
+        this.sharedData.addComments(updated);
+        this.newComment = { comment: '' };
+        this.replyTo = null;
+        this.sendingComment = false;
+      },
+      error: (err) => {
+        this.sendingComment = false;
+      }
+    });
+  }
+
+
+  onCommentKeydown(e: KeyboardEvent) {
+    if (e.key === 'Enter' && !e.shiftKey) {
+      e.preventDefault();
+      this.postComment();
+    }
+  }
+
+  /* ===================== UI actions (เดิม) ===================== */
+  goBack() { window.history.back(); }
+
+  showAssignModal = false;
+  showStatusModal = false;
+
+  openAssignModal() {
+    if (this.issuesResult?.assignedTo) {
+      this.assignModal.openEditAssign({
+        id: this.issuesResult.id,
+        status: this.issuesResult.status,
+        assignedTo: this.issuesResult.assignedTo?.id || '',
+      });
+    } else {
+      const issueId = this.issuesResult
+      if (!issueId) return;
+      this.assignModal.openAddAssign(issueId);
+    }
+  }
+  openStatusModal() {
+    if (!this.issuesResult) return;
+    this.assignModal.openEditStatus({
+      id: this.issuesResult.id,
+      status: this.issuesResult.status,
+      assignedTo: this.issuesResult.assignedTo?.id || '',
+    });
+  }
+
+
+  closeModal() {
+    this.showAssignModal = false;
+    this.showStatusModal = false;
+  }
+
+  handleAssignSubmit(event: { issue: Partial<Issue>, isEdit: boolean }) {
+    const updated = event.issue;
+    if (updated.assignedTo) this.issue.assignedTo = updated.assignedTo;
+    if (updated.dueDate) this.issue.dueDate = updated.dueDate;
+    this.assignModal.close();
+
+    this.assignService.addassign(
+      this.issue.id,
+      this.issue.assignedTo ?? '',
+      this.issue.dueDate
+    ).subscribe({
+      next: (res: any) => {
+        this.sharedData.updateIssueSelect({ ...res, id: this.issue.id });
+      },
+      error: (err: any) => { },
+    });
+  }
+
+  // auto-update status ตาม logic เดิม
+  // autoUpdateStatus(issue: Issue) {
+  //   let nextStatus: string;
+
+  //   switch (issue.status) {
+  //     case 'open':
+  //       alert('กรุณา Assign ก่อนเปลี่ยนสถานะ');
+  //       return;
+  //     case 'pending':
+  //       alert('กรุณายืนยัน assignment ก่อนเปลี่ยนสถานะ');
+  //       return;
+  //     case 'in-progress': nextStatus = 'DONE'; break;
+  //     case 'done':
+  //       alert('ยินดีด้วยค่ะ งานมอบหมายนี้ของคุณเสร็จสมบูรณ์เรียบร้อยแล้ว');
+  //       return;
+  //     default: nextStatus = issue.status;
+  //   }
+
+  //   this.assignModal.openStatus(issue, nextStatus);
+  // }
+
+  handleStatusSubmit(updated: { id?: string, issueId?: string, status: Issue['status'], annotation?: string }) {
+    const issueId = updated.id || updated.issueId;
+    if (!updated.status || !issueId) return;
+
+    const prevStatus = this.issue.status;
+
+    if (!this.auth.isLoggedIn) {
+      return;
+    }
+
+    const body: any = {
+      status: this.mapStatusFeToBe(updated.status),
+      annotation: updated.annotation || ''
+    };
+
+    if (this.issue.assignedTo) body.assignedTo = this.issue.assignedTo;
+    if (this.issue.dueDate) body.dueDate = this.issue.dueDate;
+
+    this.assignService.updateStatus('', issueId, body).subscribe({
+      next: (res: any) => {
+        this.issue = {
+          ...this.issue,
+          status: res.status ? this.mapStatusBeToFe(res.status) : updated.status,
+          assignedTo: res.assignedTo ?? this.issue.assignedTo,
+          dueDate: res.dueDate ?? this.issue.dueDate
+        };
+        this.assignModal.close();
+      },
+      error: (err: any) => {
+        this.issue = { ...this.issue, status: prevStatus }; // rollback
+      }
+    });
+  }
+  startReply(c: commentResponseDTO) {
+    if (c.user?.id === this.UserLogin?.id) {
+      return;
+    } else {
+      this.replyTo = { commentId: c.id, username: c.user?.username, parentCommentId: c.parentCommentId || '' };
+      this.newComment = { comment: `@${this.replyTo?.username} `, parentCommentId: this.replyTo.commentId };
+    }
+  }
+  cancelReply() {
+    this.replyTo = null;
+    this.newComment = { comment: '' };
+  }
+
+  downloadMarkdown() {
+    if (!this.issuesDetails?.recommendedFixByAi) return;
+
+    let markdownContent = '';
+    if (this.issuesDetails.vulnerableCode) {
+      markdownContent += `### Original Code\n\`\`\`java\n${this.issuesDetails.vulnerableCode}\n\`\`\`\n\n`;
+    }
+    
+    markdownContent += MarkdownPipe.extractCleanMarkdown(this.issuesDetails.recommendedFixByAi);
+
+    const blob = new Blob([markdownContent], { type: 'text/markdown;charset=utf-8;' });
+    const url = URL.createObjectURL(blob);
+
+    const link = document.createElement('a');
+    link.href = url;
+    const issueKey = this.issuesResult?.id || 'Recommendation';
+    const filename = `AI_Fix_ID_${issueKey}.md`;
+    link.download = filename;
+
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+
+    URL.revokeObjectURL(url);
+  }
+
+  private replycomment(comments: commentResponseDTO[]) {
+    this.rootComments = [];
+    this.replies.clear();
+
+    const list = comments ?? [];
+
+    // เรียงตามเวลา 
+    const sorted = [...list].sort((a, b) =>
+      new Date(a.createdAt ?? 0).getTime() - new Date(b.createdAt ?? 0).getTime()
+    );
+
+    for (const c of sorted) {
+      const parentId = (c as commentResponseDTO).parentCommentId || null;
+
+      if (!parentId) {
+        this.rootComments.push(c);
+      } else {
+        const arr = this.replies.get(parentId) ?? [];
+        arr.push(c);
+        this.replies.set(parentId, arr);
+      }
+    }
+  }
+
+  get parsedVulnerableLines() {
+    const code = this.issuesDetails?.vulnerableCode;
+    if (!code) return [];
+    
+    const lines = code.split('\n');
+    let targetLineNum: number | null = null;
+    let targetIndex = -1;
+    
+    lines.forEach((lineText, index) => {
+      if (lineText.includes('// <-- Target Line')) {
+        const match = lineText.match(/\/\/ <-- Target Line (\d+)/);
+        if (match) {
+          targetLineNum = parseInt(match[1], 10);
+          targetIndex = index;
+        }
+      }
+    });
+    
+    return lines.map((lineText, index) => {
+      const isTarget = index === targetIndex;
+      let cleanText = lineText;
+      if (lineText.includes('// <-- Target Line')) {
+        cleanText = lineText.split('// <-- Target Line')[0].trimEnd();
+      }
+      
+      let lineNum = index + 1;
+      if (targetLineNum !== null && targetIndex !== -1) {
+        lineNum = targetLineNum - (targetIndex - index);
+      }
+      
+      return {
+        text: cleanText,
+        isTarget: isTarget,
+        lineNum: lineNum
+      };
+    });
+  }
+
+}
+

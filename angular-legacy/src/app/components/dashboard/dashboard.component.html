@@ -1,0 +1,449 @@
+<div class="dashboard-container fade-in">
+
+
+
+  <!-- MAIN CONTENT (Classic Vertical Layout) -->
+  <div class="dashboard-content">
+    <!-- Sticky Header -->
+    <div class="dashboard-header">
+      <div class="header-content">
+        <div class="dashboard-title">
+          <i class="bi bi-grid-1x2-fill"></i>
+          <div>
+            <h1>{{ 'DASHBOARD.TITLE' | translate }}</h1>
+            <p>{{ 'DASHBOARD.SUBTITLE' | translate }}</p>
+          </div>
+        </div>
+
+        <div class="dashboard-actions">
+          <button class="export-btn" (click)="onExport()" [title]="'DASHBOARD.EXPORT_TOOLTIP' | translate">
+            <i class="bi bi-download"></i>
+          </button>
+
+          <div class="notification-wrapper" (click)="toggleNotifications(); $event.stopPropagation()"
+            [title]="'DASHBOARD.NOTIFICATIONS' | translate">
+            <i class="bi bi-bell"></i>
+            <span *ngIf="unreadCount > 0" class="notification-badge">{{ unreadCount }}</span>
+
+            <!-- Notification Dropdown -->
+            <div class="notifications-panel" *ngIf="showNotifications" (click)="$event.stopPropagation()">
+              <div class="notifications-header">
+                <span>{{ 'DASHBOARD.NOTIFICATIONS' | translate }}</span>
+                <button class="close-btn" (click)="closeNotifications(); $event.stopPropagation()">✕</button>
+              </div>
+
+              <div class="notification-tabs">
+                <button [class.active]="activeTab === 'All'" (click)="selectTab('All')">{{ 'DASHBOARD.NOTI_TAB_ALL' | translate }}</button>
+                <button [class.active]="activeTab === 'Unread'" (click)="selectTab('Unread')">{{ 'DASHBOARD.NOTI_TAB_UNREAD' | translate }}</button>
+                <button [class.active]="activeTab === 'Scans'" (click)="selectTab('Scans')">{{ 'DASHBOARD.NOTI_TAB_SCANS' | translate }}</button>
+                <button [class.active]="activeTab === 'Issues'" (click)="selectTab('Issues')">{{ 'DASHBOARD.NOTI_TAB_ISSUES' | translate }}</button>
+                <button [class.active]="activeTab === 'System'" (click)="selectTab('System')">{{ 'DASHBOARD.NOTI_TAB_SYSTEM' | translate }}</button>
+                <button class="mark-all" (click)="markAllRead()">{{ 'DASHBOARD.NOTI_MARK_READ' | translate }}</button>
+              </div>
+
+              <div class="notification-list" (scroll)="onNotificationScroll($event)">
+                <div class="notification-item" *ngFor="let n of filteredNotifications" [class.unread]="!n.isRead"
+                  (click)="viewNotification(n)">
+                  <div class="item-header">
+                    <span class="n-title">{{ n.title }}</span>
+                    <span class="n-time">{{ getTimeAgo(n.createdAt) }}</span>
+                  </div>
+                  <div class="n-message">{{ n.message }}</div>
+
+                  <!-- Action button for Issues -->
+                  <a *ngIf="n.type === 'Issues'" class="view-issue-link"
+                    (click)="handleViewIssue(n); $event.stopPropagation()">
+                    {{ 'DASHBOARD.NOTI_VIEW_ISSUE' | translate }}
+                  </a>
+                  <!-- Action button for Scans -->
+                  <a *ngIf="n.type === 'Scans'" class="view-issue-link"
+                    (click)="handleViewScan(n); $event.stopPropagation()">
+                    {{ 'DASHBOARD.NOTI_VIEW_RESULTS' | translate }}
+                  </a>
+                  <!-- Action button for System -->
+                  <a *ngIf="n.type === 'System'" class="view-issue-link"
+                    (click)="handleViewSystem(n); $event.stopPropagation()">
+                    {{ 'DASHBOARD.NOTI_VIEW_DETAILS' | translate }}
+                  </a>
+                </div>
+                <div class="notification-empty" *ngIf="filteredNotifications.length === 0">
+                  {{ 'DASHBOARD.NOTI_EMPTY' | translate }}
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Profile -->
+          <div class="profile-dropdown" (click)="toggleProfileDropdown(); $event.stopPropagation()">
+            <div class="profile-avatar"><span>{{ userProfile?.username?.charAt(0)?.toUpperCase() || '' }}</span><i
+                *ngIf="!userProfile?.username" class="bi bi-person-fill"></i></div>
+            <span class="profile-name" *ngIf="userProfile?.username">{{ userProfile?.username }}</span>
+
+            <div class="profile-menu" *ngIf="showProfileDropdown" (click)="$event.stopPropagation()">
+              <div class="menu-header"
+                style="padding-bottom: 12px; border-bottom: 1px solid var(--border-subtle); margin-bottom: 12px;">
+                <div class="user-info" style="display: flex; flex-direction: column;">
+                  <strong style="font-size: 16px;">{{ UserLogin?.username || userProfile?.username }}</strong>
+                  <span style="font-size: 12px; color: var(--text-sub);">{{ UserLogin?.email }}</span>
+                </div>
+                <div style="margin-top: 8px;">
+                  <span class="status-badge">{{ 'DASHBOARD.EMAIL_VERIFY' | translate }}</span>
+                  <span class="status-badge" [ngClass]="{
+                  'verified': (UserLogin?.status || '').toUpperCase() === 'VERIFIED',
+                  'pending_verification': (UserLogin?.status || '').toUpperCase() === 'PENDING_VERIFICATION',
+                  'unverified': (UserLogin?.status || '').toUpperCase() === 'UNVERIFIED'
+                }">
+                    {{ UserLogin?.status | userStatus }}
+                  </span>
+                </div>
+              </div>
+              <div class="menu-items">
+                <button (click)="openChangePasswordModal()" class="menu-btn">
+                  <i class="bi bi-key"></i> {{ 'DASHBOARD.CHANGE_PASSWORD' | translate }}
+                </button>
+                <button *ngIf="(UserLogin?.status || '').toUpperCase() !== 'VERIFIED'" (click)="sendVerifyEmail()"
+                  class="menu-btn verify">
+                  <i class="bi bi-envelope-check"></i> {{ 'DASHBOARD.VERIFY_EMAIL' | translate }}
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 1. Welcome Banner -->
+    <div class="dashboard-card welcome-card">
+      <div class="welcome-text">
+        <h2>{{ 'DASHBOARD.WELCOME_BACK' | translate }} {{ UserLogin?.username || userProfile?.username }}!</h2>
+        <p>{{ 'DASHBOARD.WELCOME_TEXT' | translate }}</p>
+      </div>
+      <div class="quick-stats">
+        <div class="q-stat">
+          <span class="label">{{ 'DASHBOARD.TOTAL_SCANS' | translate }}</span>
+          <span class="value">{{ DashboardData.length || 0 }}</span>
+        </div>
+        <div class="q-stat">
+          <span class="label">{{ 'DASHBOARD.PROJECTS' | translate }}</span>
+          <span class="value">{{ repositories.length || 0 }}</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- 2. Metrics Grid (4 items) -->
+    <div class="metrics-grid">
+      <div class="metric-card bug">
+        <div class="icon-box"><i class="bi bi-bug-fill"></i></div>
+        <div class="info">
+          <span class="label">{{ 'DASHBOARD.BUGS' | translate }}</span>
+          <span class="value">{{ passedCountBug }}</span>
+        </div>
+      </div>
+      <div class="metric-card security">
+        <div class="icon-box"><i class="bi bi-shield-lock-fill"></i></div>
+        <div class="info">
+          <span class="label">{{ 'DASHBOARD.SECURITY' | translate }}</span>
+          <span class="value">{{ securityCount }}</span>
+        </div>
+      </div>
+      <div class="metric-card smell">
+        <div class="icon-box"><i class="bi bi-wind"></i></div>
+        <div class="info">
+          <span class="label">{{ 'DASHBOARD.CODE_SMELLS' | translate }}</span>
+          <span class="value">{{ codeSmellCount }}</span>
+        </div>
+      </div>
+      <div class="metric-card coverage">
+        <div class="icon-box"><i class="bi bi-check2-circle"></i></div>
+        <div class="info">
+          <span class="label">{{ 'DASHBOARD.COVERAGE' | translate }}</span>
+          <span class="value">{{ coverRateCount }}%</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- 3. Quality Gate & Recent Scans (Row) -->
+    <div class="content-row">
+      <!-- Quality Gate -->
+      <div class="dashboard-card quality-gate-card">
+        <div class="card-header">
+          <h3><i class="bi bi-pie-chart-fill"></i> {{ 'DASHBOARD.QUALITY_GATE' | translate }}</h3>
+        </div>
+        <div class="chart-wrapper">
+          <apx-chart *ngIf="pieChartOptions && pieChartOptions.chart" [series]="pieChartOptions.series!"
+            [chart]="pieChartOptions.chart!" [labels]="pieChartOptions.labels!" [colors]="pieChartOptions.colors!"
+            [legend]="pieChartOptions.legend!" [dataLabels]="pieChartOptions.dataLabels!"
+            [plotOptions]="pieChartOptions.plotOptions!">
+          </apx-chart>
+        </div>
+        <div class="gate-summary">
+          <div class="summary-item pass">
+            <i class="bi bi-check-circle-fill" style="color: var(--success); margin-right: 6px;"></i> {{ 'DASHBOARD.PASSED' | translate }} <strong>{{
+              passedCount }}</strong>
+          </div>
+          <div class="summary-item fail">
+            <i class="bi bi-x-circle-fill" style="color: var(--danger); margin-right: 6px;"></i> {{ 'DASHBOARD.FAILED' | translate }} <strong>{{
+              failedCount }}</strong>
+          </div>
+        </div>
+      </div>
+
+      <!-- Recent Scans (Wider) -->
+      <div class="dashboard-card recent-scans-card">
+        <div class="card-header">
+          <h3><i class="bi bi-clock-history"></i> {{ 'DASHBOARD.RECENT_ACTIVITY' | translate }}</h3>
+          <a [routerLink]="['/scanhistory']" class="link-btn">{{ 'DASHBOARD.VIEW_ALL' | translate }} <i class="bi bi-arrow-right"></i></a>
+        </div>
+        <div class="table-responsive">
+          <table>
+            <caption class="visually-hidden">Project Quality Overview</caption>
+            <thead>
+              <tr>
+                <th>{{ 'DASHBOARD.COL_PROJECT' | translate }}</th>
+                <th>{{ 'DASHBOARD.COL_STATUS' | translate }}</th>
+                <th>{{ 'DASHBOARD.COL_QUALITY_GATE' | translate }}</th>
+                <th>{{ 'DASHBOARD.COL_TIME' | translate }}</th>
+                <th></th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let scan of DashboardData | slice:0:5">
+                <td>
+                  <div class="project-name-wrapper">
+                    <div class="project-icon">
+                      <i class="bi bi-code-square"></i>
+                    </div>
+                    <span class="project-name-text" [title]="scan.project.name">
+                      {{ scan.project.name }}
+                    </span>
+                  </div>
+                </td>
+                <td>
+                  <span class="status-badge" [ngClass]="scan.status.toLowerCase()">
+                    <i *ngIf="scan.status === 'PENDING'" class="bi bi-arrow-repeat spin"></i>
+                    {{ scan.status === 'PENDING' ? ('DASHBOARD.SCANNING' | translate) : (scan.status === 'SUCCESS' ? ('DASHBOARD.PASSED' | translate) : ('DASHBOARD.FAILED' | translate)) }}
+                  </span>
+                </td>
+                <td>
+                  <span *ngIf="scan.status === 'PENDING'" class="status-badge scanning">
+                    <i class="bi bi-arrow-repeat spin"></i> {{ 'DASHBOARD.SCANNING' | translate }}
+                  </span>
+
+                  <span *ngIf="scan.status !== 'PENDING' && scan.status !== 'SUCCESS'" class="status-badge failed">
+                    {{ 'DASHBOARD.FAILED' | translate }}
+                  </span>
+
+                  <ng-container *ngIf="scan.status === 'SUCCESS'">
+                    <span *ngIf="scan.qualityGate === 'OK'" class="status-badge success">{{ 'DASHBOARD.PASSED' | translate }}</span>
+                    <span *ngIf="scan.qualityGate === 'ERROR'" class="status-badge failed">{{ 'DASHBOARD.FAILED' | translate }}</span>
+                    <span *ngIf="scan.qualityGate !== 'OK' && scan.qualityGate !== 'ERROR'" class="text-muted">{{ scan.qualityGate || '-' }}</span>
+                  </ng-container>
+                </td>
+                <td class="text-muted">{{ scan.completedAt | date:'MMM d, h:mm a' }}</td>
+                <td class="text-end">
+                  <button class="action-btn" (click)="viewDetail(scan)"><i class="bi bi-chevron-right"></i></button>
+                </td>
+              </tr>
+              <tr *ngIf="!DashboardData || DashboardData.length === 0">
+                <td colspan="5" class="empty-state">{{ 'DASHBOARD.NO_RECENT_ACTIVITY' | translate }}</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- 4. Distribution & Issues (Row) -->
+    <div class="content-row">
+      <!-- Project Distribution -->
+      <div class="dashboard-card dist-card">
+        <div class="card-header">
+          <h3><i class="bi bi-bar-chart-fill"></i> {{ 'DASHBOARD.PROJECT_TYPES' | translate }}</h3>
+        </div>
+        <div class="dist-list">
+          <div *ngFor="let p of projectDistribution" class="dist-item">
+            <div class="dist-info">
+              <span>{{ p.type }} ({{ p.count }})</span>
+              <span>{{ p.percent }}%</span>
+            </div>
+            <div class="progress-bg">
+              <div class="progress-fill" [style.width.%]="p.percent"
+                [style.background-color]="p.type === 'Angular' ? '#dd0031' : '#6db33f'">
+              </div>
+            </div>
+          </div>
+          <div *ngIf="!projectDistribution || projectDistribution.length === 0" class="empty-state">
+            {{ 'DASHBOARD.NO_PROJECT_DATA' | translate }}
+          </div>
+        </div>
+      </div>
+
+      <!-- Top Issues -->
+      <div class="dashboard-card issues-card">
+        <div class="card-header">
+          <h3><i class="bi bi-exclamation-triangle-fill"></i> {{ 'DASHBOARD.TOP_ISSUES' | translate }}</h3>
+        </div>
+        <ul class="issue-list" *ngIf="allIssues.length > 0; else noIssues">
+          <li *ngFor="let i of allIssues | slice:0:4">
+            <div class="issue-content">
+              <span class="issue-msg">{{ i.message }}</span>
+              <span class="severity-badge" [ngClass]="i.severity.toLowerCase()">{{ i.severity }}</span>
+            </div>
+          </li>
+        </ul>
+        <ng-template #noIssues>
+          <p class="text-muted text-center py-3">{{ 'DASHBOARD.NO_ISSUES_FOUND' | translate }}</p>
+        </ng-template>
+      </div>
+    </div>
+
+    <!-- 5. Trends Chart (Full Width) -->
+    <!-- 5. Trends Chart (Full Width) -->
+    <div class="dashboard-card trends-card">
+      <div class="card-header">
+        <h3><i class="bi bi-graph-up"></i> {{ 'DASHBOARD.QUALITY_TRENDS' | translate }}</h3>
+      </div>
+      <div class="line-chart-wrapper">
+        <!-- ✅ เพิ่ม *ngIf ป้องกัน undefined -->
+        <apx-chart *ngIf="coverageChartOptions && coverageChartOptions.chart && coverageChartSeries"
+          [series]="coverageChartSeries!" [chart]="coverageChartOptions.chart!" [xaxis]="coverageChartOptions.xaxis!"
+          [stroke]="coverageChartOptions.stroke!" [markers]="coverageChartOptions.markers!"
+          [colors]="coverageChartOptions.colors!" [yaxis]="coverageChartOptions.yaxis!" [grid]="{ show: false }">
+        </apx-chart>
+      </div>
+    </div>
+
+  </div> <!-- End Dashboard Content -->
+</div>
+
+<!-- Change Password Modal -->
+<div class="modal-backdrop-custom" *ngIf="showChangePasswordModal" (mousedown)="closeChangePasswordModal()">
+  <div class="modal-dialog-custom" (mousedown)="$event.stopPropagation()">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">{{ 'DASHBOARD.CHANGE_PASSWORD' | translate }}</h5>
+        <button class="btn-close" (mousedown)="closeChangePasswordModal()"></button>
+      </div>
+      <form #passwordForm="ngForm" (ngSubmit)="submitChangePassword(passwordForm)">
+        <div class="modal-body">
+          <!-- Old Password -->
+          <div class="form-group mb-3">
+            <label>{{ 'DASHBOARD.OLD_PASSWORD' | translate }}</label>
+            <div class="pw-field">
+              <input [type]="showOldPassword ? 'text' : 'password'" class="form-control" name="oldPassword" [(ngModel)]="passwordData.oldPassword"
+                required #oldpassRef="ngModel" [class.is-invalid]="
+                  (oldpassRef.touched || submitted) && !passwordData.oldPassword
+                " />
+              <i class="pw-eye bi" [ngClass]="showOldPassword ? 'bi-eye-slash' : 'bi-eye'"
+                (mousedown)="showOldPassword = !showOldPassword"></i>
+            </div>
+            <div *ngIf="oldpassRef.dirty || oldpassRef.touched || submitted">
+              <small *ngIf="oldpassRef.errors?.['required']" class="text-danger">{{ 'DASHBOARD.OLD_PASSWORD_REQUIRED' | translate }}</small>
+            </div>
+          </div>
+
+          <!-- New Password -->
+          <div class="form-group mb-3">
+            <label>{{ 'DASHBOARD.NEW_PASSWORD' | translate }}</label>
+            <div class="pw-field">
+              <input [type]="showNewPassword ? 'text' : 'password'" class="form-control" name="newPassword" [(ngModel)]="passwordData.newPassword"
+                required minlength="8" #newpassRef="ngModel" (focus)="isNewPasswordFocused = true" [class.is-invalid]="
+                  isNewPasswordFocused &&
+                  (newpassRef.invalid || !newPasswordValid)
+                " />
+              <i class="pw-eye bi" [ngClass]="showNewPassword ? 'bi-eye-slash' : 'bi-eye'"
+                (mousedown)="showNewPassword = !showNewPassword"></i>
+            </div>
+
+            <!-- Checklist -->
+            <ul class="password-rules" *ngIf="isNewPasswordFocused">
+              <li [class.pass]="newPasswordRules.minLength" [class.fail]="!newPasswordRules.minLength">
+                <i class="bi" [ngClass]="
+                    newPasswordRules.minLength
+                      ? 'bi-check-circle-fill'
+                      : 'bi-x-circle-fill'
+                  ">
+                </i>
+                {{ 'DASHBOARD.RULE_MINLENGTH' | translate }}
+              </li>
+
+              <li [class.pass]="newPasswordRules.upper" [class.fail]="!newPasswordRules.upper">
+                <i class="bi" [ngClass]="
+                    newPasswordRules.upper
+                      ? 'bi-check-circle-fill'
+                      : 'bi-x-circle-fill'
+                  ">
+                </i>
+                {{ 'DASHBOARD.RULE_UPPERCASE' | translate }}
+              </li>
+
+              <li [class.pass]="newPasswordRules.lower" [class.fail]="!newPasswordRules.lower">
+                <i class="bi" [ngClass]="
+                    newPasswordRules.lower
+                      ? 'bi-check-circle-fill'
+                      : 'bi-x-circle-fill'
+                  ">
+                </i>
+                {{ 'DASHBOARD.RULE_LOWERCASE' | translate }}
+              </li>
+
+              <li [class.pass]="newPasswordRules.number" [class.fail]="!newPasswordRules.number">
+                <i class="bi" [ngClass]="
+                    newPasswordRules.number
+                      ? 'bi-check-circle-fill'
+                      : 'bi-x-circle-fill'
+                  ">
+                </i>
+                {{ 'DASHBOARD.RULE_NUMBER' | translate }}
+              </li>
+
+              <li [class.pass]="newPasswordRules.special" [class.fail]="!newPasswordRules.special">
+                <i class="bi" [ngClass]="
+                    newPasswordRules.special
+                      ? 'bi-check-circle-fill'
+                      : 'bi-x-circle-fill'
+                  ">
+                </i>
+                {{ 'DASHBOARD.RULE_SPECIAL' | translate }}
+              </li>
+            </ul>
+          </div>
+
+          <!-- Confirm Password -->
+          <div class="form-group mb-3">
+            <label>{{ 'DASHBOARD.CONFIRM_PASSWORD' | translate }}</label>
+            <div class="pw-field">
+              <input [type]="showConfirmPassword ? 'text' : 'password'" class="form-control" name="confirmPassword"
+                [(ngModel)]="passwordData.confirmPassword" required #confRef="ngModel" [class.is-invalid]="
+                (confRef.touched || submitted) &&
+                (!passwordData.confirmPassword ||
+                  passwordData.confirmPassword !== passwordData.newPassword)
+              " />
+              <i class="pw-eye bi" [ngClass]="showConfirmPassword ? 'bi-eye-slash' : 'bi-eye'"
+                (mousedown)="showConfirmPassword = !showConfirmPassword"></i>
+            </div>
+
+            <div *ngIf="confRef.dirty || confRef.touched || submitted">
+              <small *ngIf="confRef.errors?.['required']" class="text-danger">
+                {{ 'DASHBOARD.CONFIRM_PASSWORD_REQUIRED' | translate }}
+              </small>
+              <small *ngIf="
+                passwordData.confirmPassword &&
+                passwordData.confirmPassword !== passwordData.newPassword
+              " class="text-danger">
+                {{ 'DASHBOARD.PASSWORD_MISMATCH' | translate }}
+              </small>
+            </div>
+          </div>
+        </div>
+
+        <div class="modal-footer">
+          <button type="submit" class="btn btn-primary">{{ 'DASHBOARD.CHANGE_PASSWORD' | translate }}</button>
+          <button type="button" class="btn btn-secondary" (click)="closeChangePasswordModal()">
+            {{ 'DASHBOARD.CANCEL' | translate }}
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>

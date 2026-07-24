@@ -1,0 +1,737 @@
+/* ==========================================================================
+   🎨 PREMIUM DASHBOARD THEME (Detail Page)
+   ========================================================================== */
+
+:host {
+  /* Color Palette */
+  --primary: #4f46e5;
+  --primary-light: #818cf8;
+  --primary-bg: #eef2ff;
+
+  --success: #10b981;
+  --success-bg: #d1fae5;
+
+  --warning: #f59e0b;
+  --warning-bg: #fef3c7;
+
+  --danger: #ef4444;
+  --danger-bg: #fee2e2;
+
+  --info: #3b82f6;
+  --info-bg: #dbeafe;
+
+  --dark: #1f2937;
+  --gray: #6b7280;
+  --light-gray: #f3f4f6;
+  --white: #ffffff;
+
+  --angular: #dd0031;
+  --angular-bg: #fff0f2;
+  --spring: #6db33f;
+  --spring-bg: #f0fdf4;
+
+  --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+  --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+
+  --radius: 16px;
+  --radius-sm: 8px;
+  --title-color: #2563eb;
+}
+
+/* --- Layout & Animation --- */
+.page-container {
+  padding: 2rem;
+  background-color: none;
+  min-height: 100vh;
+  font-family: 'Check Project', 'Inter', sans-serif;
+}
+
+.fade-in-up {
+  animation: fadeInUp 0.4s ease-out;
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* --- Header Section --- */
+.page-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 2rem;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
+.header-content {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+}
+
+.back-link {
+  width: 40px;
+  height: 40px;
+  border-radius: 10px;
+  border: 1px solid var(--light-gray);
+  background: var(--white);
+  color: var(--dark);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s;
+  font-size: 1.2rem;
+}
+
+.back-link:hover {
+  background: var(--light-gray);
+  color: var(--primary);
+  border-color: var(--primary);
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-sm);
+}
+
+.back-link:active {
+  transform: translateY(0) scale(0.95);
+}
+
+.project-info {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.project-icon {
+  width: 56px;
+  height: 56px;
+  border-radius: var(--radius);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.75rem;
+  box-shadow: var(--shadow-sm);
+}
+
+.icon-angular {
+  background: var(--angular-bg);
+  color: var(--angular);
+}
+
+.icon-spring {
+  background: var(--spring-bg);
+  color: var(--spring);
+}
+
+.project-name {
+  margin: 0;
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--title-color);
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.type-badge {
+  font-size: 0.75rem;
+  padding: 0.25rem 0.75rem;
+  border-radius: 999px;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  font-weight: 600;
+}
+
+.badge-angular {
+  background: var(--angular-bg);
+  color: var(--angular);
+}
+
+.badge-spring {
+  background: var(--spring-bg);
+  color: var(--spring);
+}
+
+.repo-url {
+  font-size: 0.875rem;
+  color: var(--gray);
+  text-decoration: none;
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+  margin-top: 0.25rem;
+}
+
+.repo-url:hover {
+  color: var(--primary);
+  text-decoration: underline;
+}
+
+/* --- Header Actions --- */
+.header-actions {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.status-indicator {
+  padding: 0.5rem 1rem;
+  border-radius: 999px;
+  font-size: 0.875rem;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  background: var(--white);
+  border: 1px solid var(--light-gray);
+  box-shadow: var(--shadow-sm);
+}
+
+.status-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #cbd5e1;
+}
+
+/* Override styles from .ts logic if needed, but assuming TS returns badge classes */
+/* Here we style based on the classes returned by getStatusClass OR we can override if HTML uses [ngClass] logic */
+
+/* Fallback for status classes if using standard bootstrap names, otherwise custom: */
+.badge.bg-success {
+  background: var(--success-bg) !important;
+  color: var(--success) !important;
+  border: 1px solid var(--success);
+}
+
+.badge.bg-primary {
+  background: var(--primary-bg) !important;
+  color: var(--primary) !important;
+  border: 1px solid var(--primary);
+}
+
+.badge.bg-danger {
+  background: var(--danger-bg) !important;
+  color: var(--danger) !important;
+  border: 1px solid var(--danger);
+}
+
+.btn-settings {
+  background: var(--white);
+  border: 1px solid var(--light-gray);
+  color: var(--dark);
+  padding: 0.5rem 1rem;
+  border-radius: var(--radius-sm);
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s;
+  box-shadow: var(--shadow-sm);
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.btn-settings:hover {
+  border-color: var(--gray);
+  background: #f8fafc;
+}
+
+/* --- Key Metrics Grid --- */
+.metrics-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 1.5rem;
+  margin-bottom: 2rem;
+}
+
+.metric-card {
+  background: var(--white);
+  border-radius: var(--radius);
+  padding: 1.5rem;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+  /* Dashboard shadow */
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  transition: transform 0.2s;
+  border: none;
+}
+
+.metric-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.12);
+}
+
+.metric-header {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin-bottom: 1rem;
+}
+
+.icon-box {
+  width: 40px;
+  height: 40px;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.25rem;
+  background: var(--light-gray);
+  color: var(--gray);
+}
+
+.bug-icon {
+  background: var(--danger-bg);
+  color: var(--danger);
+}
+
+.vuln-icon {
+  background: var(--warning-bg);
+  color: var(--warning);
+}
+
+.coverage-icon {
+  background: var(--info-bg);
+  color: var(--info);
+}
+
+.metric-label {
+  font-size: 0.875rem;
+  color: var(--gray);
+  font-weight: 500;
+}
+
+.metric-value {
+  font-size: 2rem;
+  font-weight: 700;
+  color: var(--dark);
+  line-height: 1;
+}
+
+.gate-badge {
+  font-size: 1rem;
+  padding: 0.25rem 1rem;
+  border-radius: 6px;
+  display: inline-block;
+  text-transform: uppercase;
+}
+
+.gate-badge.active {
+  background: var(--success);
+  color: white;
+}
+
+.gate-badge.failed {
+  background: var(--danger);
+  color: white;
+}
+
+.progress-mini {
+  height: 6px;
+  background: var(--light-gray);
+  border-radius: 999px;
+  margin-top: 1rem;
+  overflow: hidden;
+}
+
+.progress-bar-fill {
+  height: 100%;
+  background: var(--primary);
+  border-radius: 999px;
+}
+
+/* --- Content Section --- */
+.content-section {
+  background: var(--white);
+  border-radius: var(--radius);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+  overflow: hidden;
+  border: none;
+}
+
+.tabs-header {
+  display: flex;
+  border-bottom: 1px solid var(--light-gray);
+  padding: 0 1.5rem;
+  background: #ffffff;
+}
+
+.tab-item {
+  padding: 1rem 1.5rem;
+  border: none;
+  background: none;
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: var(--gray);
+  cursor: pointer;
+  border-bottom: 3px solid transparent;
+  transition: all 0.2s;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.tab-item:hover {
+  color: var(--primary);
+  background: rgba(0, 0, 0, 0.01);
+}
+
+.tab-item.active {
+  color: var(--primary);
+  border-bottom-color: var(--primary);
+}
+
+.count-badge {
+  font-size: 0.75rem;
+  background: var(--danger-bg);
+  color: var(--danger);
+  padding: 2px 8px;
+  border-radius: 999px;
+}
+
+.tab-content {
+  padding: 2rem;
+}
+
+/* --- Overview Panel --- */
+.overview-panel {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+}
+
+.scanning-alert {
+  background: var(--primary-bg);
+  border: 1px solid var(--primary-light);
+  border-radius: var(--radius-sm);
+  padding: 1.5rem;
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+}
+
+.alert-content {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  color: var(--primary);
+  font-weight: 600;
+}
+
+.scan-progress-bar {
+  flex: 1;
+  height: 8px;
+  background: rgba(255, 255, 255, 0.5);
+  border-radius: 999px;
+  overflow: hidden;
+}
+
+.bar-fill {
+  height: 100%;
+  background: var(--primary);
+  transition: width 0.3s ease;
+}
+
+.details-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 1.5rem;
+  padding-top: 1rem;
+  border-top: 1px solid var(--light-gray);
+}
+
+.detail-item {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.detail-item .label {
+  font-size: 0.875rem;
+  color: var(--gray);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  font-weight: 600;
+}
+
+.detail-item .value {
+  font-size: 1.1rem;
+  color: var(--dark);
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.code-style {
+  font-family: monospace;
+  background: var(--light-gray);
+  padding: 0.25rem 0.5rem;
+  border-radius: 4px;
+  font-size: 0.95rem;
+}
+
+/* --- Table Styles --- */
+.table-container {
+  overflow-x: auto;
+}
+
+.data-table {
+  width: 100%;
+  border-collapse: collapse;
+  min-width: 600px;
+}
+
+.data-table th {
+  text-align: left;
+  padding: 1rem;
+  font-weight: 600;
+  color: var(--gray);
+  border-bottom: 2px solid var(--light-gray);
+  font-size: 0.875rem;
+  text-transform: uppercase;
+}
+
+.data-table td {
+  padding: 1rem;
+  border-bottom: 1px solid var(--light-gray);
+  vertical-align: middle;
+  color: var(--dark);
+  font-size: 0.95rem;
+}
+
+.data-table tr:last-child td {
+  border-bottom: none;
+}
+
+.data-table tr:hover td {
+  background: #f9fafb;
+}
+
+/* Badges in Table */
+.type-pill {
+  font-size: 0.75rem;
+  font-weight: 700;
+  padding: 0.25rem 0.75rem;
+  border-radius: 6px;
+  text-transform: uppercase;
+}
+
+.pill-bug {
+  background: var(--danger-bg);
+  color: var(--danger);
+}
+
+.pill-vuln {
+  background: var(--warning-bg);
+  color: var(--warning);
+}
+
+.severity-tag {
+  font-weight: 600;
+  color: var(--dark);
+  display: inline-flex;
+  align-items: center;
+}
+
+.sev-blocker,
+.sev-critical {
+  color: var(--danger);
+}
+
+.sev-major {
+  color: var(--warning);
+}
+
+.user-cell {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.user-avatar {
+  width: 32px;
+  height: 32px;
+  background: var(--primary-bg);
+  color: var(--primary);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 600;
+  font-size: 0.875rem;
+  text-transform: uppercase;
+}
+
+.empty-row {
+  text-align: center;
+  padding: 3rem !important;
+  color: var(--gray);
+  font-style: italic;
+}
+
+/* --- History Table Minis --- */
+.mini-stats {
+  display: flex;
+  gap: 1rem;
+  font-size: 0.875rem;
+}
+
+.stat-bug {
+  color: var(--danger);
+}
+
+.stat-vuln {
+  color: var(--warning);
+}
+
+.stat-cov {
+  color: var(--info);
+}
+
+.status-pill-sm {
+  font-size: 0.75rem;
+  padding: 0.25rem 0.75rem;
+  border-radius: 999px;
+  font-weight: 600;
+  background: var(--light-gray);
+  color: var(--gray);
+}
+
+.gate-tag {
+  font-weight: 700;
+  text-transform: uppercase;
+  font-size: 0.8rem;
+}
+
+.gate-tag.active {
+  color: var(--success);
+}
+
+.gate-tag.failed {
+  color: var(--danger);
+}
+
+/* --- Dark Mode Overrides (Optional but good to have) --- */
+:host-context(.dark-mode) {
+  --dark: #f9fafb;
+  --gray: #9ca3af;
+  --light-gray: #374151;
+  --white: #1f2937;
+  --title-color: #ffffff;
+  background-color: #111827;
+}
+
+:host-context(.dark-mode) .page-container {
+  background-color: none;
+}
+
+/* Dark Mode Hover Fixes */
+:host-context(.dark-mode) .metric-card {
+  background-color: var(--white);
+  /* Uses dark mode --white */
+  border-color: #374151;
+}
+
+:host-context(.dark-mode) .metric-card:hover {
+  background-color: #262f3e;
+  /* Slightly lighter than bg */
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.5);
+  /* Stronger shadow for dark mode */
+}
+
+/* Standardized back-link automatically inherits dark mode variables */
+
+:host-context(.dark-mode) .btn-settings {
+  background-color: var(--white);
+  border-color: #374151;
+  color: var(--dark);
+}
+
+:host-context(.dark-mode) .btn-settings:hover {
+  background-color: #262f3e;
+  border-color: var(--gray);
+}
+
+:host-context(.dark-mode) .tab-item:hover {
+  background-color: rgba(255, 255, 255, 0.05);
+  /* Proper hover for dark tabs */
+}
+
+:host-context(.dark-mode) .data-table th {
+  background-color: #1f2937;
+  /* Match card bg */
+  border-bottom-color: #374151;
+}
+
+:host-context(.dark-mode) .data-table td {
+  border-bottom-color: #374151;
+}
+
+:host-context(.dark-mode) .data-table tr:hover td {
+  background-color: #262f3e;
+  /* Visible hover row in dark mode */
+}
+
+:host-context(.dark-mode) .details-list {
+  border-top-color: #374151;
+}
+
+:host-context(.dark-mode) .tabs-header {
+  border-bottom-color: #374151;
+  background-color: var(--white);
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .page-header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .header-actions {
+    width: 100%;
+    justify-content: space-between;
+  }
+
+  .metrics-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .tabs-header {
+    overflow-x: auto;
+  }
+}
+
+/* --- Pagination Controls --- */
+.pagination-controls {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  gap: 1rem;
+  padding: 1rem;
+  border-top: 1px solid var(--light-gray);
+  background: var(--white);
+}
+
+.page-info {
+  font-size: 0.9rem;
+  color: var(--gray);
+  font-weight: 500;
+}
+
+.pagination-controls .btn {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}

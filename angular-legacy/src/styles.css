@@ -1,0 +1,839 @@
+@import '@angular/material/prebuilt-themes/indigo-pink.css';
+
+.pw-field {
+  position: relative;
+  display: block;
+  width: 100%;
+  box-sizing: border-box;
+}
+.pw-field > input {
+  width: 100%;
+  box-sizing: border-box;
+  /* leave room for the eye icon so text never sits under it */
+  padding-right: 40px !important;
+}
+.pw-eye {
+  position: absolute;
+  top: 50%;
+  right: 18px;
+  transform: translateY(-50%);
+  cursor: pointer;
+  color: #6c757d;
+  font-size: 1.30rem;
+  line-height: 1;
+  z-index: 3;
+  user-select: none;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.15s ease;
+}
+.pw-field:focus-within .pw-eye {
+  opacity: 1;
+  pointer-events: auto;
+}
+.pw-eye:hover {
+  color: #0d6efd;
+}
+
+input::-ms-reveal,
+input::-ms-clear {
+  display: none;
+}
+
+/* ===============================
+   Light mode (default)
+   =============================== */
+:root {
+  --bg-color: #ffffff;
+  /* สีพื้นหลังหลัก (ขาว) */
+  --text-color: #000000;
+  /* สีข้อความหลัก (ดำ) */
+  --dashboard-title-color: #2563eb;
+  /* ===== พื้นหลัง / ตัวอักษร ===== */
+  --title-color: #2563eb;
+  /* สี title */
+  --bg-main: #f8fafc;
+  /* พื้นหลังหลัก (Repo Light) */
+  --bg-card: #ffffff;
+  /* พื้นหลังการ์ด */
+  --bg-panel: #f8f9fa;
+  /* พื้นหลัง panel */
+  --text-main: #0f172a;
+  /* ข้อความหลัก */
+  --text-muted: #42526e;
+  /* ข้อความจาง */
+  --text-heading: #0b1220;
+  /* ข้อความหัวข้อ */
+
+  /* ===== Navbar ===== */
+  --navbar-bg: #f8fafc;
+  /* สีพื้น navbar */
+  --navbar-hover: #add8e6;
+  /* สี hover */
+  --navbar-active-bg: #1e90ff;
+  /* สีพื้น tab active */
+  --navbar-active-border: #ffa500;
+  /* สีเส้นขอบ active */
+
+  /* ===== ปุ่มหลัก ===== */
+  --btn-primary-bg: #3b82f6;
+  /* สีน้ำเงินหลัก */
+  --btn-primary-bg-hover: #2563eb;
+  /* hover */
+  --btn-primary-text: #ffffff;
+  /* ตัวอักษรปุ่มหลัก */
+
+  /* ===== ปุ่ม logout / stop ===== */
+  --btn-logout-bg: #ffffff;
+  /* พื้นหลัง logout */
+  --btn-logout-border: #fecaca;
+  /* กรอบ logout */
+  --btn-logout-text: #dc2626;
+  /* ตัวอักษร logout */
+  --btn-logout-hover: #fff1f2;
+  /* hover logout */
+  --btn-stop: #ef4444;
+  /* ปุ่ม stop */
+  --btn-stop-hover: #b91c1c;
+  /* hover stop */
+
+  /* ===== Notification ===== */
+  --notification-bg: #e6efff;
+  /* พื้นหลัง notification */
+  --notification-icon: #3b82f6;
+  /* ไอคอน */
+  --notification-badge: #dc2626;
+  /* badge */
+  --notification-panel-bg: #ffffff;
+  /* พื้นหลัง panel */
+
+  /* ===== Card / Table ===== */
+  --card-border: #dbe1f1;
+  /* กรอบการ์ด */
+  --card-shadow: rgba(15, 23, 42, 0.08);
+  /* เงา */
+  --table-header-bg: #f2f6ff;
+  /* header ตาราง */
+  --table-header-bg2: #e8efff;
+  /* header2 ตาราง */
+  --table-header-text: #334155;
+  /* ข้อความ header */
+  --table-border: #eef2f7;
+  /* กรอบตาราง */
+
+  /* ===== Status Colors ===== */
+  --status-passed-bg: #d1fae5;
+  /* ผ่าน bg */
+  --status-passed-text: #065f46;
+  /* ผ่าน text */
+  --status-warning-bg: #fef3c7;
+  /* เตือน bg */
+  --status-warning-text: #92400e;
+  /* เตือน text */
+  --status-failed-bg: #fee2e2;
+  /* ไม่ผ่าน bg */
+  --status-failed-text: #991b1b;
+  /* ไม่ผ่าน text */
+
+  /* ===== Grade Colors ===== */
+  --grade-a: #10b981;
+  /* สีเกรด A */
+  --grade-b: #84cc16;
+  /* สีเกรด B */
+  --grade-c: #f59e0b;
+  /* สีเกรด C */
+  --grade-d: #fb923c;
+  /* สีเกรด D */
+  --grade-e: #ef4444;
+  /* สีเกรด E */
+
+  /* ===== Metrics Icon Colors ===== */
+  --metric-bugs: #dc2626;
+  /* bug */
+  --metric-security: #d97706;
+  /* security */
+  --metric-code-smells: #0ea5e9;
+  /* code smells */
+  --metric-coverage: #16a34a;
+  /* coverage */
+
+  /* ===== Progress Bar ===== */
+  --progress-bg: #e9ecef;
+  /* พื้นหลัง progress */
+  --progress-value: #3b82f6;
+  /* ค่าปกติ */
+  --progress-success: #16a34a;
+  /* success */
+  --progress-primary: #3b82f6;
+  /* primary */
+
+  /* ===== Shadows ===== */
+  --shadow-primary: 0 6px 20px rgba(37, 99, 235, 0.25);
+  /* เงาหลัก */
+  --shadow-primary-hover: 0 8px 24px rgba(37, 99, 235, 0.15);
+  /* hover */
+  --shadow-danger: 0 4px 12px rgba(239, 68, 68, 0.25);
+  /* อันตราย */
+
+  --detail-bg: #f8f9fa;
+  /* background detail */
+
+  /* Toggle button */
+  --toggle-btn-bg: #1E90FF;
+  /* ปุ่ม toggle พื้นหลัง */
+  --toggle-btn-text: #ffffff;
+  /* ปุ่ม toggle ตัวอักษร */
+
+  /* Repo tab (Light mode → น้ำเงิน) */
+  --repo-tab-text: #1e40af;
+
+  /* Calendar Icon (Light → ฟ้า) */
+  --calendar-icon-filter: invert(40%) sepia(90%) saturate(500%) hue-rotate(200deg);
+
+  /* ===== Generic Status ===== */
+  --success: #10b981;
+  --danger: #ef4444;
+
+  /* ===== Extended (shared with component themes) ===== */
+  --primary: #2563eb;
+  --primary-hover: #1d4ed8;
+  --card-bg: #ffffff;
+  --border-color: #e2e8f0;
+  --text-sub: #64748b;
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.05);
+  --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+  --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+  --table-row-bg: #ffffff;
+}
+
+
+/* ===============================
+     Dark mode
+     =============================== */
+.dark-mode {
+  --bg-color: #0f172a;
+  /* พื้นหลังหลัก (Repo Dark) */
+  --text-color: #ffffff;
+  /* ข้อความหลัก */
+
+  --navbar-bg: var(--bg-main);
+  /* navbar */
+  --navbar-hover: #333333;
+  /* hover */
+  --navbar-active-bg: #333333;
+  /* active */
+  --navbar-active-border: #ffa500;
+  /* ขอบ active */
+
+  --detail-bg: #1e293b;
+  /* detail */
+  --dashboard-title-color: #ffffff;
+  --bg-main: #0f172a;
+  /* พื้นหลังหลัก (Repo Dark) */
+  --bg-card: #1e1e1e;
+  /* การ์ด */
+  --bg-panel: #2c2c2c;
+  /* panel */
+  --text-main: #ffffff;
+  /* ข้อความ */
+  --text-muted: #a0aec0;
+  /* จาง */
+  --text-heading: #f9fafb;
+  /* heading */
+
+  --btn-primary-bg: #2563eb;
+  /* ปุ่มหลัก */
+  --btn-primary-bg-hover: #1e40af;
+  /* hover */
+
+  --notification-bg: #2d3748;
+  /* แจ้งเตือน */
+  --notification-icon: #60a5fa;
+  --notification-badge: #f87171;
+  --notification-panel-bg: #1e293b;
+
+  --card-border: #374151;
+  --table-header-bg: #2c2c2c;
+  --table-header-bg2: #1f2937;
+
+  --success: #34d399;
+  --danger: #f87171;
+  --table-header-text: #e5e7eb;
+  --table-border: #4b5563;
+
+  /* Toggle button */
+  --toggle-btn-bg: #ffa500;
+  --toggle-btn-text: #000000;
+
+  /* Repo tab (Dark mode → ขาว) */
+  --repo-tab-text: #ffffff;
+
+  /* Calendar Icon (Dark → ส้ม) */
+  --calendar-icon-filter: brightness(0) invert(1);
+
+  --apexcharts-text: #ffffff;
+  /* ข้อความ chart */
+
+  /* Extended dark overrides */
+  --primary: #3b82f6;
+  --primary-hover: #60a5fa;
+  --card-bg: #1e293b;
+  --border-color: #334155;
+  --text-sub: #94a3b8;
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.3);
+  --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.4);
+  --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.4);
+  --table-row-bg: #1e293b;
+}
+
+
+/* ===============================
+     Global usage
+     =============================== */
+body {
+  background-color: var(--bg-color);
+  /* พื้นหลัง body */
+  color: var(--text-color);
+  /* สีข้อความ body */
+}
+
+.navbar {
+  background-color: var(--navbar-bg);
+  /* พื้นหลัง navbar */
+  color: var(--text-color);
+  /* สีข้อความ */
+}
+
+.detail {
+  background-color: var(--detail-bg);
+  /* พื้นหลัง detail */
+  color: var(--text-color);
+}
+
+.vertical-navbar a:hover {
+  background-color: var(--navbar-hover);
+  /* hover เมนูซ้าย */
+}
+
+.vertical-navbar a.active,
+.repo-tab {
+  color: var(--repo-tab-text);
+  /* สีข้อความ */
+  background-color: var(--navbar-active-bg);
+  /* พื้นหลัง active */
+  border-left: 4px solid var(--navbar-active-border);
+  /* เส้น active */
+}
+
+
+/* ===============================
+     Dark mode Pagination
+     =============================== */
+body.dark-mode .pagination {
+  background: transparent;
+  /* โปร่งใส */
+}
+
+body.dark-mode .page-item .page-link {
+  background-color: var(--bg-card) !important;
+  color: var(--text-main) !important;
+  border: 1px solid var(--card-border) !important;
+}
+
+body.dark-mode .page-item.active .page-link {
+  background-color: var(--btn-primary-bg) !important;
+  color: var(--btn-primary-text) !important;
+  border-color: var(--btn-primary-bg-hover) !important;
+}
+
+body.dark-mode .page-item.disabled .page-link {
+  background-color: var(--bg-panel) !important;
+  color: var(--text-muted) !important;
+  border-color: var(--card-border) !important;
+}
+
+/* ===============================
+   Dark Mode Override (Assignment Page)
+   =============================== */
+
+/* Table */
+body.dark-mode .assignment-wrapper .assignment-table {
+  background-color: var(--bg-card) !important;
+  color: var(--text-main) !important;
+  border-color: var(--card-border) !important;
+}
+
+body.dark-mode .assignment-wrapper .assignment-table thead th {
+  background-color: var(--table-header-bg) !important;
+  color: var(--table-header-text) !important;
+  border-color: var(--card-border) !important;
+}
+
+body.dark-mode .assignment-wrapper .assignment-table td {
+  background-color: var(--bg-card) !important;
+  color: var(--text-main) !important;
+  border-color: var(--card-border) !important;
+}
+
+/* Stripe rows */
+body.dark-mode .assignment-wrapper .assignment-table tbody tr:nth-child(even) {
+  background-color: var(--bg-panel) !important;
+}
+
+/* Hover row */
+body.dark-mode .assignment-wrapper .assignment-table tbody tr:hover {
+  background-color: var(--table-header-bg2) !important;
+}
+
+/* Badge colors */
+body.dark-mode .assignment-wrapper .badge.bg-low {
+  background-color: #10b981 !important;
+  color: #fff !important;
+}
+
+body.dark-mode .assignment-wrapper .badge.bg-medium {
+  background-color: #fbbf24 !important;
+  color: #1f2937 !important;
+}
+
+body.dark-mode .assignment-wrapper .badge.bg-high {
+  background-color: #ef4444 !important;
+  color: #fff !important;
+}
+
+body.dark-mode .assignment-wrapper .badge.bg-critical {
+  background-color: #111827 !important;
+  color: #fff !important;
+}
+
+/* ===============================
+   Dark Mode Override (Assignment Modal)
+   =============================== */
+
+/* ตัวกล่อง modal */
+body.dark-mode .modal-content {
+  background-color: #1f2937 !important;
+  color: var(--text-main) !important;
+  border: 1px solid var(--card-border) !important;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4) !important;
+}
+
+/* Header */
+body.dark-mode .modal-header {
+  border-bottom: 1px solid var(--card-border) !important;
+  background-color: #374151 !important;
+  color: var(--text-heading) !important;
+}
+
+/* Title */
+body.dark-mode .modal-title {
+  color: var(--text-heading) !important;
+}
+
+/* Footer */
+body.dark-mode .modal-footer {
+  border-top: 1px solid var(--card-border) !important;
+  background-color: var(--bg-panel) !important;
+}
+
+/* Inputs */
+body.dark-mode .modal-body .form-control,
+body.dark-mode .modal-body .form-select,
+body.dark-mode .modal-body textarea {
+  background-color: #374151 !important;
+  color: var(--text-main) !important;
+  border: 1px solid #4b5563 !important;
+}
+
+body.dark-mode .modal-body .form-control:focus,
+body.dark-mode .modal-body .form-select:focus,
+body.dark-mode .modal-body textarea:focus {
+  border-color: var(--btn-primary-bg) !important;
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.25) !important;
+}
+
+/* ปุ่ม */
+body.dark-mode .modal-footer .btn-secondary {
+  background-color: var(--bg-panel) !important;
+  color: var(--text-main) !important;
+  border: 1px solid var(--card-border) !important;
+}
+
+body.dark-mode .modal-footer .btn-secondary:hover {
+  background-color: var(--table-header-bg2) !important;
+}
+
+body.dark-mode .modal-footer .btn-primary {
+  background-color: var(--btn-primary-bg) !important;
+  color: var(--btn-primary-text) !important;
+}
+
+body.dark-mode .modal-footer .btn-primary:hover {
+  background-color: var(--btn-primary-bg-hover) !important;
+}
+
+.dark-mode input[type="date"] {
+  color-scheme: dark !important;
+  color: var(--text-main) !important;
+}
+
+.dark-mode input[type="date"]::-webkit-calendar-picker-indicator {
+  filter: var(--calendar-icon-filter) !important;
+  opacity: 1 !important;
+  color: var(--text-main) !important;
+}
+
+.dark-mode input[type="date"]::-moz-calendar-picker-indicator {
+  filter: var(--calendar-icon-filter) !important;
+  color: var(--text-main) !important;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/* Base container */
+.mat-mdc-snack-bar-container.app-snack {
+  --bg: #2563eb;
+  --fg: #ffffff;
+  --radius: 20px;
+  --shadow: 0 4px 12px rgba(0, 0, 0, .15);
+
+  display: flex !important;
+  align-items: center;
+  justify-content: center;
+
+  border-radius: var(--radius) !important;
+  background: var(--bg) !important;
+  color: var(--fg) !important;
+  box-shadow: var(--shadow) !important;
+
+  /* 👇 จำกัดความกว้าง */
+  width: auto !important;
+  max-width: 320px;
+  /* อยากให้ยาวสุดเท่าไหร่ */
+  min-width: 180px;
+  /* สั้นสุด */
+  padding: 10px 20px !important;
+}
+
+.mat-mdc-snack-bar-container.app-snack-red {
+  --bg: #ef4444;
+  /* red-500 */
+  --fg: #fff;
+}
+
+.mat-mdc-snack-bar-container.app-snack-green {
+  --bg: #27ae60;
+  /* green-500 */
+  --fg: #fff;
+}
+
+/* Surface (ล้างค่า width:100% ของ Material ออก) */
+.mat-mdc-snack-bar-container.app-snack .mdc-snackbar__surface {
+  background: transparent !important;
+  box-shadow: none !important;
+  width: auto !important;
+  /* 👈 สำคัญ */
+  min-width: unset !important;
+  max-width: unset !important;
+  padding: 0 !important;
+}
+
+/* Label */
+.mat-mdc-snack-bar-container.app-snack .mdc-snackbar__label {
+  font-size: 0.9rem;
+  line-height: 1.3rem;
+  color: var(--fg) !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  text-align: center;
+}
+
+/* ถ้ามีปุ่ม */
+.mat-mdc-snack-bar-container.app-snack .mdc-button {
+  margin-left: 8px;
+  height: 28px;
+}
+
+.mat-mdc-snack-bar-container.app-snack .mdc-button__label {
+  color: var(--fg) !important;
+  font-weight: 500;
+  font-size: 0.8rem;
+}
+
+/* Light/Dark Theme */
+.mat-mdc-snack-bar-container.app-snack-blue {
+  --bg: #2563eb;
+  --fg: #fff;
+}
+
+@media (prefers-color-scheme: dark) {
+  .mat-mdc-snack-bar-container.app-snack-blue {
+    --bg: #1e3a8a;
+    --fg: #fff;
+  }
+}
+
+/* Margin จากขอบจอ */
+.mdc-snackbar {
+  margin: 12px;
+}
+
+/* Desktop/Tablet */
+.mat-mdc-snack-bar-container.app-snack {
+  width: auto !important;
+  max-width: 320px;
+  min-width: 200px;
+  margin: 12px !important;
+  justify-content: center;
+}
+
+/*  Mobile: Center + ขยายไม่ให้แคบเกินไป */
+@media (max-width: 600px) {
+  .mat-mdc-snack-bar-container.app-snack {
+    max-width: 90vw !important;
+    /* ใช้ % ของหน้าจอ */
+    min-width: unset !important;
+    width: auto !important;
+    margin: 8px auto !important;
+    /* จัดให้อยู่ตรงกลาง */
+    display: flex !important;
+    justify-content: center !important;
+  }
+
+  .mat-mdc-snack-bar-container.app-snack .mdc-snackbar__surface {
+    width: auto !important;
+    max-width: 100% !important;
+  }
+
+  .mat-mdc-snack-bar-container.app-snack .mdc-snackbar__label {
+    text-align: center;
+    width: 100%;
+  }
+}
+
+/* ===============================
+   SweetAlert2 Dark Mode Overrides (Slate Theme Match)
+   =============================== */
+body.dark-mode .swal2-popup {
+  background: #1e293b !important;
+  /* var(--card-bg) in repo */
+  color: #f1f5f9 !important;
+  /* var(--text-main) in repo */
+  border: 1px solid #334155 !important;
+  /* var(--border-color) in repo */
+}
+
+body.dark-mode .swal2-title {
+  color: #f1f5f9 !important;
+}
+
+body.dark-mode .swal2-html-container {
+  color: #94a3b8 !important;
+  /* var(--text-sub) in repo */
+}
+
+body.dark-mode .swal2-input,
+body.dark-mode .swal2-textarea,
+body.dark-mode .swal2-select {
+  background: #0f172a !important;
+  /* var(--bg-main) in repo */
+  color: #f1f5f9 !important;
+  border: 1px solid #334155 !important;
+}
+
+body.dark-mode .swal2-input:focus {
+  border-color: #3b82f6 !important;
+  /* var(--primary) in repo */
+  box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.25) !important;
+}
+
+body.dark-mode .swal2-validation-message {
+  background: #1e293b !important;
+  color: #ef4444 !important;
+}
+
+/* Adjust Semantic Buttons in Swal if needed */
+body.dark-mode .swal2-confirm.swal2-styled {
+  background-color: #28a745 !important;
+  /* Keep success green or match theme */
+}
+
+body.dark-mode .swal2-deny.swal2-styled {
+  background-color: #3085d6 !important;
+}
+
+body.dark-mode .swal2-cancel.swal2-styled {
+  background-color: #475569 !important;
+  /* Slate-600 for cancel */
+}
+
+/* ===============================
+   MODERN SCROLLBAR (Premium Polish)
+   =============================== */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #cbd5e1;
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #94a3b8;
+}
+
+body.dark-mode ::-webkit-scrollbar-thumb {
+  background: #475569;
+}
+
+body.dark-mode ::-webkit-scrollbar-thumb:hover {
+  background: #64748b;
+}
+
+/* ===== ApexCharts Tooltip Overrides ===== */
+/* Force text to remain dark in Tooltip (even if Dark Mode) */
+.dark-mode .apexcharts-tooltip,
+.dark-mode .apexcharts-tooltip-title,
+.dark-mode .apexcharts-tooltip-text,
+.dark-mode .apexcharts-tooltip-series-group {
+  color: #1e293b !important;
+  /* Slate-800 */
+  background: #ffffff !important;
+  /* White BG */
+  border-color: #e2e8f0 !important;
+  /* Slate-200 */
+}
+
+.dark-mode .apexcharts-tooltip-title {
+  background: #f1f5f9 !important;
+  /* Slate-100 */
+  border-bottom: 1px solid #e2e8f0 !important;
+}
+
+/* ===============================
+   Shared Utility Classes
+   =============================== */
+
+/* Back Button (standard inline variant used across pages) */
+.back-btn {
+  width: 40px;
+  height: 40px;
+  border-radius: 10px;
+  border: 1px solid var(--border-color);
+  background: var(--card-bg);
+  color: var(--text-main);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s;
+  font-size: 1.2rem;
+}
+
+.back-btn:hover {
+  background: var(--bg-main);
+  color: var(--primary);
+  border-color: var(--primary);
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-sm);
+}
+
+.back-btn:active {
+  transform: translateY(0) scale(0.95);
+}
+
+/* Animations */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes fadeInRow {
+  from { opacity: 0; transform: translateY(6px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+/* Animation utility classes */
+.fade-in {
+  animation: fadeIn 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.spin {
+  animation: spin 1s linear infinite;
+  display: inline-block;
+}
+
+/* Status Badges */
+.th-status-badge {
+  padding: 4px 10px;
+  border-radius: 20px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  display: inline-block;
+}
+
+.th-status-pass {
+  background: var(--status-passed-bg);
+  color: var(--status-passed-text);
+}
+
+.th-status-fail {
+  background: var(--status-failed-bg);
+  color: var(--status-failed-text);
+}
+
+.th-status-warn {
+  background: var(--status-warning-bg);
+  color: var(--status-warning-text);
+}
+
+/* Quality Gate Badges */
+.gate-badge {
+  padding: 4px 12px;
+  border-radius: 20px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  display: inline-block;
+}
+
+.gate-pass {
+  background: var(--status-passed-bg);
+  color: var(--status-passed-text);
+}
+
+.gate-fail {
+  background: var(--status-failed-bg);
+  color: var(--status-failed-text);
+}
+
+.gate-scanning {
+  background: #dbeafe;
+  color: #1e40af;
+}
+
+.dark-mode .gate-scanning {
+  background: #1e3a8a;
+  color: #93c5fd;
+}

@@ -1,0 +1,154 @@
+<!-- Assign Modal -->
+<div class="modal-backdrop-custom" *ngIf="showAssign" (click)="close()"></div>
+<div class="modal-custom" *ngIf="showAssign" (click)="$event.stopPropagation()">
+  <div class="modal-card">
+      <div class="modal-header">
+        <h5 class="modal-title">{{ (isEdit ? 'ISSUE_MODAL.CHANGE_ASSIGNMENT' : 'ISSUE_MODAL.ASSIGN_ISSUE') | translate }}</h5>
+        <button class="btn-close" (click)="close()"></button>
+      </div>
+ 
+      <form #assignForm="ngForm">
+        <div class="modal-body">
+          <!-- Issue ID -->
+          <div class="form-group mb-3">
+            <label for="issueId">{{ 'ISSUE_MODAL.ISSUE_ID' | translate }}</label>
+            <input id="issueId" type="text" class="form-control" [(ngModel)]="issueDraft.id" name="id" required
+              [placeholder]="'ISSUE_MODAL.ENTER_ISSUE_ID' | translate" [readonly]="isEdit || !!issueDraft.id" />
+            <div class="text-danger" *ngIf="assignForm.submitted && !issueDraft.id">
+              {{ 'ISSUE_MODAL.ISSUE_ID_REQUIRED' | translate }}
+            </div>
+          </div>
+ 
+          <!-- Assign To -->
+          <div class="form-group mb-3">
+            <label for="assignTo">{{ 'ISSUE_MODAL.ASSIGN_TO' | translate }}</label>
+            <select id="assignTo" class="form-control" [(ngModel)]="issueDraft.assignedTo" name="assignedTo" required>
+              <option [ngValue]="null">{{ 'ISSUE_MODAL.SELECT_USER' | translate }}</option>
+              <option *ngFor="let u of UserData" [value]="u.id" [disabled]="isEdit && u.id === issueDraft.assignedTo">{{
+                u.username }}</option>
+            </select>
+            <!-- <div class="text-danger" *ngIf="assignForm.submitted && !issueDraft.assignedTo">
+              Please select a user
+            </div> -->
+          </div>
+ 
+          <!-- Due Date -->
+          <!-- <div class="form-group mb-3">
+            <label for="dueDate">Due Date:</label>
+            <input id="dueDate" type="date" class="form-control" [(ngModel)]="issue.dueDate" name="dueDate" required
+             [min]="today" #dueDateRef="ngModel" [ngModelOptions]="{ standalone: false }" />
+ 
+            <div class="text-danger" *ngIf="assignForm.submitted && dueDateRef.invalid">
+              Due Date is required
+            </div>
+          </div> -->
+ 
+ 
+        </div>
+ 
+      <div class="modal-footer">
+        <button type="submit" class="btn btn-primary" (click)="onSubmitUser()">{{ (isEdit ? 'ISSUE_MODAL.UPDATE' : 'ISSUE_MODAL.SAVE') | translate }}</button>
+        <button type="button" class="btn btn-secondary" (click)="close()">{{ 'ISSUE_MODAL.CANCEL' | translate }}</button>
+      </div>
+    </form>
+  </div>
+</div>
+<!-- Status Modal -->
+<div class="modal-backdrop-custom" *ngIf="showStatus" (click)="close()"></div>
+<div class="modal-custom" *ngIf="showStatus" (click)="$event.stopPropagation()">
+  <div class="modal-card">
+      <div class="modal-header">
+        <h5 class="modal-title">{{ 'ISSUE_MODAL.CHANGE_STATUS' | translate }}</h5>
+        <button class="btn-close" (click)="close()"></button>
+      </div>
+ 
+      <form #statusForm="ngForm">
+        <div class="modal-body">
+          <!-- Issue ID -->
+          <div class="form-group mb-3">
+            <label for="issueId">{{ 'ISSUE_MODAL.ISSUE_IDS' | translate }}</label>
+            <input id="issueId" type="text" class="form-control" [(ngModel)]="issueDraft.id" name="id" required
+              [placeholder]="'ISSUE_MODAL.ENTER_ISSUE_ID' | translate" [readonly]="isEdit || !!issueDraft.id" />
+            <div class="text-danger" *ngIf="statusForm.submitted && !issueDraft.id">
+              {{ 'ISSUE_MODAL.ISSUE_ID_REQUIRED' | translate }}
+            </div>
+          </div>
+          
+          <!-- Assign To -->
+          <div class="form-group mb-3">
+            <label for="status">{{ 'ISSUE_MODAL.STATUS' | translate }}</label>
+            <select id="status" class="form-control" [(ngModel)]="issueDraft.status" name="status" required>
+              <option value="OPEN">{{ 'ISSUE.OPEN' | translate }}</option>
+              <option value="IN_PROGRESS">{{ 'ISSUE.IN_PROGRESS' | translate }}</option>
+              <!-- <option value="RESOLVED">RESOLVED</option> -->
+              <option value="CLOSED">{{ 'ISSUE.CLOSED' | translate }}</option>
+            </select>
+            <div class="text-danger" *ngIf="statusForm.submitted && !issueDraft.status">
+              {{ 'ISSUE_MODAL.PLEASE_SELECT_STATUS' | translate }}
+            </div>
+          </div>
+ 
+          <!-- Due Date -->
+          <!-- <div class="form-group mb-3">
+            <label for="dueDate">Due Date:</label>
+            <input id="dueDate" type="date" class="form-control" [(ngModel)]="issue.dueDate" name="dueDate" required
+             [min]="today" #dueDateRef="ngModel" [ngModelOptions]="{ standalone: false }" />
+ 
+            <div class="text-danger" *ngIf="assignForm.submitted && dueDateRef.invalid">
+              Due Date is required
+            </div>
+          </div> -->
+ 
+        </div>
+ 
+      <div class="modal-footer">
+        <button type="submit" class="btn btn-primary" (click)="onSubmitStatus()">{{ 'ISSUE_MODAL.UPDATE' | translate }}</button>
+        <button type="button" class="btn btn-secondary" (click)="close()">{{ 'ISSUE_MODAL.CANCEL' | translate }}</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+
+
+<!-- Status Modal -->
+<!-- <div class="modal-backdrop-custom" *ngIf="showStatus" (click)="close()">
+  <div class="modal-dialog-custom" (click)="$event.stopPropagation()">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Update Status</h5>
+        <button class="btn-close" (click)="close()"></button>
+      </div>
+
+      <form #statusForm="ngForm" (ngSubmit)="submitStatus(statusForm)">
+        <div class="modal-body">
+          <label for="status">Status:</label>
+          <input id="status" type="text"name="status" class="form-control" [(ngModel)]="issue.status"  readonly />
+
+
+          <div class="form-group mt-3">
+            <label for="remark">
+              Remark
+              <span *ngIf="issue.status === 'REJECT'" class="text-danger">*</span>
+            </label>
+            <textarea id="remark" class="form-control" rows="3" [(ngModel)]="issue.annotation" name="annotation"
+              [required]="issue.status === 'REJECT'">
+            </textarea>
+            <div class="text-danger" *ngIf="
+                statusForm.submitted &&
+                issue.status === 'REJECT' &&
+                !issue.annotation
+              ">
+              Remark is required when rejecting
+            </div>
+          </div>
+        </div>
+
+        <div class="modal-footer">
+          <button type="submit" class="btn btn-primary">Save</button>
+          <button type="button" class="btn btn-secondary" (click)="close()">Cancel</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div> -->

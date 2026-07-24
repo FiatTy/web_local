@@ -1,0 +1,1848 @@
+/* ============================================
+   ISSUES MANAGEMENT PAGE STYLE (CLEAN VERSION)
+   ============================================ */
+
+/* ===============================
+   Container + Header
+   =============================== */
+.issues-container {
+  background: transparent;
+  padding: 16px 20px;
+  border-radius: 12px;
+  transition: background-color 0.35s ease;
+  position: relative;
+}
+
+.issues-header {
+  border: 1px solid var(--card-border);
+  border-radius: 10px;
+  background-color: #ffffff !important;
+  padding: 12px 16px;
+  margin-bottom: 16px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.issues-header h2 {
+  margin: 0;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--dashboard-title-color);
+}
+
+:host-context(body.dark-mode) .issues-header {
+  background-color: #1e293b !important;
+  border-color: var(--card-border);
+}
+
+/* ===============================
+     Custom Button
+     =============================== */
+.issues-header .custom-btn,
+:host ::ng-deep .issues-container .custom-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 10px 18px;
+  background-color: #ffc107;
+  color: #1a1a1a;
+  font-weight: 500;
+  border-radius: 8px;
+  text-decoration: none;
+  transition: background-color 0.3s, transform 0.2s;
+  white-space: nowrap;
+}
+
+.custom-btn:hover {
+  background-color: #ffb300;
+  transform: scale(1.05);
+}
+
+/* ===============================
+     Filters
+     =============================== */
+.issues-container .filters {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 16px;
+  overflow: visible;
+  position: relative;
+  z-index: 1;
+}
+
+.issues-container .filters select,
+.issues-container .filters input {
+  min-width: 140px;
+  border-radius: 8px;
+  border: 1px solid #d1d5db;
+  padding: 6px 10px;
+  transition: border-color 0.25s ease, box-shadow 0.25s ease;
+}
+
+.issues-container .filters select:focus,
+.issues-container .filters input:focus {
+  border-color: #2563eb;
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15);
+  outline: none;
+}
+
+/* ===============================
+     Table
+     =============================== */
+.issues-container .table {
+  overflow: hidden;
+}
+
+.issues-container .table th {
+  background-color: var(--table-header-bg);
+  font-weight: 600;
+  color: var(--table-header-text);
+  text-align: center;
+}
+
+.issues-container .table td,
+.issues-container .table th {
+  vertical-align: middle;
+  padding: 12px;
+  transition: background-color 0.25s ease;
+}
+
+.issues-container .table tbody tr:hover {
+  background-color: var(--table-header-bg2);
+}
+
+.issues-container .table tbody tr:nth-child(even) {
+  background-color: #fafafa;
+}
+
+.issues-container .table tbody tr {
+  border-bottom: 1px solid #f0f0f0;
+  opacity: 0;
+  transform: translateY(5px);
+  animation: fadeInRow 0.4s ease forwards;
+}
+
+.issues-container .table tbody tr:nth-child(1) {
+  animation-delay: 0.05s;
+}
+
+.issues-container .table tbody tr:nth-child(2) {
+  animation-delay: 0.1s;
+}
+
+.issues-container .table tbody tr:nth-child(3) {
+  animation-delay: 0.15s;
+}
+
+.issues-container .table tbody tr:nth-child(4) {
+  animation-delay: 0.2s;
+}
+
+/* ===============================
+     Buttons
+     =============================== */
+.issues-container .btn {
+  border-radius: 8px;
+  font-weight: 500;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  transition: transform 0.25s ease, box-shadow 0.25s ease;
+}
+
+.issues-container .btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 3px 8px rgba(0, 0, 0, 0.12);
+}
+
+.issues-container .btn:active {
+  transform: translateY(0);
+  box-shadow: none;
+}
+
+.issues-container .btn-big {
+  font-size: 1rem;
+  padding: 0.55rem 1.1rem;
+  border-radius: 10px;
+}
+
+/* Button Colors */
+.btn-primary {
+  background: linear-gradient(90deg, #2563eb, #1d4ed8);
+  border: none;
+  color: #fff;
+}
+
+.btn-secondary {
+  background-color: #e5e7eb;
+  border: none;
+  color: #374151;
+}
+
+.btn-success {
+  background-color: #10b981;
+  border: none;
+  color: #fff;
+}
+
+.btn-outline-primary {
+  border: 1px solid #A5D8FF;
+  /* ฟ้าอ่อน */
+  color: #007BFF;
+  /* ฟ้าน้ำเงินนิด ๆ */
+  background: #fff;
+}
+
+.btn-outline-primary:hover {
+  background-color: #74C0FC;
+  /* ฟ้าอ่อนขึ้นตอน hover */
+  border-color: #74C0FC;
+  color: #fff;
+}
+
+/* ===============================
+   Custom "View" Button (Light Blue Soft)
+   =============================== */
+:host ::ng-deep .issues-container .btn-info {
+  background-color: #A5D8FF !important;
+  /* ฟ้าอ่อน */
+  border: 1px solid #74C0FC !important;
+  /* ฟ้ากลาง */
+  color: #004C64 !important;
+  /* ฟ้าน้ำทะเลเข้ม */
+  transition: all 0.25s ease;
+}
+
+:host ::ng-deep .issues-container .btn-info:hover {
+  background-color: #74C0FC !important;
+  /* ฟ้าเข้มขึ้นเล็กน้อย */
+  border-color: #4EA8DE !important;
+  color: #ffffff !important;
+}
+
+
+
+
+
+
+/* ===============================
+     Dark Mode
+     =============================== */
+:host-context(body.dark-mode) .issues-container .table {
+  background-color: #1e293b;
+  border-color: #334155;
+}
+
+:host-context(body.dark-mode) .issues-container th {
+  background-color: #1e293b;
+  color: #f8fafc;
+}
+
+:host-context(body.dark-mode) .issues-container td {
+  background-color: #1e293b;
+  color: #f8fafc;
+}
+
+:host-context(body.dark-mode) .issues-container tr:hover {
+  background-color: #1e3a5c !important;
+}
+
+:host-context(body.dark-mode) .issues-container .table tbody tr:nth-child(even) {
+  background-color: #0f172a;
+}
+
+:host-context(body.dark-mode) .issues-container .table tbody tr {
+  border-bottom-color: #334155;
+}
+
+:host-context(body.dark-mode) .issues-container td.text-danger {
+  color: #ef4444 !important;
+}
+
+:host-context(body.dark-mode) .issues-container td.text-warning {
+  color: #f59e0b !important;
+}
+
+:host-context(body.dark-mode) .issues-container td.text-success {
+  color: #10b981 !important;
+}
+
+:host-context(body.dark-mode) .issues-container td.text-primary {
+  color: #2563eb !important;
+}
+
+:host-context(body.dark-mode) .issues-container .btn-outline-primary {
+  background-color: #2563eb;
+  color: #fff;
+  border: 1px solid #1d4ed8;
+}
+
+:host-context(body.dark-mode) .issues-container .btn-outline-primary:hover {
+  background-color: #1d4ed8;
+}
+
+
+
+/* ===============================
+     Responsive (Tablet & Mobile)
+     =============================== */
+@media (max-width: 1024px) and (min-width: 768px) {
+  .issues-container {
+    padding: 12px 14px;
+  }
+
+  .issues-container .table th,
+  .issues-container .table td {
+    padding: 8px;
+    font-size: 14px;
+  }
+
+  .issues-container .filters select,
+  .issues-container .filters input {
+    min-width: 120px;
+    font-size: 14px;
+    padding: 5px 8px;
+  }
+
+  .custom-btn {
+    padding: 8px 14px;
+    font-size: 14px;
+  }
+
+  .issues-container .btn {
+    font-size: 13px;
+    padding: 6px 10px;
+    gap: 4px;
+  }
+}
+
+.pagination .page-link {
+  padding: 4px 8px;
+  font-size: 13px;
+}
+
+@media (max-width: 768px) {
+  .issues-header h2 {
+    font-size: 16px;
+  }
+
+  .custom-btn {
+    padding: 6px 12px;
+    font-size: 13px;
+    margin-left: auto;
+  }
+
+  .issues-container .table th,
+  .issues-container .table td {
+    padding: 6px;
+    font-size: 13px;
+  }
+
+  .issues-container .table {
+    border-radius: 10px;
+  }
+}
+
+/* ============================================================
+   ISSUES MANAGEMENT PAGE STYLE (CLEAN VERSION)
+   ============================================================ */
+
+/* ============================================================
+   1. CONTAINER + HEADER
+   ============================================================ */
+.issues-container {
+  background: transparent;
+  padding: 16px 20px;
+  border-radius: 12px;
+  transition: background-color 0.35s ease;
+  margin-top: -12px;
+}
+
+.issues-header {
+  border: 1px solid var(--card-border);
+  border-radius: 10px;
+  background-color: var(--bg-panel);
+  padding: 12px 16px;
+  margin-bottom: 16px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
+}
+
+.issues-header h2 {
+  margin: 0;
+  font-weight: 800;
+  font-size: 1.5rem;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--dashboard-title-color);
+}
+
+/* ============================================================
+   2. CUSTOM BUTTON (TOP)
+   ============================================================ */
+.issues-header .custom-btn,
+:host ::ng-deep .issues-container .custom-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 10px 18px;
+  background-color: #ffc107;
+  color: #1a1a1a;
+  font-weight: 500;
+  border-radius: 8px;
+  text-decoration: none;
+  white-space: nowrap;
+  transition: background-color 0.3s, transform 0.2s;
+}
+
+.custom-btn:hover {
+  background-color: #ffb300;
+  transform: scale(1.05);
+}
+
+/* ============================================================
+   3. FILTERS
+   ============================================================ */
+.issues-container .filters {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 16px;
+  overflow: visible;
+  position: relative;
+  z-index: 1;
+}
+
+.issues-container .filters select,
+.issues-container .filters input {
+  min-width: 140px;
+  border-radius: 8px;
+  border: 1px solid #d1d5db;
+  padding: 6px 10px;
+  transition: border-color 0.25s ease, box-shadow 0.25s ease;
+}
+
+.issues-container .filters select:focus,
+.issues-container .filters input:focus {
+  border-color: #2563eb;
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15);
+  outline: none;
+}
+
+/* Dark Mode Filters & Input (Slate Palette) */
+:host-context(body.dark-mode) .issues-container .filters select,
+:host-context(body.dark-mode) .issues-container .filters input {
+  background-color: #0f172a !important;
+  color: #f8fafc !important;
+  border: 1px solid #334155 !important;
+}
+
+:host-context(body.dark-mode) .issues-container .filters select option {
+  background-color: #1e293b !important;
+  color: #f8fafc !important;
+}
+
+:host-context(body.dark-mode) .issues-container .filters input::placeholder {
+  color: #9ca3af !important;
+}
+
+:host-context(body.dark-mode) .issues-container .filters select:focus,
+:host-context(body.dark-mode) .issues-container .filters input:focus {
+  border-color: #2563eb !important;
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.4) !important;
+}
+
+/* ============================================================
+   4. TABLE
+   ============================================================ */
+.issues-container .table-responsive {
+  overflow-x: auto;
+}
+
+.sticky-top {
+  top: -2px;
+  z-index: 1;
+}
+
+.issues-container .table {
+  overflow: hidden;
+  min-width: 900px;
+  width: 100%;
+  border-radius: 12px;
+  background-color: #ffffff;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  transition: box-shadow 0.3s ease;
+}
+
+.issues-container .table:hover {
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.12);
+}
+
+:host-context(body.dark-mode) .issues-container .table {
+  background-color: #1e293b;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+}
+
+
+.issues-container .table th {
+  background-color: var(--table-header-bg);
+  font-weight: 600;
+  color: var(--table-header-text);
+  text-align: center;
+}
+
+.issues-container .table td,
+.issues-container .table th {
+  vertical-align: middle;
+  padding: 12px;
+  transition: background-color 0.25s ease;
+}
+
+.issues-container .table tbody tr {
+  border-bottom: 1px solid #f0f0f0;
+  opacity: 0;
+  transform: translateY(5px);
+  animation: fadeInRow 0.4s ease forwards;
+}
+
+.issues-container .table tbody tr:nth-child(even) {
+  background-color: #fafafa;
+}
+
+.issues-container .table tbody tr:hover {
+  background-color: var(--table-header-bg2);
+}
+
+.issues-container .table tbody tr:nth-child(1) {
+  animation-delay: 0.05s;
+}
+
+.issues-container .table tbody tr:nth-child(2) {
+  animation-delay: 0.1s;
+}
+
+.issues-container .table tbody tr:nth-child(3) {
+  animation-delay: 0.15s;
+}
+
+.issues-container .table tbody tr:nth-child(4) {
+  animation-delay: 0.2s;
+}
+
+/* ============================================================
+   5. BUTTONS
+   ============================================================ */
+.issues-container .btn {
+  border-radius: 8px;
+  font-weight: 500;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  transition: transform 0.25s ease, box-shadow 0.25s ease;
+}
+
+.issues-container .btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 3px 8px rgba(0, 0, 0, 0.12);
+}
+
+.issues-container .btn:active {
+  transform: translateY(0);
+  box-shadow: none;
+}
+
+.issues-container .btn-big {
+  font-size: 1rem;
+  padding: 0.55rem 1.1rem;
+  border-radius: 10px;
+}
+
+/* Button Colors */
+.btn-primary {
+  background: linear-gradient(90deg, #2563eb, #1d4ed8);
+  border: none;
+  color: #fff;
+}
+
+.btn-secondary {
+  background-color: #e5e7eb;
+  border: none;
+  color: #374151;
+}
+
+.btn-success {
+  background-color: #10b981;
+  border: none;
+  color: #fff;
+}
+
+/* Outline Primary */
+.btn-outline-primary {
+  border: 1px solid #A5D8FF;
+  color: #007BFF;
+  background: #fff;
+}
+
+.btn-outline-primary:hover {
+  background-color: #74C0FC;
+  border-color: #74C0FC;
+  color: #fff;
+}
+
+/* View Button (Soft Light Blue) */
+:host ::ng-deep .issues-container .btn-info {
+  background-color: #A5D8FF !important;
+  border: 1px solid #74C0FC !important;
+  color: #004C64 !important;
+  transition: all 0.25s ease;
+}
+
+:host ::ng-deep .issues-container .btn-info:hover {
+  background-color: #74C0FC !important;
+  border-color: #4EA8DE !important;
+  color: #fff !important;
+}
+
+/* ============================================================
+   6. PAGINATION
+   ============================================================ */
+.pagination {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 14px;
+  margin: 16px 0;
+}
+
+.page-btn {
+  width: 36px;
+  height: 36px;
+  border-radius: 10px;
+  border: 1px solid #2563eb;
+  background-color: #fff;
+  color: #2563eb;
+  font-size: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.25s ease;
+}
+
+.page-btn:hover,
+.page-btn.active {
+  background-color: #2563eb;
+  color: #fff;
+  border-color: #2563eb;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+}
+
+.page-btn.disabled {
+  opacity: 0.4;
+  pointer-events: none;
+}
+
+.page-num {
+  font-size: 14px;
+  font-weight: 600;
+  min-width: 36px;
+}
+
+.page-ellipsis {
+  font-size: 14px;
+  font-weight: 600;
+  color: #64748b;
+  padding: 0 4px;
+  user-select: none;
+}
+
+.page-label {
+  font-size: 16px;
+  font-weight: 600;
+  color: #111;
+}
+
+/* ============================================================
+   7. DARK MODE
+   ============================================================ */
+:host-context(body.dark-mode) .issues-container .table {
+  background-color: #1e293b;
+  border-color: #334155;
+}
+
+:host-context(body.dark-mode) .issues-container th {
+  background-color: #1e293b;
+  color: #f8fafc;
+}
+
+:host-context(body.dark-mode) .issues-container td {
+  background-color: #1e293b;
+  color: #f8fafc;
+}
+
+:host-context(body.dark-mode) .issues-container tr:hover {
+  background-color: #1e3a5c !important;
+}
+
+:host-context(body.dark-mode) .issues-container .table tbody tr:nth-child(even) {
+  background-color: #0f172a;
+}
+
+:host-context(body.dark-mode) .issues-container .table tbody tr {
+  border-bottom-color: #334155;
+}
+
+/* Text Color Adjustments */
+:host-context(body.dark-mode) .issues-container td.text-danger {
+  color: #ef4444 !important;
+}
+
+:host-context(body.dark-mode) .issues-container td.text-warning {
+  color: #f59e0b !important;
+}
+
+:host-context(body.dark-mode) .issues-container td.text-success {
+  color: #10b981 !important;
+}
+
+:host-context(body.dark-mode) .issues-container td.text-primary {
+  color: #2563eb !important;
+}
+
+/* Outline Primary on Dark Mode */
+:host-context(body.dark-mode) .issues-container .btn-outline-primary {
+  background-color: #2563eb;
+  color: #fff;
+  border: 1px solid #1d4ed8;
+}
+
+:host-context(body.dark-mode) .issues-container .btn-outline-primary:hover {
+  background-color: #1d4ed8;
+}
+
+/* Pagination - Dark Mode (ตามภาพ Prev เทา, Next น้ำเงิน) */
+:host-context(body.dark-mode) .pagination .page-label {
+  color: #fff;
+  font-weight: 600;
+}
+
+:host-context(body.dark-mode) .pagination .page-btn {
+  background: #1f2937;
+  border: 1px solid #374151;
+  color: #9ca3af;
+  transition: background-color .25s, color .25s, transform .2s;
+}
+
+:host-context(body.dark-mode) .pagination .page-btn:hover {
+  background: #374151;
+  color: #e5e7eb;
+  transform: translateY(-2px);
+}
+
+:host-context(body.dark-mode) .pagination .page-btn.active {
+  background: #2563eb !important;
+  border-color: #2563eb !important;
+  color: #fff !important;
+  box-shadow: 0 4px 12px rgba(37, 99, 235, .35);
+}
+
+:host-context(body.dark-mode) .pagination .page-btn.disabled {
+  opacity: 0.4;
+  background: #0f172a !important;
+  border-color: #1f2937 !important;
+  color: #4b5563 !important;
+}
+
+:host-context(body.dark-mode) .page-ellipsis {
+  color: #9ca3af;
+}
+
+/* Dark mode for footer page-size select */
+:host-context(body.dark-mode) .footer-bar .form-select {
+  background-color: #1f2937;
+  color: #f8fafc;
+  border: 1px solid #374151;
+}
+
+:host-context(body.dark-mode) .footer-bar .form-select option {
+  background-color: #1e293b;
+  color: #f8fafc;
+}
+
+/* Muted Text Fix */
+:host-context(body.dark-mode) .issues-container .text-muted,
+:host-context(body.dark-mode) .issues-container small,
+:host-context(body.dark-mode) .issues-table .text-muted {
+  color: #cbd5e1 !important;
+  opacity: 0.95;
+}
+
+/* Modal Text */
+:host-context(body.dark-mode) .modal-body-custom .text-muted,
+:host-context(body.dark-mode) .modal-body-custom small {
+  color: #cbd5e1 !important;
+  opacity: 0.95;
+}
+
+:host-context(body.dark-mode) .footer-bar {
+  border-top: none;
+}
+
+/* Icon inherits text color */
+.issues-container .bi {
+  color: currentColor;
+}
+
+/* ============================================================
+   8. SEVERITY & STATUS BADGES
+   ============================================================ */
+.severity-badge,
+.status-badge {
+  display: inline-block;
+  padding: 4px 12px;
+  border-radius: 999px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.4px;
+  min-width: 72px;
+  text-align: center;
+  border: 1px solid transparent;
+  transition: all 0.25s ease;
+}
+
+/* Light Mode */
+.text-danger {
+  background-color: #fee2e2;
+  color: #b91c1c;
+  border-color: #fecaca;
+}
+
+.text-info {
+  background-color: #dbeafe;
+  color: #1d4ed8;
+  border-color: #bfdbfe;
+}
+
+.text-success {
+  background-color: #dcfce7;
+  color: #15803d;
+  border-color: #86efac;
+}
+
+.text-warning {
+  background-color: #fef3c7;
+  color: #b45309;
+  border-color: #fcd34d;
+}
+
+.severity-blocker {
+  background-color: #991b1b;
+  color: #ffffff;
+  border-color: #991b1b;
+}
+
+.text-secondary {
+  background-color: #f1f5f9;
+  color: #475569;
+  border-color: #cbd5e1;
+}
+
+.text-pending {
+  background-color: #fef3c7;
+  color: #92400e;
+  border-color: #fde68a;
+}
+
+.status-open {
+  background-color: #fef3c7;
+  color: #92400e;
+  border-color: #fde68a;
+}
+
+.status-inprogress {
+  background-color: #dbeafe;
+  color: #1d4ed8;
+  border-color: #bfdbfe;
+}
+
+.status-done {
+  background-color: #dcfce7;
+  color: #15803d;
+  border-color: #86efac;
+}
+
+.status-reject {
+  background-color: #fee2e2;
+  color: #b91c1c;
+  border-color: #fecaca;
+}
+
+/* Dark Mode */
+:host-context(body.dark-mode) .severity-critical,
+:host-context(body.dark-mode) .text-danger {
+  background-color: #7f1d1d;
+  color: #fecaca;
+  border-color: #991b1b;
+}
+
+:host-context(body.dark-mode) .severity-high {
+  background-color: #78350f;
+  color: #fde68a;
+  border-color: #92400e;
+}
+
+:host-context(body.dark-mode) .severity-medium,
+:host-context(body.dark-mode) .text-warning {
+  background-color: #854d0e;
+  color: #fef9c3;
+  border-color: #ca8a04;
+}
+
+:host-context(body.dark-mode) .severity-low,
+:host-context(body.dark-mode) .text-success {
+  background-color: #14532d;
+  color: #bbf7d0;
+  border-color: #15803d;
+}
+
+/* Dark Status */
+:host-context(body.dark-mode) .status-open {
+  background-color: #78350f;
+  color: #fde68a;
+  border-color: #92400e;
+}
+
+:host-context(body.dark-mode) .status-inprogress {
+  background-color: #1e3a8a;
+  color: #bfdbfe;
+  border-color: #3b82f6;
+}
+
+:host-context(body.dark-mode) .status-done {
+  background-color: #14532d;
+  color: #bbf7d0;
+  border-color: #15803d;
+}
+
+:host-context(body.dark-mode) .status-reject {
+  background-color: #7f1d1d;
+  color: #fecaca;
+  border-color: #991b1b;
+}
+
+/* Force white text inside badges */
+:host-context(body.dark-mode) .severity-badge,
+:host-context(body.dark-mode) .status-badge {
+  color: #fff !important;
+}
+
+/* ============================================================
+   9. FOOTER BAR + ACTION BUTTONS
+   ============================================================ */
+.footer-bar {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: relative;
+  width: 100%;
+  margin-top: 5px;
+  right: 10px;
+}
+
+.footer-bar .bottom-action-buttons {
+  position: absolute;
+  right: 0;
+}
+
+.footer-bar .pagination {
+  margin: 0 auto;
+}
+
+.page-size-select {
+  height: 36px;
+  border-radius: 10px;
+  font-size: 14px;
+  padding: 4px 8px;
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  background-image: none !important;
+  text-align: center;
+}
+
+.page-size-group {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 4px 12px 4px 8px;
+  border-radius: 10px;
+  background-color: #f1f5f9;
+  border: 1px solid #e2e8f0;
+  transition: all 0.25s ease;
+}
+
+.page-size-icon {
+  font-size: 16px;
+  color: #64748b;
+  flex-shrink: 0;
+}
+
+.page-size-label {
+  font-size: 13px;
+  font-weight: 500;
+  color: #475569;
+  white-space: nowrap;
+  user-select: none;
+}
+
+.page-size-info {
+  font-size: 13px;
+  font-weight: 600;
+  color: #334155;
+  white-space: nowrap;
+  border-left: 1px solid #cbd5e1;
+  margin-left: 4px;
+  padding-left: 8px;
+}
+
+.pagination-divider {
+  width: 1px;
+  height: 28px;
+  background-color: #cbd5e1;
+  margin: 0 6px;
+  flex-shrink: 0;
+}
+
+/* Dark Mode – page-size-group */
+:host-context(body.dark-mode) .page-size-group {
+  background-color: #1e293b;
+  border-color: #374151;
+}
+
+:host-context(body.dark-mode) .page-size-icon {
+  color: #94a3b8;
+}
+
+:host-context(body.dark-mode) .page-size-label {
+  color: #cbd5e1;
+}
+
+:host-context(body.dark-mode) .page-size-info {
+  color: #e2e8f0;
+  border-left-color: #475569;
+}
+
+:host-context(body.dark-mode) .pagination-divider {
+  background-color: #475569;
+}
+
+/* Mobile Layout */
+@media (max-width: 767.98px) {
+  .footer-bar {
+    flex-wrap: wrap;
+    gap: 10px;
+  }
+
+  .footer-bar .bottom-action-buttons {
+    position: static;
+    margin: 0 auto;
+  }
+
+  .footer-bar .pagination {
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+}
+
+/* Bottom Action Buttons */
+.bottom-action-buttons {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.bottom-action-buttons .action-btn {
+  width: 48px;
+  height: 48px;
+  border-radius: 12px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.25rem;
+  border: none;
+  cursor: pointer;
+  transition: all 0.25s ease;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
+}
+
+/* Colors */
+.action-btn.assign {
+  background-color: #3b5bff;
+  color: #fff;
+}
+
+.action-btn.status {
+  background-color: #e9ebef;
+  color: #3f3f46;
+}
+
+.action-btn.export {
+  background-color: #35b67f;
+  color: #fff;
+}
+
+/* Hover */
+.bottom-action-buttons .action-btn:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.15);
+  filter: brightness(1.03);
+}
+
+.bottom-action-buttons .action-btn:active {
+  transform: translateY(0);
+  box-shadow: none;
+}
+
+.action-btn.assign:hover {
+  background-color: #3450e5;
+}
+
+.action-btn.status:hover {
+  background-color: #dcdfe4;
+}
+
+.action-btn.export:hover {
+  background-color: #2fa372;
+}
+
+/* Focus */
+.action-btn:focus-visible {
+  outline: 3px solid rgba(59, 130, 246, 0.35);
+  outline-offset: 3px;
+}
+
+/* Dark Mode for Buttons */
+:host-context(body.dark-mode) .bottom-action-buttons .action-btn.assign {
+  background-color: #2563eb;
+}
+
+:host-context(body.dark-mode) .bottom-action-buttons .action-btn.status {
+  background-color: #374151;
+  color: #e5e7eb;
+}
+
+:host-context(body.dark-mode) .bottom-action-buttons .action-btn.export {
+  background-color: #059669;
+}
+
+/* ============================================================
+   10. RESPONSIVE (Tablet & Mobile)
+   ============================================================ */
+@media (max-width: 1024px) and (min-width: 768px) {
+  .issues-container {
+    padding: 12px 14px;
+  }
+
+  .issues-container .table th,
+  .issues-container .table td {
+    padding: 8px;
+    font-size: 14px;
+  }
+
+  .issues-container .filters select,
+  .issues-container .filters input {
+    min-width: 120px;
+    font-size: 14px;
+    padding: 5px 8px;
+  }
+
+  .custom-btn {
+    padding: 8px 14px;
+    font-size: 14px;
+  }
+
+  .issues-container .btn {
+    font-size: 13px;
+    padding: 6px 10px;
+    gap: 4px;
+  }
+
+  .pagination .page-link {
+    padding: 4px 8px;
+    font-size: 13px;
+  }
+}
+
+@media (max-width: 768px) {
+  .issues-header h2 {
+    font-size: 16px;
+  }
+
+  .custom-btn {
+    padding: 6px 12px;
+    font-size: 13px;
+    margin-left: auto;
+  }
+
+  .issues-container .table th,
+  .issues-container .table td {
+    padding: 6px;
+    font-size: 13px;
+  }
+
+  .issues-container .table {
+    border-radius: 10px;
+  }
+}
+
+/* ============================================================
+   11. STICKY COLUMN (View)
+   ============================================================ */
+@media (max-width: 768px) {
+  :host ::ng-deep .issues-table .sticky-col {
+    border-left: 1px solid var(--card-border);
+
+    right: -1px;
+    background: #fff;
+    z-index: 3;
+  }
+
+  :host ::ng-deep .issues-table tbody td.sticky-col::before,
+  :host ::ng-deep .issues-table thead th.sticky-col::before {
+    content: "";
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: -1px;
+    height: 1px;
+    background: #f0f0f0;
+    pointer-events: none;
+  }
+
+  :host ::ng-deep .issues-table tbody tr:last-child td.sticky-col::before {
+    display: none;
+  }
+
+  :host-context(body.dark-mode) .issues-table tbody td.sticky-col::before,
+  :host-context(body.dark-mode) .issues-table thead th.sticky-col::before {
+    background: #334155;
+    opacity: .7;
+  }
+}
+
+
+
+
+
+/* Fix muted text on dark mode (e.g., "Line 245 in UserService.java") */
+:host-context(body.dark-mode) .issues-container .text-muted,
+:host-context(body.dark-mode) .issues-container small,
+:host-context(body.dark-mode) .issues-table .text-muted {
+  color: #cbd5e1 !important;
+  /* slate-300: อ่านง่ายบนพื้นมืด */
+  opacity: 0.95;
+  /* ลดซีด */
+}
+
+/* เผื่อข้อความใน modal/log pane */
+:host-context(body.dark-mode) .modal-body-custom .text-muted,
+:host-context(body.dark-mode) .modal-body-custom small {
+  color: #cbd5e1 !important;
+  opacity: 0.95;
+}
+
+/* ให้ไอคอน bootstrap (.bi) ในบรรทัดนั้นรับสีตามตัวอักษร */
+.issues-container .bi {
+  color: currentColor;
+}
+
+
+
+/* ============================================
+   Severity & Status Badges (Light + Dark)
+   ============================================ */
+
+.severity-badge,
+.status-badge {
+  display: inline-block;
+  padding: 4px 12px;
+  border-radius: 999px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.4px;
+  min-width: 72px;
+  text-align: center;
+  border: 1px solid transparent;
+  transition: all 0.25s ease;
+}
+
+/* === Light Mode Colors === */
+.text-danger {
+  background-color: #fee2e2;
+  color: #b91c1c;
+  border-color: #fecaca;
+}
+
+.text-info {
+  background-color: #dbeafe;
+  color: #1d4ed8;
+  border-color: #bfdbfe;
+}
+
+.text-success {
+  background-color: #dcfce7;
+  color: #15803d;
+  border-color: #86efac;
+}
+
+.text-pending {
+  background-color: #fef3c7;
+  color: #92400e;
+  border-color: #fde68a;
+}
+
+.severity-blocker {
+  background-color: #991b1b;
+  color: #ffffff;
+  border-color: #991b1b;
+}
+
+.text-secondary {
+  background-color: #f1f5f9;
+  color: #475569;
+  border-color: #cbd5e1;
+}
+
+/* === Status (Light) === */
+.status-open {
+  background-color: #fef3c7;
+  color: #92400e;
+  border-color: #fde68a;
+}
+
+.status-inprogress {
+  background-color: #dbeafe;
+  color: #1d4ed8;
+  border-color: #bfdbfe;
+}
+
+.status-done {
+  background-color: #dcfce7;
+  color: #15803d;
+  border-color: #86efac;
+}
+
+.status-reject {
+  background-color: #fee2e2;
+  color: #b91c1c;
+  border-color: #fecaca;
+}
+
+/* === Dark Mode Colors === */
+:host-context(body.dark-mode) .severity-critical,
+:host-context(body.dark-mode) .text-danger,
+:host-context(body.dark-mode) .status-reject {
+  background-color: #7f1d1d;
+  color: #fecaca;
+  border-color: #991b1b;
+}
+
+:host-context(body.dark-mode) .severity-high,
+:host-context(body.dark-mode) .status-open {
+  background-color: #78350f;
+  color: #fde68a;
+  border-color: #92400e;
+}
+
+:host-context(body.dark-mode) .severity-medium,
+:host-context(body.dark-mode) .text-warning {
+  background-color: #854d0e;
+  color: #fef9c3;
+  border-color: #ca8a04;
+}
+
+:host-context(body.dark-mode) .severity-low,
+:host-context(body.dark-mode) .text-success,
+:host-context(body.dark-mode) .status-done {
+  background-color: #14532d;
+  color: #bbf7d0;
+  border-color: #15803d;
+}
+
+/* === Status Inprogress (Dark) === */
+:host-context(body.dark-mode) .status-inprogress {
+  background-color: #1e3a8a;
+  color: #bfdbfe;
+  border-color: #3b82f6;
+}
+
+/* ===== Force white text inside badges on Dark Mode ===== */
+:host-context(body.dark-mode) .severity-badge,
+:host-context(body.dark-mode) .status-badge {
+  color: #fff !important;
+}
+
+.severity-badge.severity-blocker {
+  background-color: #991b1b;
+  color: #ffffff;
+  border-color: #991b1b;
+}
+
+.severity-badge.severity-info {
+  background-color: #e7f5ff;
+  color: #1971c2;
+  border-color: #a5d8ff;
+}
+
+:host-context(body.dark-mode) .severity-badge.severity-blocker {
+  background-color: rgba(153, 27, 27, 0.55);
+  color: #fecaca !important;
+  border-color: rgba(153, 27, 27, 0.7);
+}
+
+:host-context(body.dark-mode) .severity-badge.severity-info {
+  background-color: rgba(25, 113, 194, 0.2);
+  color: #74c0fc !important;
+  border-color: rgba(25, 113, 194, 0.4);
+}
+
+
+
+
+
+/* ===============================
+   Bottom Action Buttons (Color as Image)
+   =============================== */
+.bottom-action-buttons {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  /* ระยะห่างระหว่างปุ่ม */
+}
+
+.bottom-action-buttons .action-btn {
+  width: 48px;
+  height: 48px;
+  border-radius: 12px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.25rem;
+  border: none;
+  cursor: pointer;
+  transition: all 0.25s ease;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
+}
+
+/* สีตามภาพ */
+.action-btn.assign {
+  background-color: #3b5bff;
+  /* ฟ้าน้ำเงินสด */
+  color: #fff;
+}
+
+.action-btn.status {
+  background-color: #e9ebef;
+  /* เทาอ่อน */
+  color: #3f3f46;
+}
+
+.action-btn.export {
+  background-color: #35b67f;
+  /* เขียวมินต์ */
+  color: #fff;
+}
+
+/* Hover effects */
+.bottom-action-buttons .action-btn:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.15);
+  filter: brightness(1.03);
+}
+
+.bottom-action-buttons .action-btn:active {
+  transform: translateY(0);
+  box-shadow: none;
+}
+
+/* เอฟเฟกต์เวลาชี้แต่ละปุ่ม */
+.action-btn.assign:hover {
+  background-color: #3450e5;
+}
+
+.action-btn.status:hover {
+  background-color: #dcdfe4;
+}
+
+.action-btn.export:hover {
+  background-color: #2fa372;
+}
+
+/* Focus ring สวยเรียบ */
+.action-btn:focus-visible {
+  outline: 3px solid rgba(59, 130, 246, 0.35);
+  outline-offset: 3px;
+}
+
+/* Dark Mode */
+:host-context(body.dark-mode) .bottom-action-buttons .action-btn.assign {
+  background-color: #2563eb;
+}
+
+:host-context(body.dark-mode) .bottom-action-buttons .action-btn.status {
+  background-color: #374151;
+  color: #e5e7eb;
+}
+
+:host-context(body.dark-mode) .bottom-action-buttons .action-btn.export {
+  background-color: #059669;
+}
+
+
+/* ============================================================
+   iPad Safari Fix: Sticky Column Works!
+   ============================================================ */
+:host ::ng-deep .issues-table-wrapper {
+  position: relative;
+  overflow: visible;
+  /* ต้องเป็น visible เพื่อไม่ตัด sticky */
+}
+
+:host ::ng-deep .table-responsive {
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  position: relative;
+  z-index: 1;
+}
+
+/* Sticky Column สำหรับทุกหน้าจอ < 1200px (รวม iPad) */
+@media (max-width: 1200px) {
+
+  :host ::ng-deep .issues-table th,
+  :host ::ng-deep .issues-table td {
+    position: relative;
+    background-clip: padding-box;
+  }
+
+  :host ::ng-deep .issues-table .sticky-col {
+    position: -webkit-sticky;
+
+    right: 0;
+    left: auto;
+    z-index: 5;
+    background: var(--bg-panel);
+    border-left: 1px solid var(--card-border);
+  }
+
+  :host ::ng-deep .issues-table thead th.sticky-col {
+    top: 0;
+    z-index: 6;
+  }
+
+  /* เส้นล่างในแต่ละแถว */
+  :host ::ng-deep .issues-table tbody td.sticky-col::after {
+    content: "";
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    height: 1px;
+    background: var(--table-divider, #e5e7eb);
+  }
+
+  /* Dark mode */
+  :host-context(body.dark-mode) .issues-table .sticky-col {
+    background: #1e293b;
+  }
+
+  :host-context(body.dark-mode) .issues-table tbody td.sticky-col::after {
+    background: #334155;
+    opacity: 0.7;
+  }
+}
+
+/* Safari fix: ป้องกัน transform ทำให้ sticky หลุด */
+:host ::ng-deep .issues-container {
+  transform: none !important;
+  overflow: visible !important;
+}
+
+:host ::ng-deep .issues-table {
+  transform: none !important;
+}
+
+.modal-backdrop-custom {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.4);
+  z-index: 1000;
+}
+
+.modal-custom {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1001;
+}
+
+.modal-card {
+  background: white;
+  padding: 32px;
+  border-radius: 8px;
+  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+  min-width: 440px;
+  max-width: 90%;
+}
+
+:host-context(body.dark-mode) .modal-card {
+  background: #1e293b;
+  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.4);
+  border: 1px solid #334155;
+  color: #f8fafc;
+}
+
+.modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 24px;
+  padding: 0;
+  border: none;
+}
+
+:host-context(body.dark-mode) .modal-header {
+  background: #1e293b !important;
+  border-bottom: none !important;
+}
+
+
+.modal-title {
+  font-size: 20px;
+  font-weight: 600;
+  color: #1a1a1a;
+  margin: 0;
+}
+
+.btn-close {
+  background: none;
+  border: none;
+  font-size: 24px;
+  cursor: pointer;
+  color: #a3a3a3;
+  line-height: 1;
+  transition: color 0.2s ease;
+  padding: 0;
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.btn-close:hover {
+  color: #1a1a1a;
+}
+
+.modal-body {
+  margin-bottom: 24px;
+  padding: 0;
+}
+
+.form-label {
+  display: block;
+  margin-bottom: 8px;
+  font-weight: 500;
+  color: #404040;
+  font-size: 14px;
+}
+
+.modal-footer {
+  display: flex;
+  gap: 12px;
+  justify-content: flex-end;
+  padding: 0;
+  border: none;
+}
+
+:host-context(body.dark-mode) .modal-footer {
+  background: #1e293b !important;
+  border-top: none !important;
+}
+
+.btn-secondary {
+  padding: 10px 20px;
+  background: white;
+  border: 1px solid #e5e5e5;
+  color: #404040;
+  border-radius: 6px;
+  font-size: 14px;
+  font-weight: 500;
+  transition: all 0.2s ease;
+}
+
+.btn-secondary:hover {
+  border-color: #a3a3a3;
+  background: white;
+  color: #404040;
+}
+
+.btn-primary {
+  padding: 10px 20px;
+  background: #1a1a1a;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  font-size: 14px;
+  font-weight: 500;
+  transition: all 0.2s ease;
+}
+
+.btn-primary:hover {
+  background: #404040;
+}
+
+.btn-primary:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+
+
+.bottom-action-buttons {
+  display: flex;
+  gap: 12px;
+}
+
+.action-btn {
+  padding: 10px 16px;
+  background: white;
+  border: 1px solid #e5e5e5;
+  color: #404040;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  font-size: 16px;
+}
+
+.action-btn:hover {
+  border-color: #1a1a1a;
+  color: #1a1a1a;
+}
+
+.action-btn.assign {
+  background: #1a1a1a;
+  color: white;
+  border-color: #1a1a1a;
+}
+
+.action-btn.assign:hover {
+  background: #404040;
+}
+
+/* ===============================
+   Dark Mode - Modal Elements
+   =============================== */
+:host-context(body.dark-mode) .modal-title {
+  color: #f8fafc;
+}
+
+:host-context(body.dark-mode) .btn-close {
+  filter: invert(1) grayscale(100%) brightness(200%);
+}
+
+:host-context(body.dark-mode) .form-label {
+  color: #cbd5e1;
+}
+
+:host-context(body.dark-mode) .btn-secondary {
+  background: #334155;
+  color: #f8fafc;
+  border-color: #475569;
+}
+
+:host-context(body.dark-mode) .btn-secondary:hover {
+  background: #475569;
+}
+
+:host-context(body.dark-mode) .modal-body .form-control,
+:host-context(body.dark-mode) .modal-body .form-select {
+  background-color: #0f172a !important;
+  color: #f8fafc;
+  border: 1px solid #334155;
+}
+
+:host-context(body.dark-mode) .modal-body .form-control:focus,
+:host-context(body.dark-mode) .modal-body .form-select:focus {
+  border-color: #3b82f6;
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.25);
+}
+
+:host-context(body.dark-mode) .modal-body .form-control option,
+:host-context(body.dark-mode) .modal-body .form-select option {
+  background-color: #1e293b;
+  color: #f8fafc;
+}
+
+/* ============================================================
+   EMPTY STATE
+   ============================================================ */
+.empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 60px 0;
+  text-align: center;
+}
+
+.empty-icon {
+  font-size: 3rem;
+  color: #94a3b8 !important;
+  margin-bottom: 16px;
+  opacity: 0.5;
+}
+
+.empty-state h3 {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #1e293b !important;
+  margin-bottom: 8px;
+}
+
+.empty-state p {
+  color: #64748b !important;
+  font-size: 1rem;
+}
+
+:host-context(body.dark-mode) .empty-icon {
+  color: #94a3b8 !important;
+}
+
+:host-context(body.dark-mode) .empty-state h3 {
+  color: #f1f5f9 !important;
+}
+
+:host-context(body.dark-mode) .empty-state p {
+  color: #94a3b8 !important;
+}

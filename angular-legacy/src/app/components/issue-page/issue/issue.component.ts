@@ -1,0 +1,534 @@
+import { filter } from 'rxjs/operators';
+import { scan } from 'rxjs';
+import { SharedDataService } from './../../../services/shared-data/shared-data.service';
+import { Component, DestroyRef } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
+import { RouterLink, Router, ActivatedRoute } from '@angular/router';
+import { IssueService } from '../../../services/issueservice/issue.service';
+import { AuthService } from '../../../services/authservice/auth.service';
+import { Repository, RepositoryService } from '../../../services/reposervice/repository.service';
+import { IssuesRequestDTO, IssuesResponseDTO } from '../../../interface/issues_interface';
+import { ScanService } from '../../../services/scanservice/scan.service';
+import { forkJoin } from 'rxjs';
+import { User, UserService } from '../../../services/userservice/user.service';
+import { UserInfo } from '../../../interface/user_interface';
+import Swal from 'sweetalert2';
+interface Issue {
+  issuesId: string;
+  type: string;        // 'bug' | 'security' | 'code-smell'
+  severity: string;    // 'critical' | 'high' | 'medium' | 'low'
+  message: string;       // from message
+  details: string;     // from component
+  projectName: string;     // project name or id (fallback)
+  assignee: string;    // '@user' | 'Unassigned'
+  status: string;      // 'open' | 'in-progress' | 'resolved' | 'closed'
+  selected?: boolean;
+}
+interface TopIssue {
+  message: string;
+  count: number;
+}
+
+import { TranslatePipe, TranslateService } from '@ngx-translate/core';
+
+@Component({
+  selector: 'app-issue',
+  standalone: true,
+  imports: [CommonModule, FormsModule, RouterLink, TranslatePipe],
+  templateUrl: './issue.component.html',
+  styleUrls: ['./issue.component.css']
+})
+export class IssueComponent {
+  topIssues: TopIssue[] = [];
+  maxTop = 5;   // อยากให้โชว์กี่อันดับ
+
+  issueId: string | null = null;
+  repositories: Repository[] = [];
+  filteredRepositories: Repository[] = [];
+  projects: { name: string }[] = [];
+  issues: Issue[] = [];
+  issuesAll: IssuesResponseDTO[] = [];
+  originalData: IssuesResponseDTO[] = [];
+  filteredIssue: IssuesResponseDTO[] = [];
+  selectedIssues: IssuesResponseDTO[] = [];
+  selectedIdsForAssign: string[] = [];
+  paginatedIssues: IssuesResponseDTO[] = []
+  issueDraft: IssuesRequestDTO = { id: '', status: 'OPEN', assignedTo: '' };
+  showAssignModal = false;
+  savingAssign = false;
+  UserData: UserInfo[] = [];
+  private initialized = false;
+
+  constructor(
+    private readonly router: Router,
+    private readonly issueApi: IssueService,
+    private readonly auth: AuthService,
+    private readonly repositoryService: RepositoryService,
+    private readonly sharedData: SharedDataService,
+    private readonly issuesService: IssueService,
+    private readonly userDataService: UserService,
+    private readonly repoService: RepositoryService,
+    private route: ActivatedRoute,
+    private readonly destroyRef: DestroyRef,
+    private readonly translate: TranslateService
+  ) { }
+
+  ngOnInit(): void {
+    const params = this.route.snapshot.queryParams;
+    this.currentPage = +params['page'] || 1;
+    if (params['pageSize']) this.pageSize = +params['pageSize'];
+    if (params['type']) this.filterType = params['type'];
+    if (params['severity']) this.filterSeverity = params['severity'];
+    if (params['status']) this.filterStatus = params['status'];
+    if (params['project']) this.filterProject = params['project'];
+    if (params['search']) this.searchText = params['search'];
+
+    if (!this.sharedData.hasUserCache) this.loadUser();
+    this.sharedData.AllUser$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe(data => { this.UserData = data ?? []; });
+
+    if (!this.sharedData.hasIssuesCache) this.loadIssues();
+    this.sharedData.AllIssues$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe(data => {
+      this.originalData = data || [];
+      this.issuesAll = [...this.originalData];
+      this.applyFilter();
+    });
+
+    if (!this.sharedData.hasRepositoriesCache) this.loadRepositories();
+    this.sharedData.repositories$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe((repos) => { this.repositories = repos; });
+
+    setTimeout(() => this.initialized = true, 0);
+  }
+
+  loadIssues() {
+    this.sharedData.setLoading(true);
+    this.issuesService.getAllIssues().subscribe({
+      next: (data) => {
+        this.sharedData.IssuesShared = data;
+        this.sharedData.setLoading(false);
+      },
+      error: () => this.sharedData.setLoading(false)
+    });
+  }
+  loadUser() {
+    this.sharedData.setLoading(true);
+    this.userDataService.getUser().subscribe({
+      next: (data) => {
+        this.sharedData.UserShared = data;
+        this.sharedData.setLoading(false);
+      },
+      error: () => this.sharedData.setLoading(false)
+    });
+  }
+
+  loadRepositories() {
+    this.sharedData.setLoading(true);
+
+    this.repoService.getAllRepo().subscribe({
+      next: (repos) => {
+        // เก็บข้อมูลลง SharedDataService
+        this.sharedData.setRepositories(repos);
+        this.sharedData.setLoading(false);
+      },
+      error: (err) => {
+        this.sharedData.setLoading(false);
+      },
+    });
+  }
+
+  // ---------- Filters ----------
+  filterType = 'All Types';
+  filterSeverity = 'All Severity';
+  filterStatus = 'All Status';
+  filterProject = 'All Projects';
+  searchText = '';
+  selectAllCheckbox = false;
+
+  // ---------- Pagination ----------
+  currentPage = 1;
+  pageSize = 5;
+
+  get totalPages(): number {
+    return Math.ceil(this.filteredIssue.length / this.pageSize) || 1;
+  }
+
+  // ---------- State ----------
+  loading = false;
+  errorMsg = '';
+
+  pageAll(page: number) {
+    this.pageSize = page;
+    const totalPages = Math.ceil(this.filteredIssue.length / this.pageSize);
+
+    if (this.currentPage > totalPages) {
+      this.currentPage = totalPages || 1;
+    }
+
+    this.updatePage();
+    this.updateUrl();
+  }
+
+  // ---------- Filter / Page ----------
+  filterIssues() {
+    return this.issuesAll.filter(i =>
+      (this.filterType === 'All Types' || i.type === this.filterType) &&
+      (this.filterSeverity === 'All Severity' || i.severity === this.filterSeverity) &&
+      (this.filterStatus === 'All Status' || i.status === this.filterStatus) &&
+      (this.searchText === '' || (() => {
+        const path = (i.component || '').toLowerCase();
+        const kw = this.searchText.toLowerCase();
+        const idx = path.indexOf(kw);
+        return idx !== -1 && (idx === 0 || path[idx - 1] === '/' || path[idx - 1] === ':');
+      })())
+    );
+  }
+  applyFilter() {
+
+    const keyword = this.searchText.trim().toLowerCase();
+    const matchType = (this.filterType || 'All Types').toLowerCase();
+    const matchSeverity = (this.filterSeverity || 'All Severity').toLowerCase();
+    const matchStatus = (this.filterStatus || 'All Status').toLowerCase();
+    const matchProject = (this.filterProject || 'All Projects').toLowerCase();
+
+    this.filteredIssue = this.issuesAll
+      .filter(i => {
+        const typeValue = (i.type || '').toLowerCase();
+
+        const type =
+          matchType === 'all types' ||
+          (
+            matchType === 'security' &&
+            ['vulnerability', 'security_hotspot'].includes(typeValue)
+          ) ||
+          typeValue === matchType;
+
+        const severity = matchSeverity === 'all severity' || (i.severity || '').toLowerCase() === matchSeverity;
+        const status = matchStatus === 'all status' || (i.status || '').toLowerCase() === matchStatus;
+
+        const projectName = (i.projectData?.name || '').toLowerCase();
+        const project = matchProject === 'all projects' || projectName === matchProject;
+
+        const componentOk = (() => {
+          if (keyword === '') return true;
+          const path = (i.component || '').toLowerCase();
+          const idx = path.indexOf(keyword);
+          if (idx === -1) return false;
+          return idx === 0 || path[idx - 1] === '/' || path[idx - 1] === ':';
+        })();
+
+        return type && severity && status && project && componentOk;
+      })
+      .sort((a, b) => {
+        const dateDiff =
+          new Date(b.createdAt).getTime() -
+          new Date(a.createdAt).getTime();
+
+        if (dateDiff !== 0) {
+          return dateDiff;
+        } else {
+          return a.id.localeCompare(b.id);
+        }
+      });
+    if (this.currentPage > this.totalPages) {
+      this.currentPage = this.totalPages || 1;
+    }
+    this.updatePage();
+    if (this.initialized) this.updateUrl();
+  }
+
+  onSearchChange(value: string) {
+    this.searchText = value;
+    this.applyFilter();
+  }
+
+  updatePage() {
+    const start = (this.currentPage - 1) * this.pageSize;
+    this.paginatedIssues = this.filteredIssue.slice(start, start + this.pageSize);
+  }
+
+  allSelected(): boolean {
+    // Check if ALL currently displayed (paged) items are selected
+    return this.paginatedIssues.length > 0 && this.paginatedIssues.every(issue => this.isSelected(issue));
+  }
+  toggleSelectAll(event: Event): void {
+    const checked = (event.target as HTMLInputElement).checked;
+
+    if (checked) {
+      // Add all currently visible items to selection if not already there
+      this.paginatedIssues.forEach(issue => {
+        if (!this.isSelected(issue)) {
+          this.selectedIssues.push(issue);
+        }
+      });
+    } else {
+      // Remove all currently visible items from selection
+      this.selectedIssues = this.selectedIssues.filter(s => !this.paginatedIssues.some(p => p.id === s.id));
+    }
+  }
+
+  updateUrl() {
+    this.router.navigate([], {
+      relativeTo: this.route,
+      queryParams: {
+        page: this.currentPage,
+        pageSize: this.pageSize,
+        type: this.filterType,
+        severity: this.filterSeverity,
+        status: this.filterStatus,
+        project: this.filterProject,
+        search: this.searchText || null,
+      },
+      queryParamsHandling: 'merge'
+    });
+  }
+
+
+  nextPage() {
+    if (this.currentPage * this.pageSize < this.filteredIssue.length) {
+      this.currentPage++;
+      this.updatePage();
+      this.updateUrl();
+    }
+  }
+
+  prevPage() {
+    if (this.currentPage > 1) {
+      this.currentPage--;
+      this.updatePage();
+      this.updateUrl();
+    }
+  }
+
+
+  // isPageAllSelected(): boolean {
+  //   return this.paginatedIssues.length > 0 && this.paginatedIssues.every(i => !!i.selected);
+  // }
+
+  // selectAll(event: any) {
+  //   const checked = event.target.checked;
+  //   this.paginatedIssues.forEach(i => i.selected = checked);
+  // }
+
+  // selectedCount() {
+  //   return this.issuesAll.filter(i => i.selected).length;
+  // }
+
+  // ---------    //   const selectedIssues = this.issues.filter(i => i.selected);
+  //   if (!selectedIssues.length) { alert('กรุณาเลือก Issue ก่อน'); return; }
+
+  //   const developers = ['userA', 'userB', 'userC']; // สมมุติ user_id; ถ้ามี list จริงให้แทนที่
+  //   const dev = prompt('เลือก Developer (พิมพ์ user id): ' + developers.join(', '));
+  //   if (!dev || !developers.includes(dev)) { alert('Developer ไม่ถูกต้อง'); return; }
+
+  //   // call API แบบทีละรายการ (คงโครงเดิมให้เบา ๆ)
+  //   let ok = 0;
+  //   selectedIssues.forEach(row => {
+  //     this.issueApi.assignDeveloper(row.issuesId, dev).subscribe({
+  //       next: () => {
+  //         row.assignee = `@${dev}`;
+  //         ok++;
+  //       },
+  //       error: (e) => {}
+  //     });
+  //   });
+
+  //   alert(`Sent assign requests for ${selectedIssues.length} issue(s).`); // แจ้งแบบง่าย ๆ- Actions (ยังคงเค้าโครงเดิม) ----------
+  assignDeveloper() {
+    const ids = Array.from(this.selectedIssues);
+    if (ids.length === 0) return;
+
+  }
+  openAssignModal() {
+    const ids = this.selectedIssues.map(i => i.id);
+    if (ids.length === 0) {
+      Swal.fire({
+        icon: 'error',
+        title: this.translate.instant('ISSUE.INVALID_DATA_TITLE'),
+        text: this.translate.instant('ISSUE.INVALID_DATA_TEXT'),
+      });
+      this.showAssignModal = false;
+      return;
+    }
+
+    this.selectedIdsForAssign = ids;
+    this.issueDraft = { id: '', assignedTo: '', status: 'OPEN' };
+    this.showAssignModal = true;
+  }
+  closeAssignModal() {
+    this.showAssignModal = false;
+  }
+  saveAssign(form: any) {
+    if (!form.valid) return;
+
+    const reqs = this.selectedIdsForAssign.map((id) => {
+      const payload: IssuesRequestDTO = {
+        id,
+        assignedTo: this.issueDraft.assignedTo,
+        status: 'IN_PROGRESS'
+      };
+      return this.issuesService.updateIssues(payload);
+    });
+
+    this.savingAssign = true;
+
+    forkJoin(reqs).subscribe({
+      next: (results) => {
+        this.sharedData.updateIssues(results)
+        this.selectedIdsForAssign = [];
+        this.savingAssign = false;
+        this.closeAssignModal();
+      },
+      error: (err) => {
+        this.savingAssign = false;
+      }
+    });
+  }
+
+  exportData() {
+    const selectedIssues = this.selectedIssues
+    const exportIssues = selectedIssues.length ? selectedIssues : this.selectedIssues;
+
+    const datenow = new Date();
+    const dateStr = datenow.toISOString().split('T')[0].replaceAll('-', '');
+    const fileType = selectedIssues.length ? 'selected' : 'all';
+    const fileName = `issues_${fileType}_${dateStr}.csv`;
+    if (this.selectedIssues.length < 1) {
+      Swal.fire({
+        icon: 'warning',
+        title: this.translate.instant('ISSUE.EXPORT_WARNING_TITLE'),
+        text: this.translate.instant('ISSUE.EXPORT_WARNING_TEXT'),
+        confirmButtonText: this.translate.instant('COMMON.OK') || 'OK'
+      });
+      return;
+    }
+    const csvContent = [
+      ['No.', 'Title', 'Severity', 'Status', 'Assignee'].join(','),
+      ...exportIssues.map((i, idx) => [
+        idx + 1,
+        `"${i.message.replaceAll('"', '""')}"`,
+        i.severity,
+        i.status,
+        i.assignedTo?.username || '-'
+      ].join(','))
+    ].join('\n');
+
+    const blob = new Blob([csvContent], { type: 'text/csv' });
+    const url = window.URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url; a.download = fileName; a.click();
+    window.URL.revokeObjectURL(url);
+  }
+
+  clearFilters() {
+    this.filterType = 'All Types';
+    this.filterSeverity = 'All Severity';
+    this.filterStatus = 'All Status';
+    this.filterProject = 'All Projects';
+    this.searchText = '';
+    this.currentPage = 1;
+    this.selectAllCheckbox = false;
+    this.selectedIssues = [];
+    this.applyFilter();
+  }
+
+  // ---------- Helpers (โครงเดิม) ----------
+  typeIcon(type: string) {
+    switch (type.toLowerCase()) {
+      case 'bug': return 'bi-bug';
+      case 'security_hotspot': return 'bi-shield-lock';
+      case 'vulnerability': return 'bi-shield-lock';
+      case 'code_smell': return 'bi-code-slash';
+      default: return '';
+    }
+  }
+
+  severityClass(severity: string) {
+    switch ((severity || '').toLowerCase()) {
+      case 'blocker': return 'severity-blocker';
+      case 'critical': return 'text-danger';
+      case 'major': return 'text-warning';
+      case 'minor': return 'text-success';
+      case 'info': return 'severity-info';
+      default: return 'text-secondary';
+    }
+  }
+
+  statusClass(status: string) {
+    if (!status) return '';
+    const normalized = status.toLowerCase().replace(/_/g, ' ').replace(/\s+/g, ' ').trim();
+    const clean = normalized.replace(/\s/g, '-'); // normalize to hyphenated for some cases if needed, but here we just check strings
+
+    if (normalized === 'open') return 'text-danger';
+    if (normalized === 'in progress' || normalized === 'inprogress' || normalized === 'in-progress') return 'text-warning'; // Handle all forms
+    if (normalized === 'resolved' || normalized === 'done') return 'text-success';
+    if (normalized === 'closed') return 'text-secondary';
+    if (normalized === 'pending') return 'text-info';
+
+    return '';
+  }
+
+  formatStatus(status: string): string {
+    if (!status) return '';
+    const normalized = status.toLowerCase().replace(/_/g, ' ').replace(/\s+/g, ' ').trim();
+
+    if (normalized === 'in progress' || normalized === 'inprogress' || normalized === 'in-progress') return 'In Progress';
+    if (normalized === 'open') return 'Open';
+    if (normalized === 'done' || normalized === 'resolved') return 'Resolved';
+    if (normalized === 'reject') return 'Reject';
+    if (normalized === 'pending') return 'Pending';
+
+    return status;
+  }
+
+  viewResult(issueId: IssuesResponseDTO) {
+    this.router.navigate(['/issuedetail', issueId.id]);
+  }
+
+  isSelected(issue: IssuesResponseDTO): boolean {
+    return this.selectedIssues.some(s => s.id === issue.id);
+  }
+  toggleIssueSelection(issue: IssuesResponseDTO, event?: Event): void {
+    if (event) {
+      event.stopPropagation();
+    }
+
+    // Toggle logic
+    const index = this.selectedIssues.findIndex(s => s.id === issue.id);
+    if (index >= 0) {
+      this.selectedIssues.splice(index, 1);
+    } else {
+      this.selectedIssues.push(issue);
+    }
+  }
+  get pageNumbers(): (number | string)[] {
+    const total = this.totalPages;
+    const current = this.currentPage;
+
+    if (total <= 7) {
+      const pages: (number | string)[] = [];
+      for (let i = 1; i <= total; i++) pages.push(i);
+      return pages;
+    }
+
+    // Near start: [1] [2] [3] [4] [...] [last]
+    if (current <= 3) {
+      return [1, 2, 3, 4, '...', total];
+    }
+
+    // Near end: [1] [...] [n-3] [n-2] [n-1] [n]
+    if (current >= total - 2) {
+      return [1, '...', total - 3, total - 2, total - 1, total];
+    }
+
+    // Middle: [1] [...] [current-1] [current] [current+1] [...] [last]
+    return [1, '...', current - 1, current, current + 1, '...', total];
+  }
+  goToPage(page: number) {
+    if (page >= 1 && page <= this.totalPages) {
+      this.currentPage = page;
+      this.updatePage();
+      this.updateUrl();
+    }
+  }
+}

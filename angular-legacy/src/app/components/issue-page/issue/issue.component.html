@@ -1,0 +1,216 @@
+<!-- Issues Management Page -->
+<div class="issues-container my-0">
+  <!-- Header -->
+  <div class="issues-header d-flex justify-content-between align-items-center">
+    <h2><i class="bi bi-list-task me-2"></i> {{ 'ISSUE.TITLE_MGT' | translate }}</h2>
+
+    <!-- ปุ่ม My Assignment ฝั่งขวา -->
+    <a [routerLink]="['/assignment']" class="custom-btn" [title]="'ISSUE.MY_ASSIGNMENT_TOOLTIP' | translate">
+      <i class="bi bi-person-badge me-1"></i>{{ 'ISSUE.ASSIGNMENT' | translate }}
+    </a>
+  </div>
+
+  <!-- Filters & Search -->
+  <div class="d-flex flex-wrap gap-2 mb-4 align-items-center filters">
+    <select class="form-select w-auto" [(ngModel)]="filterType" (ngModelChange)="applyFilter()">
+      <option>All Types</option>
+      <option value="bug">Bug</option>
+      <option value="SECURITY">Security</option>
+      <option value="Code_smell">Code Smell</option>
+    </select>
+
+    <select class="form-select w-auto" [(ngModel)]="filterSeverity" (ngModelChange)="applyFilter()">
+      <option>All Severity</option>
+      <option value="BLOCKER">BLOCKER</option>
+      <option value="critical">CRITICAL</option>
+      <option value="MAJOR">MAJOR</option>
+      <option value="MINOR">MINOR</option>
+      <option value="INFO">INFO</option>
+    </select>
+
+    <select class="form-select w-auto" [(ngModel)]="filterStatus" (ngModelChange)="applyFilter()">
+      <option>All Status</option>
+      <option value="open">Open</option>
+      <option value="in_progress">In Progress</option>
+      <option value="resolved">Resolved</option>
+      <option value="closed">Closed</option>
+    </select>
+
+    <select class="form-select w-auto" [(ngModel)]="filterProject" (change)="applyFilter()">
+      <option value="All Projects">All Projects</option>
+      <option *ngFor="let project of repositories" [value]="project.name">
+        {{ project.name }}
+      </option>
+    </select>
+    <input class="form-control w-auto" type="text" [placeholder]="'ISSUE.SEARCH_PLACEHOLDER' | translate" [(ngModel)]="searchText"
+      (ngModelChange)="onSearchChange($event)">
+    <button class="btn btn-outline-primary" (click)="clearFilters()">{{ 'ISSUE.CLEAR' | translate }}</button>
+  </div>
+
+  <!-- Table -->
+  <div class="table-responsive">
+    <table class="table align-middle issues-table">
+      <caption class="visually-hidden">{{ 'ISSUE.TABLE_CAPTION' | translate }}</caption>
+      <thead class="sticky-top">
+        <tr >
+          <th class="text-center">
+            <input type="checkbox" [checked]="allSelected()" (change)="toggleSelectAll($event)">
+          </th>
+          <th class="text-start">{{ 'ISSUE.COL_TYPE' | translate }}</th>
+          <th class="text-start">{{ 'ISSUE.COL_SEVERITY' | translate }}</th>
+          <th class="text-start">{{ 'ISSUE.COL_ISSUE' | translate }}</th>
+          <th class="text-start">{{ 'ISSUE.COL_COMPONENT' | translate }}</th>
+          <th class="text-start">{{ 'ISSUE.COL_PROJECT' | translate }}</th>
+          <th class="text-start">{{ 'ISSUE.COL_ASSIGNED' | translate }}</th>
+          <th class="text-start">{{ 'ISSUE.COL_STATUS' | translate }}</th>
+          <th class="text-center view-column sticky-col">{{ 'ISSUE.COL_VIEW' | translate }}</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let issue of paginatedIssues">
+          <td class="text-center" (click)="$event.stopPropagation()">
+            <input type="checkbox" [checked]="isSelected(issue)" (change)="toggleIssueSelection(issue, $event)" />
+          </td>
+          <td><i class="bi me-1" [ngClass]="typeIcon(issue.type)"></i>{{ issue.type | titlecase }}</td>
+          <td>
+            <span class="severity-badge" [ngClass]="severityClass(issue.severity)">
+              {{ issue.severity | uppercase }}
+            </span>
+          </td>
+
+          <td>
+            <strong class="issue-message">{{ issue.message }}</strong><br>
+          </td>
+          <td [title]="issue.component">{{ issue.component.split('/').pop() }}</td>
+          <td>{{issue.projectData?.name}}</td>
+          <td>{{issue.assignedTo?.username ?? ('ISSUE.UNASSIGNED' | translate)}}</td>
+          <td>
+            <span class="status-badge" [ngClass]="statusClass(issue.status)">
+              {{ formatStatus(issue.status) }}
+            </span>
+          </td>
+
+          <td class="text-center sticky-col">
+            <button *ngIf="issue?.id" (click)="viewResult(issue)" class="btn btn-info btn-sm">
+              <i class="bi bi-eye"></i>
+            </button>
+          </td>
+        </tr>
+        <!-- Empty State -->
+        <tr *ngIf="paginatedIssues?.length === 0">
+          <td colspan="9" class="text-center py-5">
+            <div class="empty-state">
+              <div class="empty-icon">
+                <i class="bi bi-folder-x"></i>
+              </div>
+              <h3>{{ 'ISSUE.NO_ISSUES_FOUND' | translate }}</h3>
+              <p>{{ 'ISSUE.NO_ISSUES_FOUND_DESC' | translate }}</p>
+            </div>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- ✅ Assign Modal (inline in same page) -->
+<div class="modal-backdrop-custom" *ngIf="showAssignModal" (click)="closeAssignModal()"></div>
+
+<div class="modal-custom" *ngIf="showAssignModal" (click)="$event.stopPropagation()">
+  <div class="modal-card" (click)="$event.stopPropagation()">
+
+    <div class="modal-header">
+      <h3 class="modal-title">{{ 'ISSUE.ASSIGN_MODAL_TITLE' | translate }}</h3>
+      <button type="button" class="btn-close" (click)="closeAssignModal()" aria-label="Close">✕</button>
+    </div>
+
+    <form #assignForm="ngForm" (ngSubmit)="saveAssign(assignForm)">
+      <div class="modal-body">
+
+        <!-- Selected count -->
+        <div class="mb-3">
+          <label class="form-label">{{ 'ISSUE.SELECTED_ISSUES_LABEL' | translate }}</label>
+          <input class="form-control" [value]="'ISSUE.ISSUES_SELECTED' | translate:{ count: selectedIssues.length }" readonly />
+        </div>
+
+        <!-- Assign to user -->
+        <div class="mb-3">
+          <label class="form-label">{{ 'ISSUE.ASSIGN_TO' | translate }}</label>
+          <select class="form-control" [(ngModel)]="issueDraft.assignedTo" name="assignedTo" required>
+            <option value="" disabled>{{ 'ISSUE.SELECT_USER' | translate }}</option>
+            <option *ngFor="let u of UserData" [value]="u.id">
+              {{ u.username }}
+            </option>
+          </select>
+
+          <div class="text-danger mt-1" *ngIf="assignForm.submitted && !issueDraft.assignedTo">
+            {{ 'ISSUE.PLEASE_SELECT_USER' | translate }}
+          </div>
+        </div>
+
+      </div>
+
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" (click)="closeAssignModal()">{{ 'ISSUE.CANCEL' | translate }}</button>
+
+        <button type="submit" class="btn btn-primary" [disabled]="savingAssign">
+          <span *ngIf="!savingAssign">{{ 'ISSUE.SAVE' | translate }}</span>
+          <span *ngIf="savingAssign" class="spinner-border spinner-border-sm"></span>
+        </button>
+      </div>
+    </form>
+
+  </div>
+</div>
+
+<!-- Footer -->
+<div class="footer-bar px-3 px-md-4">
+  <div class="pagination d-flex align-items-center gap-2">
+    <div class="page-size-group d-flex align-items-center gap-2">
+      <i class="bi bi-table page-size-icon"></i>
+      <span class="page-size-label">{{ 'ISSUE.ROWS_PER_PAGE' | translate }}</span>
+      <select class="form-select w-auto page-size-select" (ngModelChange)="pageAll($event)" [(ngModel)]="pageSize">
+        <option [ngValue]="5">5</option>
+        <option [ngValue]="10">10</option>
+        <option [ngValue]="15">15</option>
+        <option [ngValue]="20">20</option>
+        <option [ngValue]="50">50</option>
+      </select>
+      <span class="page-size-info">
+        {{ 'ISSUE.PAGE_INFO' | translate:{
+          start: ((currentPage - 1) * pageSize + 1),
+          end: (currentPage * pageSize > filteredIssue.length ? filteredIssue.length : currentPage * pageSize),
+          total: filteredIssue.length
+        } }}
+      </span>
+    </div>
+    <span class="pagination-divider"></span>
+    <button class="page-btn" [class.disabled]="currentPage === 1" [disabled]="currentPage === 1" (click)="prevPage()">
+      <i class="bi bi-chevron-left"></i>
+    </button>
+
+    <ng-container *ngFor="let p of pageNumbers">
+      <span *ngIf="p === '...'" class="page-ellipsis">...</span>
+      <button *ngIf="p !== '...'" class="page-btn page-num" [class.active]="p === currentPage" (click)="goToPage(+p)">
+        {{ p }}
+      </button>
+    </ng-container>
+
+    <button class="page-btn" [class.disabled]="currentPage === totalPages" [disabled]="currentPage === totalPages"
+      (click)="nextPage()">
+      <i class="bi bi-chevron-right"></i>
+    </button>
+
+    <span class="pagination-divider" style="margin: 0 8px;"></span>
+
+    <div class="bottom-action-buttons" style="position: static;">
+      <button class="action-btn assign" (click)="openAssignModal()" [title]="'ISSUE.TOOLTIP_ASSIGN_DEV' | translate">
+        <i class="bi bi-person-plus"></i>
+      </button>
+      <button class="action-btn export" (click)="exportData()" [title]="'ISSUE.TOOLTIP_EXPORT' | translate">
+        <i class="bi bi-download"></i>
+      </button>
+    </div>
+  </div>
+
+</div>

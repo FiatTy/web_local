@@ -1,0 +1,255 @@
+<div class="page-container fade-in">
+  <!-- Header Section -->
+  <header class="page-header">
+    <div class="header-content">
+      <button class="back-link" routerLink="/repositories" [title]="'DETAIL_REPO.BACK_TOOLTIP' | translate">
+        <i class="bi bi-chevron-left"></i>
+      </button>
+
+      <div class="project-info">
+        <div class="project-icon" [ngClass]="repo?.projectTypeLabel === 'ANGULAR' ? 'icon-angular' : 'icon-spring'">
+          <i class="bi" [ngClass]="repo?.projectTypeLabel === 'ANGULAR' ? 'bi-code-slash' : 'bi-filetype-java'"></i>
+        </div>
+        <div class="project-details">
+          <h1 class="project-name">
+            {{ repo?.name }}
+            <span class="type-badge"
+              [ngClass]="repo?.projectTypeLabel === 'ANGULAR' ? 'badge-angular' : 'badge-spring'">
+              {{ repo?.projectTypeLabel }}
+            </span>
+          </h1>
+          <a [href]="repo?.repositoryUrl" target="_blank" class="repo-url">
+            <i class="bi bi-link-45deg"></i> {{ repo?.repositoryUrl }}
+          </a>
+        </div>
+      </div>
+    </div>
+
+    <div class="header-actions">
+      <div class="status-indicator" [ngClass]="getStatusClass(repo?.status)">
+        <span class="status-dot"></span>
+        {{ repo?.status }}
+      </div>
+      <button class="btn-settings" (click)="editRepo(repo!)">
+        <i class="bi bi-gear-fill"></i> {{ 'DETAIL_REPO.SETTINGS' | translate }}
+      </button>
+    </div>
+  </header>
+
+  <!-- Key Metrics Grid -->
+  <section class="metrics-grid">
+    <!-- Quality Gate -->
+    <div class="metric-card quality-gate">
+      <div class="metric-header">
+        <div class="icon-box"><i class="bi bi-shield-check"></i></div>
+        <span class="metric-label">{{ 'DETAIL_REPO.QUALITY_GATE' | translate }}</span>
+      </div>
+      <div class="metric-value">
+        <span class="gate-badge" [ngClass]="getQualityGateClass(repo?.qualityGate || '')">
+          {{ repo?.qualityGate || 'N/A' }}
+        </span>
+      </div>
+    </div>
+
+    <!-- Bugs -->
+    <div class="metric-card">
+      <div class="metric-header">
+        <div class="icon-box bug-icon"><i class="bi bi-bug-fill"></i></div>
+        <span class="metric-label">{{ 'DETAIL_REPO.BUGS' | translate }}</span>
+      </div>
+      <div class="metric-value">
+        {{ repo?.metrics?.bugs || 0 }}
+      </div>
+    </div>
+
+    <!-- Vulnerabilities -->
+    <div class="metric-card">
+      <div class="metric-header">
+        <div class="icon-box vuln-icon"><i class="bi bi-shield-exclamation"></i></div>
+        <span class="metric-label">{{ 'DETAIL_REPO.SECURITY' | translate }}</span>
+      </div>
+      <div class="metric-value">
+        {{ getSecurityTotal(repo?.metrics) }}
+      </div>
+    </div>
+
+    <!-- Coverage -->
+    <div class="metric-card">
+      <div class="metric-header">
+        <div class="icon-box coverage-icon"><i class="bi bi-graph-up"></i></div>
+        <span class="metric-label">{{ 'DETAIL_REPO.COVERAGE' | translate }}</span>
+      </div>
+      <div class="metric-value">
+        {{ repo?.metrics?.coverage || 0 }}%
+      </div>
+      <div class="progress-mini">
+        <div class="progress-bar-fill" [style.width.%]="repo?.metrics?.coverage || 0"></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Main Content Tabs -->
+  <section class="content-section">
+    <div class="tabs-header">
+      <button class="tab-item" [class.active]="activeTab==='overview'" (click)="switchTab('overview')">
+        <i class="bi bi-grid-1x2"></i> {{ 'DETAIL_REPO.TAB_OVERVIEW' | translate }}
+      </button>
+      <button class="tab-item" [class.active]="activeTab==='bugs'" (click)="switchTab('bugs')">
+        <i class="bi bi-bug"></i> {{ 'DETAIL_REPO.TAB_ISSUES' | translate }}
+        <span class="count-badge" *ngIf="issues.length > 0">{{ issues.length }}</span>
+      </button>
+      <button class="tab-item" [class.active]="activeTab==='history'" (click)="switchTab('history')">
+        <i class="bi bi-clock-history"></i> {{ 'DETAIL_REPO.TAB_HISTORY' | translate }}
+      </button>
+    </div>
+
+    <div class="tab-content">
+      <!-- Overview Tab -->
+      <div *ngIf="activeTab==='overview'" class="fade-in-up">
+        <div class="overview-panel">
+
+          <div *ngIf="repo?.status === 'Scanning'" class="scanning-alert">
+            <div class="alert-content">
+              <i class="bi bi-arrow-repeat spin"></i>
+              <span>{{ 'DETAIL_REPO.ANALYSIS_IN_PROGRESS' | translate }}</span>
+            </div>
+            <div class="scan-progress-bar">
+              <div class="bar-fill" [style.width.%]="repo?.scanningProgress || 0"></div>
+            </div>
+            <span class="progress-text">{{ repo?.scanningProgress || 0 }}%</span>
+          </div>
+
+          <div class="details-list">
+            <div class="detail-item">
+              <span class="label">{{ 'DETAIL_REPO.LAST_ANALYSIS' | translate }}</span>
+              <span class="value">
+                <i class="bi bi-calendar3"></i>
+                {{ repo?.lastScan ? (repo?.lastScan | date:'medium') : ('DETAIL_REPO.NO_SCAN_HISTORY' | translate) }}
+              </span>
+            </div>
+            <div class="detail-item">
+              <span class="label">{{ 'DETAIL_REPO.SONAR_PROJECT_KEY' | translate }}</span>
+              <span class="value code-style">{{ repo?.sonarProjectKey || '-' }}</span>
+            </div>
+            <div class="detail-item">
+              <span class="label">{{ 'DETAIL_REPO.COST_PER_DAY' | translate }}</span>
+              <span class="value">{{ repo?.costPerDay | number:'1.0-2' }} ฿</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Issues Tab -->
+      <div *ngIf="activeTab==='bugs'" class="fade-in-up">
+        <div class="table-container">
+          <table class="data-table">
+            <caption class="visually-hidden">{{ 'DETAIL_REPO.TAB_ISSUES' | translate }}</caption>
+            <thead>
+              <tr>
+                <th>{{ 'DETAIL_REPO.COL_TYPE' | translate }}</th>
+                <th>{{ 'DETAIL_REPO.COL_MESSAGE' | translate }}</th>
+                <th>{{ 'DETAIL_REPO.COL_SEVERITY' | translate }}</th>
+                <th>{{ 'DETAIL_REPO.COL_STATUS' | translate }}</th>
+                <th>{{ 'DETAIL_REPO.COL_ASSIGNEE' | translate }}</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let issue of paginatedIssues">
+                <td>
+                  <span class="type-pill" [class.pill-bug]="issue.type === 'Bug'"
+                    [class.pill-vuln]="issue.type === 'Vulnerability'">
+                    {{ formatStatus(issue.type) }}
+                  </span>
+                </td>
+                <td class="msg-col" [title]="issue.message">{{ issue.message }}</td>
+                <td>
+                  <span class="severity-tag" [ngClass]="'sev-' + (issue.severity | lowercase)">
+                    {{ issue.severity }}
+                  </span>
+                </td>
+                <td><span class="status-text">{{ formatStatus(issue.status) }}</span></td>
+                <td>
+                  <div class="user-cell">
+                    <div class="user-avatar">{{ (issue.assignedTo?.username || '?').charAt(0) }}</div>
+                    <span>{{ issue.assignedTo?.username || ('DETAIL_REPO.UNASSIGNED' | translate) }}</span>
+                  </div>
+                </td>
+              </tr>
+              <tr *ngIf="issues.length === 0">
+                <td colspan="5" class="empty-row">
+                  <i class="bi bi-check2-circle"></i> {{ 'DETAIL_REPO.NO_ISSUES_FOUND' | translate }}
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <!-- Pagination Controls -->
+        <div class="pagination-controls" *ngIf="issues.length > pageSize">
+          <button class="btn btn-sm btn-outline-secondary" (click)="prevPage()" [disabled]="currentPage === 1">
+            <i class="bi bi-chevron-left"></i> {{ 'DETAIL_REPO.PREVIOUS' | translate }}
+          </button>
+          <span class="page-info">
+            {{ 'DETAIL_REPO.PAGE_INFO' | translate:{ current: currentPage, total: totalPages } }}
+          </span>
+          <button class="btn btn-sm btn-outline-secondary" (click)="nextPage()" [disabled]="currentPage === totalPages">
+            {{ 'DETAIL_REPO.NEXT' | translate }} <i class="bi bi-chevron-right"></i>
+          </button>
+        </div>
+      </div>
+
+      <!-- History Tab -->
+      <div *ngIf="activeTab==='history'" class="fade-in-up">
+        <div class="table-container">
+          <table class="data-table">
+            <caption class="visually-hidden">{{ 'DETAIL_REPO.TAB_HISTORY' | translate }}</caption>
+            <thead>
+              <tr>
+                <th>{{ 'DETAIL_REPO.COL_DATE' | translate }}</th>
+                <th>{{ 'DETAIL_REPO.COL_STATUS' | translate }}</th>
+                <th>{{ 'DETAIL_REPO.COL_METRICS' | translate }}</th>
+                <th>{{ 'DETAIL_REPO.QUALITY_GATE' | translate }}</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let scan of scans">
+                <td class="date-col">
+                  {{ scan.completedAt | date:'medium' }}
+                </td>
+                <td>
+                  <span class="status-pill-sm" [ngClass]="getStatusClass(scan.status)">
+                    {{ scan.status }}
+                  </span>
+                </td>
+                <td>
+                  <div class="mini-stats">
+                    <span [title]="'DETAIL_REPO.BUGS' | translate" class="stat-bug"><i class="bi bi-bug-fill"></i> {{ scan.metrics?.bugs || 0
+                      }}</span>
+                    <span [title]="'DETAIL_REPO.SECURITY' | translate" class="stat-vuln"><i class="bi bi-shield-fill-exclamation"></i> {{
+                      getSecurityTotal(scan.metrics) }}</span>
+                    <span [title]="'DETAIL_REPO.COVERAGE' | translate" class="stat-cov"><i class="bi bi-bar-chart-fill"></i> {{
+                      scan.metrics?.coverage || 0 }}%</span>
+                  </div>
+                </td>
+                <td>
+                  <span *ngIf="scan.qualityGate === 'OK'" class="gate-tag active">{{ 'DETAIL_REPO.PASSED' | translate }}</span>
+                  <span *ngIf="scan.qualityGate === 'ERROR'" class="gate-tag failed">{{ 'DETAIL_REPO.FAILED' | translate }}</span>
+                  <span *ngIf="scan.qualityGate !== 'OK' && scan.qualityGate !== 'ERROR'" class="gate-tag"
+                    [ngClass]="getQualityGateClass(scan.qualityGate || '')">
+                    {{ scan.qualityGate }}
+                  </span>
+                </td>
+              </tr>
+              <tr *ngIf="scans.length === 0">
+                <td colspan="4" class="empty-row">
+                  <i class="bi bi-clock-history"></i> {{ 'DETAIL_REPO.NO_SCAN_HISTORY' | translate }}
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+    </div>
+  </section>
+</div>

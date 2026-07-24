@@ -1,0 +1,105 @@
+<!-- Top Bar: Login / Register (ขวาบน) -->
+<nav class="navbar navbar-light bg-transparent position-absolute top-0 start-0 end-0 p-3 z-3">
+  <div class="d-flex w-100 justify-content-between align-items-center">
+
+    <!-- Logo ชิดซ้าย -->
+    <img src="logo.png" alt="logo" style="height: 80px; object-fit: contain; min-width: 0;">
+
+    <!-- ปุ่ม Login/Register ชิดขวา -->
+    <div class="d-flex gap-2 flex-shrink-0 ms-3 align-items-center" style="align-self: flex-start;">
+      <app-language-switcher class="me-2"></app-language-switcher>
+      <button type="button" class="btn btn-outline-primary btn-sm" style="min-width: 80px;" (click)="goToLogin()">
+        {{ 'AUTH.LOGIN' | translate }}
+      </button>
+      <button type="button" class="btn btn-primary btn-sm" style="min-width: 80px;" (click)="goToRegister()">
+        {{ 'AUTH.REGISTER' | translate }}
+      </button>
+    </div>
+
+  </div>
+</nav>
+
+<!-- Hero Section -->
+<section class="hero d-flex align-items-center text-center">
+
+  <div class="container">
+    <h1 class="display-5 fw-bold mb-2">PCCTH Automate Code Review</h1>
+    <p class="lead mb-4">
+      {{ 'LANDING.HERO_SUBTITLE_1' | translate }}<br class="d-none d-md-block" />
+      <span class="fw-semibold">{{ 'LANDING.HERO_SUBTITLE_2' | translate }}</span>
+    </p>
+    <button type="button" class="btn btn-primary btn-lg px-4" (click)="scrollTo('features')">
+      {{ 'LANDING.EXPLORE_FEATURES' | translate }}
+    </button>
+  </div>
+</section>
+
+<!-- Features Section -->
+<section id="features" class="py-5">
+  <div class="container text-center">
+    <h2 class="h3 fw-bold mb-4">{{ 'LANDING.WHY_CHOOSE_US' | translate }}</h2>
+
+    <div class="row g-4 justify-content-center">
+      <div class="col-12 col-md-4">
+        <div class="card h-100 feature-card">
+          <div class="card-body">
+            <div class="fs-2 text-primary">
+              <i class="bi bi-alarm"></i>
+            </div>
+            <h3 class="h5 fw-bold mt-2 mb-1">{{ 'LANDING.SAVE_TIME' | translate }}</h3>
+            <div class="text-muted small">{{ 'LANDING.SAVE_TIME_DESC' | translate }}</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-12 col-md-4">
+        <div class="card h-100 feature-card">
+          <div class="card-body">
+            <div class="fs-2 text-success">
+              <i class="bi bi-search"></i>
+            </div>
+
+            <h3 class="h5 fw-bold mt-2 mb-1">{{ 'LANDING.ISSUE_DETECTION' | translate }}</h3>
+            <div class="text-muted small">{{ 'LANDING.ISSUE_DETECTION_DESC' | translate }}</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-12 col-md-4">
+        <div class="card h-100 feature-card">
+          <div class="card-body">
+            <div class="fs-2 text-gradient-red">
+              <i class="bi bi-bar-chart"></i>
+            </div>
+            <h3 class="h5 fw-bold mt-2 mb-1">{{ 'LANDING.DASHBOARD' | translate }}</h3>
+            <div class="text-muted small">{{ 'LANDING.DASHBOARD_DESC' | translate }}</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Notification Levels -->
+<section class="py-5 notifications-section">
+  <div class="container text-center">
+    <h2 class="h4 fw-bold mb-4">{{ 'LANDING.NOTIFICATIONS_4_LEVELS' | translate }}</h2>
+    <div class="d-flex flex-wrap justify-content-center gap-3">
+      <span class="badge rounded-pill bg-success px-3 py-2">{{ 'COMMON.SUCCESS' | translate }}</span>
+      <span class="badge rounded-pill bg-info text-dark px-3 py-2">{{ 'COMMON.INFO' | translate }}</span>
+      <span class="badge rounded-pill bg-warning text-dark px-3 py-2">{{ 'COMMON.WARNING' | translate }}</span>
+      <span class="badge rounded-pill bg-danger px-3 py-2">{{ 'COMMON.ERROR' | translate }}</span>
+    </div>
+  </div>
+</section>
+
+<!-- Call to Action -->
+<section class="py-5 cta text-center text-white">
+  <div class="container">
+    <h2 class="h4 fw-bold mb-2">{{ 'LANDING.CTA_TITLE' | translate }}</h2>
+    <p class="mb-4">{{ 'LANDING.CTA_DESC' | translate }}</p>
+    <button type="button" class="btn btn-outline-light btn-lg" (click)="goToRegister()">
+      {{ 'LANDING.GET_STARTED' | translate }}
+    </button>
+  </div>
+</section>

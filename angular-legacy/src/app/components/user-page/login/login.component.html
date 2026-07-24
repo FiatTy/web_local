@@ -1,0 +1,69 @@
+<div class="login-container">
+  <div class="login-wrapper"> <!-- NEW: ครอบสองฝั่ง -->
+
+    <!-- LEFT: Welcome -->
+    <div class="welcome-section">
+      <h1 [innerHTML]="'LOGIN.WELCOME_TITLE' | translate"></h1>
+      <p>{{ 'LOGIN.WELCOME_TEXT' | translate }}</p>
+    </div>
+
+    <div class="login-box">
+      <div class="login-header">
+        <a routerLink="/" class="back-btn" title="Back to Home">
+          <i class="bi bi-chevron-left"></i>
+        </a>
+        <h2>{{ 'AUTH.LOGIN' | translate }}</h2>
+        <app-language-switcher class="lang-switcher-abs"></app-language-switcher>
+      </div>
+      <form (ngSubmit)="onSubmit(form)" #form="ngForm" novalidate>
+        <div class="input-group">
+          <label for="email">{{ 'AUTH.EMAIL' | translate }}</label>
+          <input type="email" name="email" [(ngModel)]="email" required email pattern="^[^@\s]+@[^@\s]+\.[a-zA-Z]{2,}$"
+            #emailRef="ngModel" [placeholder]="'LOGIN.EMAIL_PLACEHOLDER' | translate" title="Please enter your email address"
+            [class.input-error]="(submitted && emailRef.invalid) || loginFailed" />
+          <div *ngIf="emailRef.touched || emailRef.dirty || submitted">
+            <small *ngIf="emailRef.errors?.['required']" class="error-message">
+              {{ 'LOGIN.EMAIL_REQUIRED' | translate }}
+            </small>
+            <small *ngIf="emailRef.errors?.['email']" class="error-message">
+              {{ 'LOGIN.EMAIL_VALID' | translate }}
+            </small>
+            <small *ngIf="emailRef.errors?.['pattern']" class="error-message">
+              {{ 'LOGIN.EMAIL_PATTERN' | translate }}
+            </small>
+          </div>
+        </div>
+
+        <div class="input-group">
+          <label for="password">{{ 'AUTH.PASSWORD' | translate }}</label>
+          <div class="pw-field">
+            <input [type]="showPassword ? 'text' : 'password'" name="password" [(ngModel)]="password" required #pwdRef="ngModel"
+              [placeholder]="'LOGIN.PASSWORD_PLACEHOLDER' | translate" title="Please enter your password"
+              [class.input-error]="(submitted && pwdRef.invalid) || loginFailed" />
+            <i class="pw-eye bi" [ngClass]="showPassword ? 'bi-eye-slash' : 'bi-eye'"
+              (mousedown)="showPassword = !showPassword"></i>
+          </div>
+          <div *ngIf="pwdRef.touched || pwdRef.dirty || submitted">
+            <small *ngIf="pwdRef.errors?.['required']" class="error-message">
+              {{ 'LOGIN.PASSWORD_REQUIRED' | translate }}
+            </small>
+          </div>
+        </div>
+
+        <button type="submit">{{ 'AUTH.LOGIN_BUTTON' | translate }}</button>
+      </form>
+
+      <div class="extra-links">
+        <p>
+          {{ 'LOGIN.FORGOT_PASSWORD' | translate }}
+          <a [routerLink]="['/forgot-password']">{{ 'AUTH.RESET_PASSWORD' | translate }}</a>
+        </p>
+        <p>
+          {{ 'LOGIN.DONT_HAVE_ACCOUNT' | translate }}
+          <a [routerLink]="['/register']">{{ 'AUTH.REGISTER' | translate }}</a>
+        </p>
+      </div>
+    </div>
+
+  </div>
+</div>

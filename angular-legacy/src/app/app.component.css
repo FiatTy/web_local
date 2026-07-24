@@ -1,0 +1,67 @@
+  /* ปุ่ม Toggle */
+
+  .theme-toggle-btn {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    background-color: var(--toggle-btn-bg);
+    color: var(--toggle-btn-text);
+    border: none;
+    border-radius: 50%;
+    width: 60px;
+    height: 60px;
+    font-size: 24px;
+    cursor: pointer;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: transform 0.2s, background 0.3s, opacity 0.3s;
+  }
+
+  .theme-toggle-btn:hover {
+    transform: scale(1.1);
+    opacity: 1 !important;
+  }
+
+  /* =======================================
+   FIX: Prevent ANY element from covering the theme toggle button
+   ======================================= */
+  .theme-toggle-btn {
+    position: fixed !important;
+    /* ลอยอยู่เหนือทุก container */
+    bottom: 24px;
+    /* ระยะห่างจากขอบล่าง */
+    right: 24px;
+    /* ระยะห่างจากขอบขวา */
+    width: 56px;
+    height: 56px;
+    border-radius: 50%;
+    border: none;
+    color: #fff;
+    font-size: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.25);
+    z-index: 99999 !important;
+    /* 🚀 ดันขึ้นมาสุด */
+    opacity: 0.15;
+    /* โปร่งใสเมื่อไม่ hover */
+    transition: opacity 0.3s ease, transform 0.2s ease, box-shadow 0.3s ease;
+  }
+
+  /* Hover effect */
+  .theme-toggle-btn:hover {
+    opacity: 1 !important;        
+    transform: translateY(-2px);
+    box-shadow: 0 10px 24px rgba(0, 0, 0, 0.3);
+  }
+
+  /* Dark mode styling (optional) */
+  body.dark-mode .theme-toggle-btn {
+    background: linear-gradient(180deg, #facc15 0%, #eab308 100%);
+    color: #222;
+  }
+  

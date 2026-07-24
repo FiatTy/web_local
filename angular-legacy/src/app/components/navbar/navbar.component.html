@@ -1,0 +1,74 @@
+<button class="hamburger" [class.active]="navbarOpen" (click)="toggleNavbar()">
+  <i class="bi bi-list"></i>
+</button>
+
+<!-- Backdrop Overlay for Mobile -->
+<div class="navbar-backdrop" [class.active]="navbarOpen" (click)="closeNavbar()"></div>
+
+<nav class="vertical-navbar" [class.active]="navbarOpen">
+  <h4><img src="logo.png" alt="logo" width="60" height="60"> PCCTH <br> Code Review</h4>
+
+  <ul>
+    <li class="nav-item">
+      <a class="nav-link" routerLink="/dashboard" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }"
+        (click)="closeNavbar()">
+        <i class="bi bi-speedometer2"></i> {{ 'NAV.DASHBOARD' | translate }}
+      </a>
+      <a class="nav-link" routerLink="/repositories" routerLinkActive="active"
+        [routerLinkActiveOptions]="{ exact: false }" (click)="closeNavbar()">
+        <i class="bi bi-folder-fill"></i> {{ 'NAV.REPOSITORIES' | translate }}
+      </a>
+
+      <a class="nav-link" routerLink="/scanhistory" routerLinkActive="active"
+        [routerLinkActiveOptions]="{ exact: false }" (click)="closeNavbar()">
+        <i class="bi bi-clock-history"></i> {{ 'NAV.SCAN_HISTORY' | translate }}
+      </a>
+
+      <a class="nav-link" routerLink="/issue" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: false }"
+        (click)="closeNavbar()">
+        <i class="bi bi-exclamation-circle-fill"></i> {{ 'NAV.ISSUE' | translate }}
+      </a>
+      <a class="nav-link" routerLink="/analysis" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: false }"
+        (click)="closeNavbar()">
+        <i class="bi bi-graph-up"></i> {{ 'NAV.ANALYTICS' | translate }}
+      </a>
+
+      <!-- Report Group -->
+      <a class="nav-link" (click)="toggleSubmenu('report', $event)" [class.active]="isSubmenuRouteActive('report')">
+        <i class="bi bi-file-earmark-text-fill"></i> {{ 'NAV.REPORT' | translate }}
+        <i class="bi bi-chevron-down ms-auto" style="font-size: 0.8rem; margin-right: 0; margin-left: auto;"></i>
+      </a>
+      <ul *ngIf="submenuOpen['report']" class="submenu-down">
+        <li><a routerLink="/generatereport" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: false }"
+            (click)="closeNavbar()"> {{ 'NAV.GENERATE_REPORT' | translate }}</a></li>
+        <li><a routerLink="/reporthistory" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: false }"
+            (click)="closeNavbar()"> {{ 'NAV.REPORT_HISTORY' | translate }}</a></li>
+      </ul>
+    </li>
+
+    <!-- Setting Group & Logout -->
+    <li class="nav-item mt-auto">
+      <ul *ngIf="submenuOpen['Setting']" class="submenu-up">
+        <li><a routerLink="/sonarqubeconfig" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: false }"
+            (click)="closeNavbar()"> {{ 'NAV.SONARQUBE_CONFIG' | translate }}</a></li>
+
+        <li><a routerLink="/notificationsetting" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: false }"
+            (click)="closeNavbar()"> {{ 'NAV.NOTIFICATION_SETTING' | translate }}</a></li>
+
+        <li *ngIf="isAdmin"><a routerLink="/usermanagement" routerLinkActive="active"
+            [routerLinkActiveOptions]="{ exact: false }" (click)="closeNavbar()"> {{ 'NAV.USER_MANAGEMENT' | translate }}</a></li>
+      </ul>
+
+      <app-language-switcher style="padding: 4px 16px;"></app-language-switcher>
+
+      <a class="nav-link" (click)="toggleSubmenu('Setting', $event)" [class.active]="isSubmenuRouteActive('Setting')">
+        <i class="bi bi-gear-fill"></i> {{ 'NAV.SETTING' | translate }}
+        <i class="bi bi-chevron-up ms-auto" style="font-size: 0.8rem; margin-right: 0; margin-left: auto;"></i>
+      </a>
+
+      <a class="nav-link" (click)="logout(); closeNavbar()" style="color: var(--danger); margin-top: 8px;">
+        <i class="bi bi-box-arrow-right"></i> {{ 'NAV.LOGOUT' | translate }}
+      </a>
+    </li>
+  </ul>
+</nav>

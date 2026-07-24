@@ -1,0 +1,261 @@
+<div class="register-container">
+  <div class="register-wrapper">
+    <!-- NEW: ครอบสองฝั่ง -->
+
+    <!-- LEFT: Welcome -->
+    <div class="welcome-section">
+      <h1>{{ 'REGISTER.WELCOME_TITLE' | translate }}</h1>
+      <p>
+        {{ 'REGISTER.WELCOME_TEXT' | translate }}
+      </p>
+    </div>
+
+    <!-- RIGHT: Register (ของเดิม) -->
+    <div class="register-box">
+      <div class="register-header">
+        <a routerLink="/" class="back-btn" title="Back to Home">
+          <i class="bi bi-chevron-left"></i>
+        </a>
+        <h2>{{ 'REGISTER.TITLE' | translate }}</h2>
+      </div>
+
+      <form (ngSubmit)="onSubmit(form)" #form="ngForm" novalidate>
+        <!-- Username -->
+        <div class="input-group">
+          <label for="username">{{ 'REGISTER.USERNAME' | translate }}</label>
+          <input
+            type="text"
+            name="username"
+            [(ngModel)]="username"
+            required
+            minlength="8"
+            [placeholder]="'REGISTER.USERNAME_PLACEHOLDER' | translate"
+            #usernameRef="ngModel"
+            [class.is-invalid]="
+              (usernameRef.invalid && (usernameRef.touched || submitted)) ||
+              usernameRef.errors?.['duplicate']
+            "
+          />
+          <div *ngIf="usernameRef.touched || usernameRef.dirty || submitted">
+            <small
+              *ngIf="usernameRef.errors?.['required']"
+              class="error-message"
+              >{{ 'REGISTER.USERNAME_REQUIRED' | translate }}</small
+            >
+            <small
+              *ngIf="usernameRef.errors?.['minlength']"
+              class="error-message"
+              >{{ 'REGISTER.USERNAME_MINLENGTH' | translate }}</small
+            >
+            <small *ngIf="checkUsername(usernameRef)" class="error-message"
+              >{{ 'REGISTER.USERNAME_EXISTS' | translate }}</small
+            >
+          </div>
+        </div>
+
+        <!-- Email -->
+        <div class="input-group">
+          <label for="email">{{ 'AUTH.EMAIL' | translate }}</label>
+          <input
+            type="email"
+            name="email"
+            [(ngModel)]="email"
+            required
+            email
+            [pattern]="emailPattern"
+            [placeholder]="'REGISTER.EMAIL_PLACEHOLDER' | translate"
+            #emailRef="ngModel"
+            [class.is-invalid]="
+              (emailRef.invalid && (emailRef.touched || submitted)) ||
+              emailRef.errors?.['duplicate'] ||
+              ((emailRef.touched || submitted) && isInvalidDomain(email))
+            "
+          />
+          <div *ngIf="emailRef.touched || emailRef.dirty || submitted">
+            <small *ngIf="emailRef.errors?.['required']" class="error-message"
+              >{{ 'REGISTER.EMAIL_REQUIRED' | translate }}</small
+            >
+            <small *ngIf="emailRef.errors?.['email']" class="error-message"
+              >{{ 'REGISTER.EMAIL_VALID' | translate }}</small
+            >
+            <small *ngIf="emailRef.errors?.['pattern']" class="error-message"
+              >{{ 'REGISTER.EMAIL_PATTERN' | translate }}</small
+            >
+            <small *ngIf="checkEmail(emailRef)" class="error-message"
+              >{{ 'REGISTER.EMAIL_EXISTS' | translate }}</small
+            >
+            <small *ngIf="(emailRef.touched || submitted) && isInvalidDomain(email)" class="error-message"
+              >{{ 'REGISTER.EMAIL_INVALID_DOMAIN' | translate }}</small
+            >
+          </div>
+        </div>
+
+        <!-- Phone Number -->
+        <div class="input-group">
+          <label for="phoneNumber">{{ 'REGISTER.PHONE_NUMBER' | translate }}</label>
+          <input
+            type="tel"
+            name="phoneNumber"
+            [(ngModel)]="phoneNumber"
+            required
+            pattern="^0\d{9}$"
+            maxlength="10"
+            [placeholder]="'REGISTER.PHONE_PLACEHOLDER' | translate"
+            #telRef="ngModel"
+            [class.is-invalid]="
+              (telRef.invalid && (telRef.touched || submitted)) ||
+              telRef.errors?.['duplicate']
+            "
+          />
+          <div *ngIf="telRef.touched || telRef.dirty || submitted">
+            <small *ngIf="telRef.errors?.['required']" class="error-message"
+              >{{ 'REGISTER.PHONE_REQUIRED' | translate }}</small
+            >
+            <small *ngIf="telRef.errors?.['pattern']" class="error-message"
+              >{{ 'REGISTER.PHONE_PATTERN' | translate }}</small
+            >
+            <small *ngIf="checkPhoneNumber(telRef)" class="error-message"
+              >{{ 'REGISTER.PHONE_EXISTS' | translate }}</small
+            >
+          </div>
+        </div>
+
+        <!-- Password -->
+        <div class="input-group">
+          <label for="password">{{ 'AUTH.PASSWORD' | translate }}</label>
+          <div class="pw-field">
+            <input
+              [type]="showPassword ? 'text' : 'password'"
+              name="password"
+              (focus)="markTouched(pwdRef)"
+              [(ngModel)]="password"
+              required
+              minlength="8"
+              [placeholder]="'REGISTER.PASSWORD_PLACEHOLDER' | translate"
+              #pwdRef="ngModel"
+              [class.is-invalid]="
+                (pwdRef.invalid && (pwdRef.touched || submitted)) ||
+                ((pwdRef.touched || submitted) && !passwordValid)
+              "
+            />
+            <i class="pw-eye bi" [ngClass]="showPassword ? 'bi-eye-slash' : 'bi-eye'"
+              (mousedown)="showPassword = !showPassword"></i>
+          </div>
+
+          <!-- Checklist only -->
+          <ul class="password-rules" *ngIf="pwdRef.touched || submitted">
+            <li
+              [class.pass]="passwordRules.minLength"
+              [class.error-message]="!passwordRules.minLength"
+            >
+              <i
+                class="bi"
+                [ngClass]="
+                  passwordRules.minLength
+                    ? 'bi-check-circle-fill'
+                    : 'bi-x-circle-fill'
+                "
+              ></i>
+              {{ 'REGISTER.RULE_MINLENGTH' | translate }}
+            </li>
+
+            <li
+              [class.pass]="passwordRules.upper"
+              [class.error-message]="!passwordRules.upper"
+            >
+              <i
+                class="bi"
+                [ngClass]="
+                  passwordRules.upper
+                    ? 'bi-check-circle-fill'
+                    : 'bi-x-circle-fill'
+                "
+              ></i>
+              {{ 'REGISTER.RULE_UPPERCASE' | translate }}
+            </li>
+
+            <li
+              [class.pass]="passwordRules.lower"
+              [class.error-message]="!passwordRules.lower"
+            >
+              <i
+                class="bi"
+                [ngClass]="
+                  passwordRules.lower
+                    ? 'bi-check-circle-fill'
+                    : 'bi-x-circle-fill'
+                "
+              ></i>
+              {{ 'REGISTER.RULE_LOWERCASE' | translate }}
+            </li>
+
+            <li
+              [class.pass]="passwordRules.number"
+              [class.error-message]="!passwordRules.number"
+            >
+              <i
+                class="bi"
+                [ngClass]="
+                  passwordRules.number
+                    ? 'bi-check-circle-fill'
+                    : 'bi-x-circle-fill'
+                "
+              ></i>
+              {{ 'REGISTER.RULE_NUMBER' | translate }}
+            </li>
+
+            <li
+              [class.pass]="passwordRules.special"
+              [class.error-message]="!passwordRules.special"
+            >
+              <i
+                class="bi"
+                [ngClass]="
+                  passwordRules.special
+                    ? 'bi-check-circle-fill'
+                    : 'bi-x-circle-fill'
+                "
+              ></i>
+              {{ 'REGISTER.RULE_SPECIAL' | translate }}
+            </li>
+          </ul>
+        </div>
+
+        <!-- Confirm Password -->
+        <div class="input-group">
+          <label for="confirmPassword">{{ 'AUTH.CONFIRM_PASSWORD' | translate }}</label>
+          <div class="pw-field">
+            <input
+              [type]="showConfirmPassword ? 'text' : 'password'"
+              name="confirmPassword"
+              [(ngModel)]="confirmPassword"
+              required
+              minlength="8"
+              [placeholder]="'REGISTER.CONFIRM_PASSWORD_PLACEHOLDER' | translate"
+              #confirmRef="ngModel"
+            />
+            <i class="pw-eye bi" [ngClass]="showConfirmPassword ? 'bi-eye-slash' : 'bi-eye'"
+              (mousedown)="showConfirmPassword = !showConfirmPassword"></i>
+          </div>
+          <div *ngIf="confirmRef.touched || confirmRef.dirty || submitted">
+            <small *ngIf="confirmRef.errors?.['required']" class="error-message"
+              >{{ 'REGISTER.CONFIRM_PASSWORD_REQUIRED' | translate }}</small
+            >
+            <small *ngIf="passwordsMismatch" class="error-message"
+              >{{ 'REGISTER.PASSWORD_MISMATCH' | translate }}</small
+            >
+          </div>
+        </div>
+
+        <button type="submit">{{ 'REGISTER.BUTTON' | translate }}</button>
+      </form>
+
+      <div class="extra-links">
+        <p>
+          {{ 'REGISTER.ALREADY_HAVE_ACCOUNT' | translate }}
+          <a [routerLink]="['/login']">{{ 'AUTH.LOGIN' | translate }}</a>
+        </p>
+      </div>
+    </div>
+  </div>
+</div>

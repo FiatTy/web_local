@@ -1,0 +1,165 @@
+import { Component, OnInit, OnDestroy, ChangeDetectorRef } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { Router } from '@angular/router';
+import { AuthService } from '../../../services/authservice/auth.service';
+import { SharedDataService } from '../../../services/shared-data/shared-data.service';
+import { SecurityService } from '../../../services/securityservice/security.service';
+import { ScanService } from '../../../services/scanservice/scan.service';
+import { TechnicalDebtDataService } from '../../../services/shared-data/technicaldebt-data.service';
+import { TechnicalDebtService } from '../../../services/technicaldebtservice/technicaldebt.service';
+import { DebtTimePipe } from '../../../pipes/debt-time.pipe';
+
+interface HotSecurityIssue {
+  name: string;
+  count: number;
+}
+
+interface DebtProject {
+  projectName: string;
+  debtMinutes: number;
+  debtCost: string;
+  priority: string;
+  color: string;
+}
+
+import { Subscription } from 'rxjs';
+
+import { TranslatePipe } from '@ngx-translate/core';
+
+@Component({
+  selector: 'app-analysis',
+  standalone: true,
+  imports: [CommonModule, DebtTimePipe, TranslatePipe],
+  providers: [DebtTimePipe],
+  templateUrl: './analysis.component.html',
+  styleUrl: './analysis.component.css'
+})
+export class AnalysisComponent implements OnInit, OnDestroy {
+
+  getCardTitleKey(title: string): string {
+    if (title === 'Security Score') return 'ANALYTICS.SECURITY_SCORE';
+    if (title === 'Technical Debt') return 'ANALYTICS.TECHNICAL_DEBT';
+    return title;
+  }
+
+  getPriorityKey(priority: string): string {
+    if (!priority) return '';
+    const p = priority.toLowerCase().trim();
+    if (p === 'high') return 'ANALYTICS.PRIORITY_HIGH';
+    if (p === 'med' || p === 'medium') return 'ANALYTICS.PRIORITY_MED';
+    if (p === 'low') return 'ANALYTICS.PRIORITY_LOW';
+    return priority;
+  }
+
+  securityScore = 0;
+  technicalDebt = 0;
+  codeCoverage = 78;
+  buildStatus = 'Passing';
+  lintingIssues = 12;
+  testCoverage = 80;
+
+  topSecurityIssues: HotSecurityIssue[] = [];
+  topDebtProjects: DebtProject[] = [];
+
+  private subscriptions = new Subscription();
+
+  get summaryCards() {
+    return [
+      {
+        title: 'Security Score',
+        value: `${this.securityScore}`,
+        icon: 'bi bi-shield-check',
+        action: () => this.router.navigate(['/security-dashboard'])
+      },
+      {
+        title: 'Technical Debt',
+        value: this.debtTimePipe.transform(this.technicalDebt, 'short'),
+        icon: 'bi bi-clock-history',
+        action: () => this.router.navigate(['/technical-debt'])
+      }
+    ];
+  }
+
+  constructor(
+    private readonly router: Router,
+    private readonly authService: AuthService,
+    private readonly sharedData: SharedDataService,
+    private readonly securityService: SecurityService,
+    private readonly scanService: ScanService,
+    private readonly techDebtDataService: TechnicalDebtDataService,
+    private readonly techDebtService: TechnicalDebtService,
+    private readonly debtTimePipe: DebtTimePipe,
+  ) { }
+
+  ngOnInit(): void {
+    if (!this.authService.isLoggedIn) {
+      this.router.navigate(['/login']);
+      return;
+    }
+
+    this.subscriptions.add(
+      this.sharedData.securityScore$.subscribe(score => {
+        this.securityScore = score;
+      })
+    );
+
+    this.subscriptions.add(
+      this.sharedData.hotIssues$.subscribe(issues => {
+        this.topSecurityIssues = issues;
+      })
+    );
+
+    this.subscriptions.add(
+      this.techDebtDataService.totalDebt$.subscribe(debt => {
+        const totalMinutes = (debt.days * 480) + (debt.hours * 60) + debt.minutes;
+        this.technicalDebt = totalMinutes;
+      })
+    );
+
+    this.subscriptions.add(
+      this.techDebtDataService.topDebtItems$.subscribe(items => {
+        this.topDebtProjects = items.map(item => ({
+          projectName: item.item,
+          debtMinutes: item.time,
+          debtCost: `THB${Math.ceil(item.cost).toLocaleString()}`,
+          priority: item.priority,
+          color: item.colorClass === 'high' ? 'bg-danger' : (item.colorClass === 'med' ? 'bg-warning text-dark' : 'bg-success')
+        }));
+      })
+    );
+
+    // Subscribe to scan history changes and recalculate debt
+    this.subscriptions.add(
+      this.sharedData.scansHistory$.subscribe(data => {
+        if (data && data.length > 0) {
+          this.techDebtDataService.calculateFromScans(data);
+        }
+      })
+    );
+
+    this.securityService.getMetrics().subscribe({
+      next: (m) => this.sharedData.updateSecurityState({
+        score: m.score,
+        riskLevel: m.riskLevel,
+        hotIssues: m.hotIssues
+      }),
+      error: () => { }
+    });
+
+    if (!this.sharedData.hasScansHistoryCache) {
+      this.scanService.getScansHistory().subscribe({
+        next: (data) => this.sharedData.Scans = data,
+        error: (err) => { }
+      });
+    }
+  }
+
+  ngOnDestroy(): void {
+    this.subscriptions.unsubscribe();
+  }
+
+  goToDebt(): void {
+    this.router.navigate(['/technical-debt']);
+  }
+}
+

@@ -1,0 +1,222 @@
+<div class="repo-dashboard fade-in">
+
+  <!-- Header -->
+  <div class="dashboard-header">
+    <div>
+      <h1>{{ 'REPOSITORY.TITLE' | translate }}</h1>
+      <p>{{ 'REPOSITORY.SUBTITLE' | translate }}</p>
+    </div>
+    <button class="btn btn-primary-gradient" (click)="goToAddRepository()">
+      <i class="bi bi-plus-lg"></i> {{ 'REPOSITORY.NEW_REPOSITORY' | translate }}
+    </button>
+  </div>
+
+  <!-- Summary Stats -->
+  <div class="stats-grid">
+    <div class="stat-card" *ngFor="let stat of summaryStats">
+      <div class="stat-icon" [ngClass]="stat.bg">
+        <i [class]="stat.icon"></i>
+      </div>
+      <div class="stat-info">
+        <h3>{{ stat.count }}</h3>
+        <span>{{ 
+          (stat.label === 'Total Repositories' ? 'REPOSITORY.STATS_TOTAL' : 
+           stat.label === 'Active' ? 'REPOSITORY.STATS_ACTIVE' :
+           stat.label === 'Scanning' ? 'REPOSITORY.STATS_SCANNING' :
+           stat.label === 'Error' ? 'REPOSITORY.STATS_ERROR' : stat.label) | translate 
+        }}</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toolbar -->
+  <div class="toolbar-container">
+    <!-- Filter Tabs -->
+    <div class="filter-tabs">
+      <button class="tab-btn" [class.active]="activeFilter === 'all'" (click)="filterBy('all')">
+        {{ 'REPOSITORY.TAB_ALL' | translate }} <span class="badge-count">{{ repositories.length }}</span>
+      </button>
+      <button class="tab-btn" [class.active]="activeFilter === 'ANGULAR'" (click)="filterBy('ANGULAR')">
+        {{ 'REPOSITORY.TAB_ANGULAR' | translate }} <span class="badge-count">{{ countByType('ANGULAR') }}</span>
+      </button>
+      <button class="tab-btn" [class.active]="activeFilter === 'SPRING_BOOT'" (click)="filterBy('SPRING_BOOT')">
+        {{ 'REPOSITORY.TAB_SPRING' | translate }} <span class="badge-count">{{ countByType('SPRING_BOOT') }}</span>
+      </button>
+    </div>
+
+    <!-- Search & Status -->
+    <div class="search-actions">
+      <div class="search-input">
+        <i class="bi bi-search"></i>
+        <input type="text" [placeholder]="'REPOSITORY.SEARCH_PLACEHOLDER' | translate" (input)="searchRepositories($event)">
+      </div>
+
+      <div class="status-select">
+        <select [(ngModel)]="selectedStatus" (change)="filterByStatus()">
+          <option value="all">{{ 'REPOSITORY.STATUS_ALL' | translate }}</option>
+          <option value="Active">{{ 'REPOSITORY.STATUS_ACTIVE' | translate }}</option>
+          <option value="Scanning">{{ 'REPOSITORY.STATUS_SCANNING' | translate }}</option>
+          <option value="Error">{{ 'REPOSITORY.STATUS_ERROR' | translate }}</option>
+        </select>
+        <i class="bi bi-chevron-down dropdown-icon"></i>
+      </div>
+    </div>
+  </div>
+
+  <!-- Repository Grid -->
+  <div class="repo-grid">
+    <div class="repo-card" *ngFor="let repo of filteredRepositories">
+
+      <!-- Card Header -->
+      <div class="card-header-row">
+        <div class="repo-identity">
+          <div class="type-icon" [ngClass]="repo.projectTypeLabel === 'ANGULAR' ? 'icon-angular' : 'icon-spring'">
+            <i class="bi" [ngClass]="repo.projectTypeLabel === 'ANGULAR' ? 'bi-code-slash' : 'bi-filetype-java'"></i>
+          </div>
+          <div>
+            <h4 class="repo-name" [title]="repo.name">{{ repo.name }}</h4>
+            <div class="repo-meta">
+              <span class="badge-text" [ngClass]="repo.projectTypeLabel === 'ANGULAR' ? 'text-angular' : 'text-spring'">
+                {{ repo.projectTypeLabel }}
+              </span>
+              <a [href]="repo.repositoryUrl" target="_blank" class="repo-url">
+                <i class="bi bi-link-45deg"></i> {{ 'REPOSITORY.LINK' | translate }}
+              </a>
+            </div>
+          </div>
+        </div>
+
+        <div class="status-indicator">
+          <span class="status-dot" [ngClass]="{
+            'status-active': repo.status === 'Active',
+            'status-scanning': repo.status === 'Scanning',
+            'status-error': repo.status === 'Error'
+          }"></span>
+        </div>
+      </div>
+
+      <!-- Card Body: Metrics or Scanning State -->
+      <div class="card-body-content">
+
+        <!-- Scanning State -->
+        <div *ngIf="repo.status === 'Scanning'" class="scanning-state">
+          <div class="progress-bar-wrapper">
+            <div class="progress-bar-animated"></div>
+          </div>
+          <span class="scanning-label"><i class="bi bi-arrow-repeat spin"></i> {{ 'REPOSITORY.ANALYZING' | translate }}</span>
+        </div>
+
+        <!-- Metrics State -->
+        <div *ngIf="repo.status !== 'Scanning'" class="metrics-row">
+          <div class="metric-item" [title]="'REPOSITORY.BUGS' | translate">
+            <i class="bi bi-bug text-danger"></i>
+            <span class="metric-value">{{ repo.metrics?.bugs || 0 }}</span>
+            <span class="metric-label">{{ 'REPOSITORY.BUGS' | translate }}</span>
+          </div>
+          <div class="metric-item" [title]="'REPOSITORY.SECURITY' | translate">
+            <i class="bi bi-shield-exclamation text-warning"></i>
+            <span class="metric-value">{{ getSecurityTotal(repo.metrics) }}</span>
+            <span class="metric-label">{{ 'REPOSITORY.SECURITY' | translate }}</span>
+          </div>
+          <div class="metric-item" [title]="'REPOSITORY.COVERAGE' | translate">
+            <i class="bi bi-graph-up text-success"></i>
+            <span class="metric-value">{{ repo.metrics?.coverage || 0 }}%</span>
+            <span class="metric-label">{{ 'REPOSITORY.COVERAGE' | translate }}</span>
+          </div>
+
+          <!-- Quality Gate -->
+          <div class="metric-item quality-gate" *ngIf="repo.qualityGate">
+            <span class="gate-badge" [ngClass]="repo.qualityGate === 'Passed' ? 'gate-pass' : 'gate-fail'">
+              {{ (repo.qualityGate === 'Passed' ? 'REPOSITORY.PASSED' : 'REPOSITORY.FAILED') | translate }}
+            </span>
+            <span class="metric-label">{{ 'REPOSITORY.QUALITY_GATE' | translate }}</span>
+          </div>
+        </div>
+
+        <!-- Last Scan Info -->
+        <div class="last-updated" *ngIf="repo.status !== 'Scanning'">
+          <i class="bi bi-clock"></i> {{ repo.lastScan ? (repo.lastScan | date:'medium') : ('REPOSITORY.NEVER_SCANNED' | translate) }}
+        </div>
+      </div>
+
+      <!-- Card Footer: Actions -->
+      <div class="card-footer-row">
+        <div class="action-buttons">
+
+          <!-- Run Scan -->
+          <button class="btn-icon btn-run" *ngIf="repo.status === 'Active'" (click)="runScan(repo)" [title]="'REPOSITORY.TOOLTIP_RUN' | translate">
+            <i class="bi bi-play-fill"></i>
+          </button>
+
+          <!-- Resume Scan -->
+          <button class="btn-icon btn-resume" *ngIf="repo.status === 'Error'" (click)="resumeScan(repo)"
+            [title]="'REPOSITORY.TOOLTIP_RETRY' | translate">
+            <i class="bi bi-arrow-clockwise"></i>
+          </button>
+
+          <!-- Actions visible only when NOT Scanning -->
+          <ng-container *ngIf="repo.status !== 'Scanning'">
+            <!-- View Details -->
+            <button class="btn-icon btn-view" (click)="viewRepo(repo)" [title]="'REPOSITORY.TOOLTIP_VIEW' | translate">
+              <i class="bi bi-eye"></i>
+            </button>
+
+            <!-- Edit -->
+            <button class="btn-icon btn-edit" (click)="editRepo(repo)" [title]="'REPOSITORY.TOOLTIP_SETTINGS' | translate">
+              <i class="bi bi-gear"></i>
+            </button>
+
+            <!-- Delete -->
+            <button class="btn-icon btn-delete" (click)="onDelete(repo)" [title]="'REPOSITORY.TOOLTIP_DELETE' | translate">
+              <i class="bi bi-trash"></i>
+            </button>
+          </ng-container>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- Empty State -->
+  <div class="empty-state" *ngIf="filteredRepositories.length === 0 && !loading">
+    <div class="empty-icon">
+      <i class="bi bi-folder-x"></i>
+    </div>
+    <h3>{{ 'REPOSITORY.NO_REPOS_FOUND' | translate }}</h3>
+    <p>{{ 'REPOSITORY.NO_REPOS_FOUND_DESC' | translate }}</p>
+  </div>
+
+</div>
+
+<!-- Modal -->
+<div class="modal-backdrop-custom fade-in" *ngIf="showScanModal" (click)="closeScanModal()">
+  <div class="modal-dialog-custom" (click)="$event.stopPropagation()">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">
+          <i class="bi bi-shield-lock"></i> {{ 'REPOSITORY.RUN_SCAN_TITLE' | translate }}
+        </h5>
+        <button class="btn-close" (click)="closeScanModal()"></button>
+      </div>
+
+      <form #scanForm="ngForm" (ngSubmit)="confirmScan(scanForm)">
+        <div class="modal-body">
+          <div class="form-group mb-3">
+            <label>{{ 'REPOSITORY.USERNAME' | translate }}</label>
+            <input type="text" [(ngModel)]="scanUsername" name="username" class="form-control" required />
+          </div>
+          <div class="form-group mb-3">
+            <label>{{ 'REPOSITORY.GIT_TOKEN' | translate }}</label>
+            <input type="password" [(ngModel)]="scanPassword" name="password" class="form-control" required
+              [placeholder]="'REPOSITORY.TOKEN_PLACEHOLDER' | translate" />
+          </div>
+        </div>
+
+        <div class="modal-footer">
+          <button type="button" class="btn btn-text" (click)="closeScanModal()">{{ 'REPOSITORY.CANCEL' | translate }}</button>
+          <button type="submit" class="btn btn-primary-gradient">{{ 'REPOSITORY.START_SCAN' | translate }}</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>

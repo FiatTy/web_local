@@ -1,0 +1,90 @@
+<div class="container mt-4">
+  <div class="d-flex align-items-center mb-3">
+    <button class="back-btn me-2" (click)="goBack()">
+      <i class="bi bi-chevron-left"></i>
+    </button>
+    <h3 class="text-primary mb-0">
+      <i class="bi bi-shield-lock-fill"></i> {{ 'SECURITY_DASHBOARD.TITLE' | translate }}
+    </h3>
+  </div>
+  <div class="d-flex justify-content-between align-items-center my-3">
+    <p><strong>{{ 'SECURITY_DASHBOARD.SECURITY_SCORE' | translate }}</strong> {{securityScore}}/100</p>
+    <p><strong>{{ 'SECURITY_DASHBOARD.RISK_LEVEL' | translate }}</strong> {{ getRiskLevelKey(riskLevel) | translate }}</p>
+  </div>
+
+  <div class="row">
+    <div class="col-md-4 mb-3">
+      <div class="card shadow-sm">
+        <div class="card-header">{{ 'SECURITY_DASHBOARD.VULNERABILITIES_BY_SEVERITY' | translate }}</div>
+        <div class="card-body">
+          <div *ngFor="let v of vulnerabilities" class="vulnerability-item">
+            <div class="d-flex justify-content-between">
+              <span>{{ getSeverityKey(v.severity) | translate }}</span>
+              <span>{{v.count}}</span>
+            </div>
+            <div class="progress-bar-container">
+              <div *ngIf="v.count > 0" class="progress-bar" [ngClass]="v.color"
+                [style.width.%]="(v.count / totalVulnerabilities) * 100">
+              </div>
+            </div>
+          </div>
+          <hr>
+          <p>{{ 'SECURITY_DASHBOARD.TOTAL_VULNERABILITIES' | translate:{count: totalVulnerabilities} }}</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-md-4 mb-3">
+      <div class="card shadow-sm">
+        <div class="card-header">{{ 'SECURITY_DASHBOARD.OWASP_COVERAGE' | translate }}</div>
+        <div class="card-body">
+          <ul class="list-group">
+            <li *ngFor="let item of owaspCoverage"
+              class="list-group-item d-flex justify-content-between align-items-center">
+              {{ item.name }}
+              <i [ngClass]="{
+                  'bi bi-check-circle-fill text-success': item.status === 'pass',
+                  'bi bi-exclamation-triangle-fill text-warning': item.status === 'warning',
+                  'bi bi-x-circle-fill text-danger': item.status === 'fail'
+                }">
+              </i>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-md-4 mb-3">
+      <div class="card shadow-sm">
+        <div class="card-header">{{ 'SECURITY_DASHBOARD.HOT_SECURITY_ISSUES' | translate }}</div>
+        <div class="card-body">
+          <ol *ngIf="hotIssues.length > 0; else noHotIssues">
+            <li *ngFor="let issue of hotIssues">{{issue.name}} ({{issue.count}})</li>
+          </ol>
+          <ng-template #noHotIssues>
+            <p class="text-muted text-center">{{ 'SECURITY_DASHBOARD.NO_HOT_ISSUES' | translate }}</p>
+          </ng-template>
+          <button class="btn btn-outline-primary btn-sm w-100" [routerLink]="['/issue']"
+            [queryParams]="{ type: 'SECURITY' }">
+            {{ 'SECURITY_DASHBOARD.VIEW_ALL_ISSUES' | translate }}
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card shadow-sm mt-3">
+    <div class="card-body">
+      <ng-container *ngIf="trendDataLoaded; else loadingChart">
+        <h5 class="text-primary mb-3"><i class="bi bi-graph-up"></i> {{ 'SECURITY_DASHBOARD.TREND_TITLE' | translate }}</h5>
+        <apx-chart [series]="chartSeries" [chart]="chartOptions.chart!" [xaxis]="chartOptions.xaxis!"
+          [stroke]="chartOptions.stroke!" [yaxis]="chartOptions.yaxis!" [colors]="chartOptions.colors!"
+          [dataLabels]="chartOptions.dataLabels!" [tooltip]="chartOptions.tooltip!" [title]="chartOptions.title!">
+        </apx-chart>
+      </ng-container>
+      <ng-template #loadingChart>
+        <p class="text-muted text-center">{{ 'SECURITY_DASHBOARD.LOADING_TREND' | translate }}</p>
+      </ng-template>
+    </div>
+  </div>
+</div>

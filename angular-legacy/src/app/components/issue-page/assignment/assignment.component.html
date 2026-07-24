@@ -1,0 +1,123 @@
+<div class="container mt-4 assignment-wrapper">
+  <div class="d-flex justify-content-between align-items-center mb-3">
+    <div class="d-flex align-items-center gap-2">
+      <button class="back-btn" (click)="goBack()"><i class="bi bi-chevron-left"></i></button>
+
+      <h3 class="mb-0 text-primary dark:text-white"
+        style="font-size:2rem; font-weight:600; display:flex; align-items:center; gap:8px;">
+        <i class="bi bi-list-task me-1 text-primary dark:text-info" style="font-size:2rem;"></i>
+        {{ 'MY_ASSIGNMENTS.TITLE' | translate }}
+      </h3>
+
+
+
+    </div>
+    <!-- <button type="button" class="btn btn-outline-primary" (click)="openAssignModal()" title="Change Assignee">
+      <i class="bi bi-person-check"></i> Assign Issue
+    </button> -->
+  </div>
+
+
+
+  <table class="table table-bordered assignment-table">
+    <caption class="visually-hidden">{{ 'MY_ASSIGNMENTS.TABLE_CAPTION' | translate }}</caption>
+    <thead>
+      <tr>
+        <th class="text-center">{{ 'MY_ASSIGNMENTS.COL_ASSIGNED_TO' | translate }}</th>
+        <th class="text-center">{{ 'MY_ASSIGNMENTS.COL_ISSUE' | translate }}</th>
+        <th class="text-center">{{ 'MY_ASSIGNMENTS.COL_SEVERITY' | translate }}</th>
+        <th class="text-center">{{ 'MY_ASSIGNMENTS.COL_CREATE_DATE' | translate }}</th>
+        <th class="text-center">{{ 'MY_ASSIGNMENTS.COL_STATUS' | translate }}</th>
+
+
+        <!-- <th>Resolution</th> -->
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let a of issuesAll" (click)="goToDetail(a.id) " style="cursor:pointer;">
+        <td>{{ a.assignedTo?.username }}</td>
+        <td>{{ a.message }}</td>
+        <td class="text-center">
+          <span class="badge severity-badge" [ngStyle]="{
+          'background-color': getPriorityColor(a.severity),
+          'font-weight': '500'
+        }">
+            {{ a.severity }}
+          </span>
+        </td>
+
+
+        <td class="text-center">{{ a.createdAt | date:'yyyy-MM-dd' }}</td>
+        <td class="text-center">
+          <span class="status-box" [ngClass]="statusClass(a.status)">
+            {{ 'ISSUE.' + getStatusKey(a.status) | translate }}
+          </span>
+        </td>
+
+        <!-- <td>{{ a.resolution || '-' }}</td> -->
+
+      </tr>
+    </tbody>
+  </table>
+  <!-- <app-issuemodal #assignModal (assignSubmit)="handleAssignSubmit($event)" (statusSubmit)="handleStatusSubmit($event)"
+    (closed)="{}">
+  </app-issuemodal> -->
+
+</div>
+
+
+<!-- Modal -->
+<!-- <div class="modal modal-backdrop-custom" 
+     [ngClass]="showAssignModal ? 'modal-show' : 'modal-hide'" 
+     (click)="closeAssignModal()">
+  <div class="modal-dialog modal-dialog-custom" (click)="$event.stopPropagation()">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title"><i class="bi bi-person-check"></i> {{ 'ISSUE.ASSIGN_MODAL_TITLE' | translate }}</h5>
+        <button type="button" class="btn-close" (click)="closeAssignModal()"></button>
+      </div>
+
+      <div class="modal-body">
+        <form #assignmentForm="ngForm" (ngSubmit)="onSubmit(assignmentForm)" novalidate>
+          <div class="mb-3">
+            <label for="issueId" class="form-label">{{ 'ISSUE_MODAL.ISSUE_ID' | translate }}</label>
+            <input type="text" class="form-control" [(ngModel)]="assignment.issueId" 
+                   name="issueId" #issueId="ngModel" required>
+            <div *ngIf="issueId.invalid && (issueId.dirty || issueId.touched)" class="text-danger small">
+              {{ 'MY_ASSIGNMENTS.PLEASE_ENTER_ISSUE_ID' | translate }}
+            </div>
+          </div>
+
+          <div class="mb-3">
+            <label for="assignedTo" class="form-label">{{ 'ISSUE_MODAL.ASSIGN_TO' | translate }}</label>
+            <select class="form-select" [(ngModel)]="assignment.assignedTo" 
+                    name="assignedTo" #assignedTo="ngModel" required>
+              <option value="" disabled selected>{{ 'ISSUE.SELECT_USER' | translate }}</option>
+              <option *ngFor="let user of users" [value]="user.name">{{ user.name }}</option>
+            </select>
+            <div *ngIf="assignedTo.invalid && (assignedTo.dirty || assignedTo.touched)" class="text-danger small">
+              {{ 'ISSUE.PLEASE_SELECT_USER' | translate }}
+            </div>
+          </div>
+
+       
+          <div class="mb-3">
+            <label for="dueDate" class="form-label">{{ 'ISSUE_DETAIL.CREATED' | translate }}</label>
+            <input type="date" class="form-control" [(ngModel)]="assignment.dueDate" 
+                   name="dueDate" #dueDate="ngModel" required>
+            <div *ngIf="dueDate.invalid && (dueDate.dirty || dueDate.touched)" class="text-danger small">
+              {{ 'MY_ASSIGNMENTS.PLEASE_SELECT_DUE_DATE' | translate }}
+            </div>
+          </div>
+
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" (click)="closeAssignModal()">{{ 'ISSUE.CANCEL' | translate }}</button>
+            <button type="submit" class="btn btn-primary" [disabled]="assignmentForm.invalid">
+              {{ 'MY_ASSIGNMENTS.SAVE_ASSIGNMENT' | translate }}
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div> -->

@@ -1,0 +1,443 @@
+import { Component, OnInit } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
+import { Router } from '@angular/router';
+import { Repository, RepositoryService } from '../../../services/reposervice/repository.service';
+import { ScanService } from '../../../services/scanservice/scan.service';
+import { Issue, IssueService } from '../../../services/issueservice/issue.service';
+import { AuthService } from '../../../services/authservice/auth.service';
+import { forkJoin } from 'rxjs';
+import { SseService } from '../../../services/scanservice/sse.service';        // <-- added
+import { MatSnackBar } from '@angular/material/snack-bar';
+import { SharedDataService } from '../../../services/shared-data/shared-data.service';
+import { WebSocketService } from '../../../services/websocket/websocket.service';
+import { ScanEvent } from '../../../interface/websocket_interface';
+import Swal from 'sweetalert2';
+import { UserSettingsDataService } from '../../../services/shared-data/user-settings-data.service';
+import { TranslatePipe, TranslateService } from '@ngx-translate/core';
+
+
+@Component({
+  selector: 'app-repositories',
+  standalone: true,
+  imports: [CommonModule, FormsModule, TranslatePipe],
+  templateUrl: './repositories.component.html',
+  styleUrl: './repositories.component.css'
+})
+export class RepositoriesComponent implements OnInit {
+  private wsSub?: any; //กัน subscribe ซ้ำ/ค้างเวลาเปลี่ยนหน้า
+  repositories: Repository[] = [];
+
+  filteredRepositories: Repository[] = [];
+  issues: Issue[] = [];
+  summaryStats: { label: string; count: number; icon: string; bg: string }[] = [];
+  searchText: string = '';
+  activeFilter: string = 'all';
+  selectedStatus: string = 'all';
+  loading: boolean = false;
+  fetch: boolean = false;
+  constructor(
+    private sharedData: SharedDataService,
+    private readonly router: Router,
+    private readonly repoService: RepositoryService,
+    private readonly scanService: ScanService,
+    private readonly authService: AuthService,
+    private readonly issueService: IssueService,
+    private readonly snack: MatSnackBar,
+    private readonly ws: WebSocketService,
+    private readonly userSettingsData: UserSettingsDataService,
+    private readonly translate: TranslateService
+  ) { }
+
+  ngOnInit(): void {
+    if (!this.authService.isLoggedIn) {
+      this.router.navigate(['/login']);
+      return;
+    }
+
+    const nav = this.router.getCurrentNavigation();
+    const message = nav?.extras?.state?.['message'];
+
+    if (message) {
+      this.snack.open(message, '', {
+        duration: 2500,
+        horizontalPosition: 'right',
+        verticalPosition: 'top',
+        panelClass: ['app-snack', 'app-snack-green']
+      });
+    }
+
+    // 1. Subscribe รับข้อมูลจาก SharedDataService
+    this.sharedData.repositories$.subscribe(repos => {
+      this.repositories = repos;
+
+      this.filteredRepositories = this.sortRepositories([...repos]);
+      this.updateSummaryStats();
+    });
+
+    // 2. ถ้ายังไม่มี data Cache Fetch API ใหม่ (ถ้ามีแล้วใช้ของเดิม เพื่อรักษา Status 'Scanning')
+    if (!this.sharedData.hasRepositoriesCache) {
+      this.loadRepositories();
+    }
+  }
+
+  loadRepositories() {
+    this.sharedData.setLoading(true);
+
+    this.repoService.getAllRepo().subscribe({
+      next: (repos) => {
+        // [Refactor] ไม่เช็ค sessionStorage แล้ว ใช้ข้อมูลจาก DB ล้วนๆ
+        // ถ้า DB บอกว่าเป็น PENDING/SCANNING ก็จะขึ้นหมุนติ้วๆ เอง
+
+        // เก็บข้อมูลลง SharedDataService
+        this.sharedData.setRepositories(repos);
+        this.sharedData.setLoading(false);
+
+        this.filteredRepositories = this.sortRepositories([...repos]);
+        this.updateSummaryStats();
+      },
+      error: (err) => {
+        this.sharedData.setLoading(false);
+      }
+    });
+  }
+
+  goToAddRepository() {
+    this.router.navigate(['/addrepository']);
+  }
+
+  searchRepositories(event: Event): void {
+    const keyword = (event.target as HTMLInputElement).value
+      .trim()
+      .toLowerCase();
+
+    this.searchText = keyword;
+    this.applyFilters();
+  }
+
+
+  filterBy(framework: string): void {
+    this.activeFilter = framework;
+    this.applyFilters();
+  }
+
+  filterByStatus(): void {
+    this.applyFilters();
+  }
+
+  private applyFilters(): void {
+    // 1. Filter by Tab & Status first (Base List)
+    const baseList = this.repositories.filter(repo =>
+      (this.activeFilter === 'all' || repo.projectType?.toLowerCase().includes(this.activeFilter.toLowerCase())) &&
+      (this.selectedStatus === 'all' || repo.status === this.selectedStatus)
+    );
+
+    // 2. Handle Search Logic
+    if (this.searchText) {
+      this.filteredRepositories = baseList.filter(repo =>
+        repo.name.toLowerCase().includes(this.searchText) ||
+        repo.projectType?.toLowerCase().includes(this.searchText)
+      );
+    } else {
+      // No search: Show all filtered by Tab/Status
+      this.filteredRepositories = this.sortRepositories(baseList);
+    }
+
+    this.updateSummaryStats();
+  }
+
+  countByType(framework: 'ANGULAR' | 'SPRING_BOOT'): number {
+    return this.repositories.filter(
+      repo => repo.projectType === framework
+    ).length;
+  }
+
+
+  updateSummaryStats(): void {
+    this.summaryStats = [
+      {
+        label: 'Total Repositories',
+        count: this.repositories.length,
+        icon: 'bi bi-database',
+        bg: 'bg-primary'
+      },
+      {
+        label: 'Active',
+        count: this.repositories.filter(r => r.status === 'Active').length,
+        icon: 'bi bi-check-circle-fill',
+        bg: 'bg-success'
+      },
+      {
+        label: 'Scanning',
+        count: this.repositories.filter(r => r.status === 'Scanning').length,
+        icon: 'bi bi-arrow-repeat',
+        bg: 'bg-info'
+      },
+      {
+        label: 'Error',
+        count: this.repositories.filter(r => r.status === 'Error').length,
+        icon: 'bi bi-exclamation-circle-fill',
+        bg: 'bg-danger'
+      }
+    ];
+  }
+
+  runScan(repo: Repository) {
+    if (repo.status === 'Scanning') return;
+    if (!repo.projectId) return;
+
+    const sonarConfig = this.userSettingsData.sonarQubeConfig;
+
+    // Validate SonarQube Token & Server URL
+    if (!sonarConfig?.authToken || sonarConfig.authToken.trim() === '' || !sonarConfig?.serverUrl || sonarConfig.serverUrl.trim() === '') {
+      Swal.fire({
+        icon: 'warning',
+        title: 'Missing SonarQube Token or Server URL',
+        text: 'Please configure your SonarQube Token and Server URL in User Settings before scanning.',
+        showCancelButton: true,
+        confirmButtonText: 'Go to Settings',
+        confirmButtonColor: '#3085d6',
+        cancelButtonColor: '#d33',
+        reverseButtons: true,
+      }).then((result: any) => {
+        if (result.isConfirmed) this.router.navigate(['/sonarqubeconfig']);
+      });
+      return;
+    }
+
+    // Validate Git Access Token
+    const gitToken = sonarConfig?.gitAccessToken?.trim() || null;
+    if (!gitToken) {
+      Swal.fire({
+        icon: 'warning',
+        title: 'Missing Git Access Token',
+        text: 'Please configure your Git Access Token in SonarQube Settings before scanning a private repository.',
+        showCancelButton: true,
+        confirmButtonText: 'Go to Settings',
+        confirmButtonColor: '#3085d6',
+        cancelButtonColor: '#d33',
+        reverseButtons: true,
+      }).then((result: any) => {
+        if (result.isConfirmed) this.router.navigate(['/sonarqubeconfig']);
+      });
+      return;
+    }
+
+    this.executeScan(repo, gitToken);
+  }
+
+  private executeScan(repo: Repository, token: string | null) {
+    // update UI and SharedDataService with 'Scanning' immediately to give feedback
+    repo.status = 'Scanning';
+    repo.scanningProgress = 0;
+
+    if (repo.projectId) {
+      this.sharedData.updateRepoStatus(repo.projectId, 'Scanning', 0);
+      // [Refactor] ไม่เก็บ sessionStorage แล้ว เชื่อใจ WebSocket + DB
+    }
+
+    this.updateSummaryStats();
+
+    this.repoService.startScan(repo.projectId!, 'dev', token, this.userSettingsData.sonarQubeConfig?.serverUrl).subscribe({
+      next: (response: any) => {
+        this.snack.open(`Scan started: ${repo.name}`, '', {
+          duration: 2500,
+          horizontalPosition: 'right',
+          verticalPosition: 'top',
+          panelClass: ['app-snack', 'app-snack-green']
+        });
+        // Status จะถูก update ผ่าน WebSocket ใน AppComponent แทน
+      },
+      error: (err) => {
+        repo.status = 'Error';
+        repo.scanningProgress = 0;
+
+        // Update SharedDataService on error
+        if (repo.projectId) {
+          this.sharedData.updateRepoStatus(repo.projectId, 'Error', 0);
+        }
+
+        this.updateSummaryStats();
+
+        // Extract error message if possible
+        const msg = err?.error?.message || 'Scan failed to start';
+
+        this.snack.open(msg, '', {
+          duration: 3000,
+          horizontalPosition: 'right',
+          verticalPosition: 'top',
+          panelClass: ['app-snack', 'app-snack-red']
+        });
+      }
+    });
+  }
+
+  resumeScan(repo: Repository) {
+    if (repo.status === 'Scanning') return;
+    if (!repo.projectId) return;
+
+    const sonarConfig = this.userSettingsData.sonarQubeConfig;
+
+    // Validate SonarQube Token & Server URL
+    if (!sonarConfig?.authToken || sonarConfig.authToken.trim() === '' || !sonarConfig?.serverUrl || sonarConfig.serverUrl.trim() === '') {
+      Swal.fire({
+        icon: 'warning',
+        title: 'Missing SonarQube Token or Server URL',
+        text: 'Please configure your SonarQube Token and Server URL in User Settings before scanning.',
+        showCancelButton: true,
+        confirmButtonText: 'Go to Settings',
+        confirmButtonColor: '#3085d6',
+        cancelButtonColor: '#d33',
+        reverseButtons: true,
+      }).then((result: any) => {
+        if (result.isConfirmed) this.router.navigate(['/sonarqubeconfig']);
+      });
+      return;
+    }
+
+    // Validate Git Access Token
+    const gitToken = sonarConfig?.gitAccessToken?.trim() || null;
+    if (!gitToken) {
+      Swal.fire({
+        icon: 'warning',
+        title: 'Missing Git Access Token',
+        text: 'Please configure your Git Access Token in SonarQube Settings before scanning a private repository.',
+        showCancelButton: true,
+        confirmButtonText: 'Go to Settings',
+        confirmButtonColor: '#3085d6',
+        cancelButtonColor: '#d33',
+        reverseButtons: true,
+      }).then((result: any) => {
+        if (result.isConfirmed) this.router.navigate(['/sonarqubeconfig']);
+      });
+      return;
+    }
+
+    this.executeScan(repo, gitToken);
+  }
+
+  //ตัวแปรใน class
+  showScanModal: boolean = false;
+  selectedRepo: Repository | null = null;
+  scanUsername: string = '';
+  scanPassword: string = '';
+
+  //เปิด modal
+  openScanModal(repo: Repository) {
+    this.selectedRepo = repo;
+    this.scanUsername = '';
+    this.scanPassword = '';
+    this.showScanModal = true;
+  }
+
+  //ปิด modal
+  closeScanModal() {
+    this.showScanModal = false;
+    this.selectedRepo = null;
+  }
+
+  //กด Start Scan
+  confirmScan(form: any) {
+    if (!form.valid || !this.selectedRepo) return;
+
+    // เรียก runScan
+    this.runScan(this.selectedRepo);
+
+    // ปิด modal
+    this.closeScanModal();
+  }
+
+  editRepo(repo: Repository) {
+    this.router.navigate(['/settingrepo', repo.projectId]);
+  }
+
+  viewRepo(repo: Repository): void {
+    this.router.navigate(['/detailrepo', repo.projectId]);
+  }
+
+  sortRepositories(list: Repository[]): Repository[] {
+    return [...list].sort((a, b) => {
+      const parseDate = (d?: string | Date): number => {
+        if (!d) return 0;
+        const dateStr = typeof d === 'string' ? d.split('.')[0] + 'Z' : d; // แก้ format
+        const parsed = new Date(dateStr).getTime();
+        return isNaN(parsed) ? 0 : parsed;
+      };
+
+      const dateA = parseDate(a.lastScan || a.createdAt);
+      const dateB = parseDate(b.lastScan || b.createdAt);
+
+      return dateB - dateA; // ล่าสุด → เก่าสุด
+    });
+  }
+  onDelete(repo: Repository) {
+    // กัน null / undefined แบบชัดเจน
+    const t = (key: string) => this.translate.instant(key);
+    if (!repo?.projectId) {
+      Swal.fire({
+        icon: 'error',
+        title: t('REPOSITORY.DELETE_CONFIRM.INVALID_DATA_TITLE'),
+        text: t('REPOSITORY.DELETE_CONFIRM.INVALID_DATA_TEXT'),
+      });
+      return;
+    }
+
+    Swal.fire({
+      title: t('REPOSITORY.DELETE_CONFIRM.TITLE'),
+      text: t('REPOSITORY.DELETE_CONFIRM.TEXT'),
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#d33',
+      cancelButtonColor: '#3085d6',
+      confirmButtonText: t('REPOSITORY.DELETE_CONFIRM.CONFIRM'),
+      cancelButtonText: t('REPOSITORY.DELETE_CONFIRM.CANCEL'),
+      reverseButtons: true
+    }).then((result) => {
+      if (result.isConfirmed) {
+
+        // Loading while deleting
+        Swal.fire({
+          title: t('REPOSITORY.DELETE_CONFIRM.DELETING'),
+          allowOutsideClick: false,
+          didOpen: () => {
+            Swal.showLoading();
+          }
+        });
+
+        this.repoService.deleteRepo(repo.projectId!).subscribe({
+          next: () => {
+            this.sharedData.removeRepository(repo.projectId!);
+            Swal.fire({
+              icon: 'success',
+              title: t('REPOSITORY.DELETE_CONFIRM.SUCCESS_TITLE'),
+              text: t('REPOSITORY.DELETE_CONFIRM.SUCCESS_TEXT'),
+              timer: 1800,
+              showConfirmButton: false
+            });
+            this.repoService.getAllRepo().subscribe(repos => {
+              this.sharedData.setRepositories(repos);
+              this.router.navigate(['/repositories']);
+            });
+          },
+          error: () => {
+            Swal.fire({
+              icon: 'error',
+              title: t('REPOSITORY.DELETE_CONFIRM.FAILED_TITLE'),
+              text: t('REPOSITORY.DELETE_CONFIRM.FAILED_TEXT'),
+            });
+          }
+        });
+      }
+    });
+  }
+
+  getSecurityTotal(metrics: any): number {
+    if (!metrics) return 0;
+    const hotspots = metrics.securityHotspots || 0;
+    const vulns = metrics.vulnerabilities || 0;
+    return hotspots + vulns;
+  }
+
+
+
+}
