@@ -1,0 +1,221 @@
+import { useState } from 'react';
+import { NavLink, Outlet } from 'react-router';
+import { useTranslation } from 'react-i18next';
+import {
+  Bell,
+  Bug,
+  ClipboardList,
+  FileClock,
+  FileText,
+  FolderGit2,
+  LayoutDashboard,
+  LineChart,
+  LogOut,
+  type LucideIcon,
+  Menu,
+  ScanLine,
+  ShieldCheck,
+  SlidersHorizontal,
+  TrendingDown,
+  Users,
+  X,
+} from 'lucide-react';
+import { useAuth } from '@/lib/auth/auth-context';
+import { LanguageSwitcher } from '@/components/common/LanguageSwitcher';
+import { ThemeToggle } from '@/components/common/ThemeToggle';
+
+interface NavItemConfig {
+  to: string;
+  labelKey: string;
+  fallback: string;
+  icon: LucideIcon;
+  adminOnly?: boolean;
+}
+
+interface NavSection {
+  heading: string;
+  items: NavItemConfig[];
+}
+
+const NAV_SECTIONS: NavSection[] = [
+  {
+    heading: 'Overview',
+    items: [{ to: '/dashboard', labelKey: 'NAV.DASHBOARD', fallback: 'Dashboard', icon: LayoutDashboard }],
+  },
+  {
+    heading: 'Code',
+    items: [
+      { to: '/repositories', labelKey: 'NAV.REPOSITORIES', fallback: 'Repositories', icon: FolderGit2 },
+      { to: '/scanhistory', labelKey: 'NAV.SCAN_HISTORY', fallback: 'Scan History', icon: ScanLine },
+      { to: '/issue', labelKey: 'NAV.ISSUE', fallback: 'Issues', icon: Bug },
+      { to: '/assignment', labelKey: 'NAV.ASSIGNMENT', fallback: 'Assignments', icon: ClipboardList },
+    ],
+  },
+  {
+    heading: 'Analytics',
+    items: [
+      { to: '/analysis', labelKey: 'NAV.ANALYSIS', fallback: 'Analysis', icon: LineChart },
+      { to: '/security-dashboard', labelKey: 'NAV.SECURITY', fallback: 'Security', icon: ShieldCheck },
+      { to: '/technical-debt', labelKey: 'NAV.TECHNICAL_DEBT', fallback: 'Technical Debt', icon: TrendingDown },
+    ],
+  },
+  {
+    heading: 'Reports',
+    items: [
+      { to: '/generatereport', labelKey: 'NAV.GENERATE_REPORT', fallback: 'Generate Report', icon: FileText },
+      { to: '/reporthistory', labelKey: 'NAV.REPORT_HISTORY', fallback: 'Report History', icon: FileClock },
+    ],
+  },
+  {
+    heading: 'Settings',
+    items: [
+      { to: '/sonarqubeconfig', labelKey: 'NAV.SONARQUBE_CONFIG', fallback: 'SonarQube', icon: SlidersHorizontal },
+      { to: '/notificationsetting', labelKey: 'NAV.NOTIFICATION_SETTING', fallback: 'Notifications', icon: Bell },
+      { to: '/usermanagement', labelKey: 'NAV.USER_MANAGEMENT', fallback: 'User Management', icon: Users, adminOnly: true },
+    ],
+  },
+];
+
+export function RootLayout() {
+  const { t } = useTranslation();
+  const { user, logout } = useAuth();
+  const [mobileOpen, setMobileOpen] = useState(false);
+  const isAdmin = user?.role === 'ADMIN';
+  const initial = user?.username?.charAt(0).toUpperCase() ?? '?';
+
+  return (
+    <div className="flex min-h-screen bg-bg text-fg">
+      {mobileOpen ? (
+        <button
+          type="button"
+          aria-label="Close menu"
+          className="fixed inset-0 z-30 bg-black/40 lg:hidden"
+          onClick={() => setMobileOpen(false)}
+        />
+      ) : null}
+
+      <aside
+        className={`fixed inset-y-0 left-0 z-40 flex w-64 flex-col border-r border-border bg-surface transition-transform duration-200 lg:static lg:translate-x-0 ${
+          mobileOpen ? 'translate-x-0' : '-translate-x-full'
+        }`}
+      >
+        <div className="flex h-14 items-center justify-between border-b border-border px-5">
+          <div className="flex items-center gap-2.5">
+            <div className="flex h-7 w-7 items-center justify-center rounded-md bg-primary font-mono text-xs font-bold text-primary-fg">
+              CR
+            </div>
+            <div className="flex flex-col leading-none">
+              <span className="text-sm font-semibold tracking-tight text-fg">Code Review</span>
+              <span className="font-mono text-[9px] uppercase tracking-[0.2em] text-faint">PCCTH</span>
+            </div>
+          </div>
+          <button
+            type="button"
+            aria-label="Close menu"
+            className="text-muted hover:text-fg lg:hidden"
+            onClick={() => setMobileOpen(false)}
+          >
+            <X size={18} />
+          </button>
+        </div>
+
+        <nav className="flex-1 space-y-6 overflow-y-auto px-3 py-5">
+          {NAV_SECTIONS.map((section) => {
+            const items = section.items.filter((item) => !item.adminOnly || isAdmin);
+            if (items.length === 0) {
+              return null;
+            }
+            return (
+              <div key={section.heading}>
+                <p className="px-3 pb-1.5 font-mono text-[10px] font-semibold uppercase tracking-[0.15em] text-faint">
+                  {section.heading}
+                </p>
+                <div className="space-y-0.5">
+                  {items.map((item) => {
+                    const Icon = item.icon;
+                    return (
+                      <NavLink
+                        key={item.to}
+                        to={item.to}
+                        onClick={() => setMobileOpen(false)}
+                        className={({ isActive }) =>
+                          `group relative flex items-center gap-3 rounded-md px-3 py-2 text-sm transition-colors ${
+                            isActive
+                              ? 'bg-primary-subtle font-medium text-primary'
+                              : 'text-muted hover:bg-surface-2 hover:text-fg'
+                          }`
+                        }
+                      >
+                        {({ isActive }) => (
+                          <>
+                            <span
+                              className={`absolute left-0 top-1/2 h-5 w-0.5 -translate-y-1/2 rounded-full bg-primary transition-opacity ${
+                                isActive ? 'opacity-100' : 'opacity-0'
+                              }`}
+                            />
+                            <Icon size={17} />
+                            <span>{t(item.labelKey, item.fallback)}</span>
+                          </>
+                        )}
+                      </NavLink>
+                    );
+                  })}
+                </div>
+              </div>
+            );
+          })}
+        </nav>
+      </aside>
+
+      <div className="flex min-w-0 flex-1 flex-col">
+        <header className="sticky top-0 z-20 flex h-14 items-center gap-3 border-b border-border bg-surface/80 px-4 backdrop-blur">
+          <button
+            type="button"
+            aria-label="Open menu"
+            className="inline-flex h-9 w-9 items-center justify-center rounded-md border border-border text-muted transition-colors hover:text-fg lg:hidden"
+            onClick={() => setMobileOpen(true)}
+          >
+            <Menu size={18} />
+          </button>
+
+          <div className="flex-1" />
+
+          <LanguageSwitcher />
+          <ThemeToggle />
+          <button
+            type="button"
+            aria-label="Notifications"
+            className="inline-flex h-9 w-9 items-center justify-center rounded-md border border-border text-muted transition-colors hover:text-fg active:scale-95"
+          >
+            <Bell size={16} />
+          </button>
+
+          <div className="flex items-center gap-2 pl-1">
+            <div className="hidden text-right leading-tight sm:block">
+              <div className="text-xs font-medium text-fg">{user?.username}</div>
+              <div className="font-mono text-[10px] uppercase tracking-wide text-faint">{user?.role}</div>
+            </div>
+            <div className="flex h-8 w-8 items-center justify-center rounded-full bg-primary-subtle text-sm font-semibold text-primary">
+              {initial}
+            </div>
+            <button
+              type="button"
+              onClick={() => void logout()}
+              title={t('NAV.LOGOUT')}
+              aria-label={t('NAV.LOGOUT')}
+              className="inline-flex h-9 w-9 items-center justify-center rounded-md border border-border text-muted transition-colors hover:text-danger active:scale-95"
+            >
+              <LogOut size={16} />
+            </button>
+          </div>
+        </header>
+
+        <main className="flex-1 px-4 py-6 lg:px-8">
+          <div className="mx-auto w-full max-w-7xl">
+            <Outlet />
+          </div>
+        </main>
+      </div>
+    </div>
+  );
+}

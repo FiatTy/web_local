@@ -9,6 +9,9 @@ dist-ssr
 !.env.example
 .DS_Store
 Thumbs.db
+.playwright-mcp
+landing-light.png
+landing-dark.png
 .vscode/*
 !.vscode/extensions.json
 .idea
