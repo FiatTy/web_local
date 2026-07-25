@@ -146,11 +146,29 @@ auth, user, repository, scan, issue, assign, comment, dashboard, notification, r
 | 0 | Scaffold — วางโครง Vite+React+TS+Tailwind ให้ build ผ่าน | DONE |
 | 1 | Foundation — api-client + interceptor, AuthContext, guard, i18n, layout/router, design system | DONE |
 | 2 | หน้า Auth — login, register, reset-password, forgot-password, verify-email/success/failed | DONE |
-| 3 | หน้าโดเมนทีละหมวด — dashboard -> repository -> scan -> issue -> report -> analytics -> settings (พร้อม api/hook ต่อโดเมน + UX/UI สวย) | ถัดไป |
-| 4 | Realtime — WebSocket แจ้งเตือน + comment ต่อ issue, SSE สถานะ scan | รอ |
+| 3 | หน้าโดเมนทีละหมวด — dashboard -> repository -> scan -> issue -> report -> analytics -> settings (พร้อม api/hook ต่อโดเมน + UX/UI สวย) | DONE |
+| 4 | Realtime — WebSocket แจ้งเตือน + comment ต่อ issue, SSE สถานะ scan | ถัดไป |
 | CD | Deploy (self-hosted runner + nginx `/codereview/`) | ยังไม่ทำ |
 
 ทุกเฟส: `npm run build` ต้องเขียว, commit + push ต่อ unit, ตอนทำ UI ใช้ design skills (frontend-design, emil-design-eng) + ตรวจด้วย Playwright
+
+### หน้าที่ทำครบใน Phase 3 (21 route ไม่มี placeholder เหลือ)
+
+| หมวด | หน้า | feature layer |
+|---|---|---|
+| Overview | `/dashboard` | ประกอบจาก repository + scan + issue hooks |
+| Code | `/repositories`, `/addrepository`, `/settingrepo/:id`, `/detailrepo/:id` | `features/repository` |
+| Code | `/scanhistory`, `/scanresult/:id`, `/logviewer/:id` | `features/scan` |
+| Code | `/issue`, `/issuedetail/:id`, `/assignment` | `features/issue` |
+| Analytics | `/analysis`, `/security-dashboard`, `/technical-debt` | `features/security` + `features/analytics/lib/technical-debt.ts` |
+| Reports | `/generatereport`, `/reporthistory` | `features/report` |
+| Settings | `/sonarqubeconfig`, `/notificationsetting`, `/usermanagement` (ADMIN) | `features/setting`, `features/user` |
+
+ของกลางที่เพิ่มระหว่าง Phase 3: `lib/toast` (ToastProvider + useToast แทน SweetAlert2),
+`components/common/{FormField, Switch, GateStatus, PageHeader}`, `components/charts/{DonutChart, BarList}`
+
+ยังไม่ได้ทำ (ค้างจาก Phase 3): export รายงานเป็น Excel / Word / PowerPoint ฝั่ง client
+(ของเดิมใช้ exceljs + docx + pptxgenjs) — ตอนนี้รองรับ PDF ที่ backend เรนเดอร์ให้อย่างเดียว
 
 ---
 
