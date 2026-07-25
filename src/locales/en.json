@@ -881,6 +881,9 @@
   },
   "GENERATE_REPORT": {
     "TITLE": "Generate Report",
+    "SUBTITLE": "Pick a project, a date range, and the sections to include.",
+    "PDF_HINT": "Rendered on the server and downloaded when ready.",
+    "SCANS_IN_RANGE": "Scans in range",
     "PROJECTS_TO_INCLUDE": "Projects to Include",
     "PROJECT_REQUIRED": "Please select at least one project.",
     "SELECT_PROJECT": "Select a project",
@@ -917,6 +920,7 @@
   },
   "REPORT_HISTORY": {
     "TITLE": "Report History",
+    "SUBTITLE": "Reports you generated, ready to download again.",
     "SEARCH_PLACEHOLDER": "Search reports...",
     "LOADING": "Loading...",
     "PROJECT": "Project",

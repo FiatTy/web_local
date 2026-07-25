@@ -27,7 +27,8 @@ import { AssignmentsPage } from '@/pages/AssignmentsPage';
 import { AnalysisPage } from '@/pages/AnalysisPage';
 import { SecurityDashboardPage } from '@/pages/SecurityDashboardPage';
 import { TechnicalDebtPage } from '@/pages/TechnicalDebtPage';
-import { PlaceholderPage } from '@/components/common/PlaceholderPage';
+import { GenerateReportPage } from '@/pages/GenerateReportPage';
+import { ReportHistoryPage } from '@/pages/ReportHistoryPage';
 
 const basename = import.meta.env.BASE_URL.replace(/\/$/, '');
 
@@ -64,8 +65,8 @@ export const router = createBrowserRouter(
                 { path: '/analysis', element: <AnalysisPage /> },
                 { path: '/security-dashboard', element: <SecurityDashboardPage /> },
                 { path: '/technical-debt', element: <TechnicalDebtPage /> },
-                { path: '/generatereport', element: <PlaceholderPage title="Generate Report" /> },
-                { path: '/reporthistory', element: <PlaceholderPage title="Report History" /> },
+                { path: '/generatereport', element: <GenerateReportPage /> },
+                { path: '/reporthistory', element: <ReportHistoryPage /> },
                 { path: '/sonarqubeconfig', element: <SonarQubeConfigPage /> },
                 { path: '/notificationsetting', element: <NotificationSettingsPage /> },
                 {
