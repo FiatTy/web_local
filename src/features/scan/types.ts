@@ -7,6 +7,8 @@ export interface ScanMetrics {
   coverage?: number;
   securityHotspots?: number;
   duplicatedLinesDensity?: number;
+  technicalDebtMinutes?: number;
+  debtRatio?: number;
   maintainabilityRating?: string;
   reliabilityRating?: string;
   securityRating?: string;
