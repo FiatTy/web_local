@@ -17,6 +17,7 @@ import { IssuesPage } from '@/pages/IssuesPage';
 import { DashboardPage } from '@/pages/DashboardPage';
 import { SonarQubeConfigPage } from '@/pages/SonarQubeConfigPage';
 import { NotificationSettingsPage } from '@/pages/NotificationSettingsPage';
+import { UserManagementPage } from '@/pages/UserManagementPage';
 import { PlaceholderPage } from '@/components/common/PlaceholderPage';
 
 const basename = import.meta.env.BASE_URL.replace(/\/$/, '');
@@ -61,7 +62,7 @@ export const router = createBrowserRouter(
                 {
                   element: <RoleRoute allowed={['ADMIN']} />,
                   children: [
-                    { path: '/usermanagement', element: <PlaceholderPage title="User Management" /> },
+                    { path: '/usermanagement', element: <UserManagementPage /> },
                   ],
                 },
               ],

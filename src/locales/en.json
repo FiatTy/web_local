@@ -725,6 +725,11 @@
     "GO_TO_WEBSITE": "Go to Website"
   },
   "USER_MGT": {
+    "SUBTITLE": "Create accounts, set roles, and remove access for this workspace.",
+    "USERS_COUNT": "{{total}} shown",
+    "NO_USERS": "No users match this search.",
+    "LOAD_ERROR": "Could not load users. Please try again.",
+    "SAVE_FAILED_TEXT": "Could not save the user. Please try again.",
     "SEARCH_PLACEHOLDER": "Search username...",
     "ADD_USER": "Add User",
     "TABLE_CAPTION": "User Accounts Management",
