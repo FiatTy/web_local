@@ -711,6 +711,19 @@
     "REQUEST_NEW_LINK": "Request new link",
     "ERROR_GENERIC": "Reset link is invalid or expired."
   },
+  "VERIFY": {
+    "VERIFYING_TITLE": "Verifying your email...",
+    "VERIFYING_TEXT": "Please wait while we confirm your email address.",
+    "SUCCESS_TITLE": "Verification successful!",
+    "SUCCESS_TEXT": "Your account has been successfully verified.",
+    "ALREADY_TITLE": "Already verified",
+    "ALREADY_TEXT": "Your email has already been verified. You can sign in and start using your account.",
+    "FAILED_TITLE": "Verification failed",
+    "FAILED_TEXT": "Sorry, this verification link is invalid. Please request a new verification email.",
+    "EXPIRED_TITLE": "Link expired",
+    "EXPIRED_TEXT": "This verification link has expired. Please sign in to request a new verification email.",
+    "GO_TO_WEBSITE": "Go to Website"
+  },
   "USER_MGT": {
     "SEARCH_PLACEHOLDER": "Search username...",
     "ADD_USER": "Add User",

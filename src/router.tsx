@@ -8,6 +8,9 @@ import { LoginPage } from '@/pages/LoginPage';
 import { RegisterPage } from '@/pages/RegisterPage';
 import { ForgotPasswordPage } from '@/pages/ForgotPasswordPage';
 import { ResetPasswordPage } from '@/pages/ResetPasswordPage';
+import { VerifyEmailPage } from '@/pages/VerifyEmailPage';
+import { VerifySuccessPage } from '@/pages/VerifySuccessPage';
+import { VerifyFailedPage } from '@/pages/VerifyFailedPage';
 import { PlaceholderPage } from '@/components/common/PlaceholderPage';
 
 const basename = import.meta.env.BASE_URL.replace(/\/$/, '');
@@ -22,9 +25,9 @@ export const router = createBrowserRouter(
         { path: '/register', element: <RegisterPage /> },
         { path: '/reset-password', element: <ResetPasswordPage /> },
         { path: '/forgot-password', element: <ForgotPasswordPage /> },
-        { path: '/verify-email', element: <PlaceholderPage title="Verify Email" /> },
-        { path: '/verify-success', element: <PlaceholderPage title="Verify Success" /> },
-        { path: '/verify-failed', element: <PlaceholderPage title="Verify Failed" /> },
+        { path: '/verify-email', element: <VerifyEmailPage /> },
+        { path: '/verify-success', element: <VerifySuccessPage /> },
+        { path: '/verify-failed', element: <VerifyFailedPage /> },
         {
           element: <ProtectedRoute />,
           children: [
