@@ -19,6 +19,9 @@
     "REGISTER": "Register",
     "FORGOT_PASSWORD": "Forgot Password",
     "RESET_PASSWORD": "Reset Password",
+    "BACK_HOME": "Back to home",
+    "ASIDE_EYEBROW": "Automated code review",
+    "ASIDE_TAGLINE": "Continuous quality and security analysis for every repository.",
     "EMAIL": "Email",
     "PASSWORD": "Password",
     "CONFIRM_PASSWORD": "Confirm Password",
@@ -429,6 +432,8 @@
     "EMAIL_PATTERN": "Email must have at least 2 characters after \".\"",
     "PASSWORD_PLACEHOLDER": "Enter your password",
     "PASSWORD_REQUIRED": "Password is required",
+    "SUBTITLE": "Sign in to continue to your workspace.",
+    "ERROR_GENERIC": "Login failed. Check your email and password, then try again.",
     "FORGOT_PASSWORD": "Forgot your Password?",
     "DONT_HAVE_ACCOUNT": "Don't have an account?"
   },

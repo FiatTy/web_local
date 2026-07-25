@@ -4,6 +4,7 @@ import { ProtectedRoute } from '@/routes/ProtectedRoute';
 import { RoleRoute } from '@/routes/RoleRoute';
 import { RootLayout } from '@/layouts/RootLayout';
 import { LandingPage } from '@/pages/LandingPage';
+import { LoginPage } from '@/pages/LoginPage';
 import { PlaceholderPage } from '@/components/common/PlaceholderPage';
 
 const basename = import.meta.env.BASE_URL.replace(/\/$/, '');
@@ -14,7 +15,7 @@ export const router = createBrowserRouter(
       element: <AuthBoundary />,
       children: [
         { path: '/', element: <LandingPage /> },
-        { path: '/login', element: <PlaceholderPage title="Login" /> },
+        { path: '/login', element: <LoginPage /> },
         { path: '/register', element: <PlaceholderPage title="Register" /> },
         { path: '/reset-password', element: <PlaceholderPage title="Reset Password" /> },
         { path: '/forgot-password', element: <PlaceholderPage title="Forgot Password" /> },
