@@ -14,6 +14,7 @@ import { VerifyFailedPage } from '@/pages/VerifyFailedPage';
 import { RepositoriesPage } from '@/pages/RepositoriesPage';
 import { ScanHistoryPage } from '@/pages/ScanHistoryPage';
 import { IssuesPage } from '@/pages/IssuesPage';
+import { DashboardPage } from '@/pages/DashboardPage';
 import { PlaceholderPage } from '@/components/common/PlaceholderPage';
 
 const basename = import.meta.env.BASE_URL.replace(/\/$/, '');
@@ -37,7 +38,7 @@ export const router = createBrowserRouter(
             {
               element: <RootLayout />,
               children: [
-                { path: '/dashboard', element: <PlaceholderPage title="Dashboard" /> },
+                { path: '/dashboard', element: <DashboardPage /> },
                 { path: '/repositories', element: <RepositoriesPage /> },
                 { path: '/addrepository', element: <PlaceholderPage title="Add Repository" /> },
                 { path: '/settingrepo/:projectId', element: <PlaceholderPage title="Repository Settings" /> },
