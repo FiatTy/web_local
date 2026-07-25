@@ -13,6 +13,8 @@ export interface RepoMetrics {
   securityHotspots?: number;
 }
 
+import type { Scan } from '@/features/scan/types';
+
 export interface RepositoryPayload {
   name: string;
   url: string;
@@ -63,4 +65,8 @@ export interface Repository {
   lastScan?: string;
   qualityGate?: string;
   metrics?: RepoMetrics;
+}
+
+export interface RepositoryDetail extends Repository {
+  scans: Scan[];
 }

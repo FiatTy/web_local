@@ -456,6 +456,9 @@
   },
   "DETAIL_REPO": {
     "BACK_TOOLTIP": "กลับไปยังหน้าคลังโค้ด",
+    "LATEST_METRICS": "ผลวิเคราะห์ล่าสุด",
+    "VULNERABILITIES": "ช่องโหว่ (Vulnerabilities)",
+    "SECURITY_HOTSPOTS": "จุดเสี่ยงความปลอดภัย (Security Hotspots)",
     "SETTINGS": "ตั้งค่า",
     "QUALITY_GATE": "เกณฑ์คุณภาพ",
     "BUGS": "ข้อผิดพลาด",

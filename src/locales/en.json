@@ -456,6 +456,9 @@
   },
   "DETAIL_REPO": {
     "BACK_TOOLTIP": "Back to Repositories",
+    "LATEST_METRICS": "Latest Analysis",
+    "VULNERABILITIES": "Vulnerabilities",
+    "SECURITY_HOTSPOTS": "Security Hotspots",
     "SETTINGS": "Settings",
     "QUALITY_GATE": "Quality Gate",
     "BUGS": "Bugs",

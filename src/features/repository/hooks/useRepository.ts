@@ -3,11 +3,12 @@ import {
   buildScanRequest,
   createRepository,
   getRepositoryById,
+  getRepositoryDetail,
   startScan,
   updateRepository,
 } from '@/features/repository/api/repository.api';
 import { repositoriesQueryKey } from '@/features/repository/hooks/useRepositories';
-import type { Repository, RepositoryPayload } from '@/features/repository/types';
+import type { Repository, RepositoryDetail, RepositoryPayload } from '@/features/repository/types';
 import type { SonarQubeConfig } from '@/features/setting/types';
 
 export function repositoryQueryKey(projectId: string) {
@@ -18,6 +19,18 @@ export function useRepository(projectId?: string) {
   return useQuery<Repository>({
     queryKey: repositoryQueryKey(projectId ?? ''),
     queryFn: () => getRepositoryById(projectId as string),
+    enabled: Boolean(projectId),
+  });
+}
+
+export function repositoryDetailQueryKey(projectId: string) {
+  return ['repository-detail', projectId] as const;
+}
+
+export function useRepositoryDetail(projectId?: string) {
+  return useQuery<RepositoryDetail>({
+    queryKey: repositoryDetailQueryKey(projectId ?? ''),
+    queryFn: () => getRepositoryDetail(projectId as string),
     enabled: Boolean(projectId),
   });
 }

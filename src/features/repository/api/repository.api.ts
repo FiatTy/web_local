@@ -4,10 +4,12 @@ import type {
   RepoMetrics,
   RepoStatus,
   Repository,
+  RepositoryDetail,
   RepositoryPayload,
   StartScanRequest,
 } from '@/features/repository/types';
 import type { SonarQubeConfig } from '@/features/setting/types';
+import type { Scan } from '@/features/scan/types';
 
 const DEFAULT_EXCLUSIONS = '**/node_modules/**,**/*.spec.ts';
 const DEFAULT_JDK_VERSION = 17;
@@ -187,4 +189,45 @@ export function buildScanRequest(
 
 export async function startScan(projectId: string, request: StartScanRequest): Promise<void> {
   await apiClient.post(`/${projectId}/scan`, request);
+}
+
+function mapScan(raw: RawScan, project: RawProject): Scan {
+  const metrics = raw.metrics as Record<string, unknown> | undefined;
+  return {
+    id: raw.id ?? '',
+    projectId: project.id,
+    projectName: project.name,
+    projectType: project.projectType,
+    status: (raw.status as Scan['status']) ?? 'PENDING',
+    startedAt: raw.startedAt ?? '',
+    completedAt: raw.completedAt,
+    qualityGate: raw.qualityGate ?? null,
+    metrics: metrics
+      ? {
+          bugs: toNumber(metrics.bugs) ?? 0,
+          vulnerabilities: toNumber(metrics.vulnerabilities) ?? 0,
+          codeSmells: toNumber(metrics.codeSmells ?? metrics.code_smells) ?? 0,
+          coverage: toNumber(metrics.coverage) ?? 0,
+          securityHotspots: toNumber(metrics.securityHotspots ?? metrics.security_hotspots) ?? 0,
+          duplicatedLinesDensity:
+            toNumber(metrics.duplicatedLinesDensity ?? metrics.duplicated_lines_density) ?? 0,
+          maintainabilityRating: (metrics.maintainabilityRating ?? metrics.sqale_rating) as string | undefined,
+          reliabilityRating: (metrics.reliabilityRating ?? metrics.reliability_rating) as string | undefined,
+          securityRating: (metrics.securityRating ?? metrics.security_rating) as string | undefined,
+        }
+      : null,
+  };
+}
+
+export async function getRepositoryDetail(projectId: string): Promise<RepositoryDetail> {
+  const { data } = await apiClient.get<RawProject>(`/api/${projectId}`);
+  const project = { ...data, id: data.id ?? projectId };
+  const scans = (project.scanData ?? [])
+    .map((scan) => mapScan(scan, project))
+    .sort(
+      (a, b) =>
+        new Date(b.completedAt ?? b.startedAt).getTime() -
+        new Date(a.completedAt ?? a.startedAt).getTime(),
+    );
+  return { ...mapProject(project), scans };
 }
