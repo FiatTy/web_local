@@ -145,8 +145,8 @@ auth, user, repository, scan, issue, assign, comment, dashboard, notification, r
 |---|---|---|
 | 0 | Scaffold — วางโครง Vite+React+TS+Tailwind ให้ build ผ่าน | DONE |
 | 1 | Foundation — api-client + interceptor, AuthContext, guard, i18n, layout/router, design system | DONE |
-| 2 | หน้า Auth — login, register, reset-password, forgot-password, verify-email/success/failed | ถัดไป |
-| 3 | หน้าโดเมนทีละหมวด — dashboard -> repository -> scan -> issue -> report -> analytics -> settings (พร้อม api/hook ต่อโดเมน + UX/UI สวย) | รอ |
+| 2 | หน้า Auth — login, register, reset-password, forgot-password, verify-email/success/failed | DONE |
+| 3 | หน้าโดเมนทีละหมวด — dashboard -> repository -> scan -> issue -> report -> analytics -> settings (พร้อม api/hook ต่อโดเมน + UX/UI สวย) | ถัดไป |
 | 4 | Realtime — WebSocket แจ้งเตือน + comment ต่อ issue, SSE สถานะ scan | รอ |
 | CD | Deploy (self-hosted runner + nginx `/codereview/`) | ยังไม่ทำ |
 
