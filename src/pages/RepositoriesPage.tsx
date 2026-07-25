@@ -10,17 +10,25 @@ import {
   Gauge,
   Layers,
   Loader2,
+  Play,
   Plus,
   RefreshCw,
+  RotateCw,
   Search,
   Settings2,
   ShieldAlert,
+  SlidersHorizontal,
   Trash2,
   XCircle,
 } from 'lucide-react';
 import { PageHeader } from '@/components/common/PageHeader';
+import { useToast } from '@/lib/toast/toast-context';
 import { useDeleteRepository, useRepositories } from '@/features/repository/hooks/useRepositories';
+import { useStartScan } from '@/features/repository/hooks/useRepository';
+import { useSonarQubeConfig } from '@/features/setting/hooks/useSonarQubeConfig';
 import type { ProjectType, RepoStatus, Repository } from '@/features/repository/types';
+
+const SCAN_BRANCH = 'dev';
 
 type TypeTab = 'all' | ProjectType;
 type StatusFilter = 'all' | RepoStatus;
@@ -94,9 +102,13 @@ function Metric({
 function RepoCard({
   repo,
   onDelete,
+  onScan,
+  isScanPending,
 }: {
   repo: Repository;
   onDelete: (repo: Repository) => void;
+  onScan: (repo: Repository) => void;
+  isScanPending: boolean;
 }) {
   const { t } = useTranslation();
   const lastScan = formatDateTime(repo.lastScan);
@@ -163,31 +175,62 @@ function RepoCard({
       </div>
 
       <div className="mt-4 flex items-center justify-end gap-1">
-        <Link
-          to={`/detailrepo/${repo.projectId}`}
-          title={t('REPOSITORY.TOOLTIP_VIEW')}
-          aria-label={t('REPOSITORY.TOOLTIP_VIEW')}
-          className="inline-flex h-8 w-8 items-center justify-center rounded-md text-muted transition-colors hover:bg-surface-2 hover:text-fg"
-        >
-          <ExternalLink size={15} />
-        </Link>
-        <Link
-          to={`/settingrepo/${repo.projectId}`}
-          title={t('REPOSITORY.TOOLTIP_SETTINGS')}
-          aria-label={t('REPOSITORY.TOOLTIP_SETTINGS')}
-          className="inline-flex h-8 w-8 items-center justify-center rounded-md text-muted transition-colors hover:bg-surface-2 hover:text-fg"
-        >
-          <Settings2 size={15} />
-        </Link>
-        <button
-          type="button"
-          onClick={() => onDelete(repo)}
-          title={t('REPOSITORY.TOOLTIP_DELETE')}
-          aria-label={t('REPOSITORY.TOOLTIP_DELETE')}
-          className="inline-flex h-8 w-8 items-center justify-center rounded-md text-muted transition-colors hover:bg-danger/10 hover:text-danger"
-        >
-          <Trash2 size={15} />
-        </button>
+        {repo.status === 'Active' ? (
+          <button
+            type="button"
+            onClick={() => onScan(repo)}
+            disabled={isScanPending}
+            title={t('REPOSITORY.TOOLTIP_RUN')}
+            aria-label={t('REPOSITORY.TOOLTIP_RUN')}
+            className="inline-flex h-8 items-center gap-1.5 rounded-md bg-primary-subtle px-2.5 text-xs font-medium text-primary transition-colors hover:bg-primary hover:text-primary-fg disabled:cursor-not-allowed disabled:opacity-60"
+          >
+            {isScanPending ? <Loader2 size={14} className="animate-spin" /> : <Play size={14} />}
+            {t('REPOSITORY.START_SCAN')}
+          </button>
+        ) : null}
+        {repo.status === 'Error' ? (
+          <button
+            type="button"
+            onClick={() => onScan(repo)}
+            disabled={isScanPending}
+            title={t('REPOSITORY.TOOLTIP_RETRY')}
+            aria-label={t('REPOSITORY.TOOLTIP_RETRY')}
+            className="inline-flex h-8 items-center gap-1.5 rounded-md bg-warning/12 px-2.5 text-xs font-medium text-warning transition-colors hover:bg-warning/20 disabled:cursor-not-allowed disabled:opacity-60"
+          >
+            {isScanPending ? <Loader2 size={14} className="animate-spin" /> : <RotateCw size={14} />}
+            {t('REPOSITORY.TOOLTIP_RETRY')}
+          </button>
+        ) : null}
+
+        {repo.status === 'Scanning' ? null : (
+          <>
+            <Link
+              to={`/detailrepo/${repo.projectId}`}
+              title={t('REPOSITORY.TOOLTIP_VIEW')}
+              aria-label={t('REPOSITORY.TOOLTIP_VIEW')}
+              className="inline-flex h-8 w-8 items-center justify-center rounded-md text-muted transition-colors hover:bg-surface-2 hover:text-fg"
+            >
+              <ExternalLink size={15} />
+            </Link>
+            <Link
+              to={`/settingrepo/${repo.projectId}`}
+              title={t('REPOSITORY.TOOLTIP_SETTINGS')}
+              aria-label={t('REPOSITORY.TOOLTIP_SETTINGS')}
+              className="inline-flex h-8 w-8 items-center justify-center rounded-md text-muted transition-colors hover:bg-surface-2 hover:text-fg"
+            >
+              <Settings2 size={15} />
+            </Link>
+            <button
+              type="button"
+              onClick={() => onDelete(repo)}
+              title={t('REPOSITORY.TOOLTIP_DELETE')}
+              aria-label={t('REPOSITORY.TOOLTIP_DELETE')}
+              className="inline-flex h-8 w-8 items-center justify-center rounded-md text-muted transition-colors hover:bg-danger/10 hover:text-danger"
+            >
+              <Trash2 size={15} />
+            </button>
+          </>
+        )}
       </div>
     </div>
   );
@@ -196,13 +239,48 @@ function RepoCard({
 export function RepositoriesPage() {
   const { t } = useTranslation();
   const navigate = useNavigate();
+  const { showToast } = useToast();
   const { data: repositories, isPending, isError, refetch, isFetching } = useRepositories();
   const deleteRepository = useDeleteRepository();
+  const configQuery = useSonarQubeConfig();
+  const startScan = useStartScan();
 
   const [typeTab, setTypeTab] = useState<TypeTab>('all');
   const [statusFilter, setStatusFilter] = useState<StatusFilter>('all');
   const [search, setSearch] = useState('');
   const [pendingDelete, setPendingDelete] = useState<Repository | null>(null);
+  const [scanningId, setScanningId] = useState<string | null>(null);
+  const [missingConfigKey, setMissingConfigKey] = useState<'SONAR' | 'GIT' | null>(null);
+
+  const config = configQuery.data;
+
+  async function handleScan(repo: Repository) {
+    if (!config?.authToken?.trim() || !config?.serverUrl?.trim()) {
+      setMissingConfigKey('SONAR');
+      return;
+    }
+    const gitToken = config.gitAccessToken?.trim() || null;
+    if (!gitToken) {
+      setMissingConfigKey('GIT');
+      return;
+    }
+
+    setScanningId(repo.projectId);
+    try {
+      await startScan.mutateAsync({
+        projectId: repo.projectId,
+        branch: SCAN_BRANCH,
+        config,
+        gitToken,
+        serverUrl: config.serverUrl,
+      });
+      showToast({ tone: 'success', title: t('REPOSITORY.SCAN_STARTED'), description: repo.name });
+    } catch {
+      showToast({ tone: 'error', title: t('REPOSITORY.SCAN_START_FAILED'), description: repo.name });
+    } finally {
+      setScanningId(null);
+    }
+  }
 
   const list = useMemo(() => repositories ?? [], [repositories]);
 
@@ -338,10 +416,63 @@ export function RepositoriesPage() {
       ) : (
         <div className="grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-3">
           {filtered.map((repo) => (
-            <RepoCard key={repo.projectId} repo={repo} onDelete={setPendingDelete} />
+            <RepoCard
+              key={repo.projectId}
+              repo={repo}
+              onDelete={setPendingDelete}
+              onScan={(target) => void handleScan(target)}
+              isScanPending={scanningId === repo.projectId}
+            />
           ))}
         </div>
       )}
+
+      {missingConfigKey ? (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+          <button
+            type="button"
+            aria-label={t('REPOSITORY.CANCEL')}
+            className="absolute inset-0 bg-black/50"
+            onClick={() => setMissingConfigKey(null)}
+          />
+          <div className="relative w-full max-w-sm rounded-xl border border-border bg-surface p-6 shadow-xl">
+            <div className="flex h-11 w-11 items-center justify-center rounded-full bg-warning/12 text-warning">
+              <AlertTriangle size={20} />
+            </div>
+            <h2 className="mt-4 text-base font-semibold text-fg">
+              {t(
+                missingConfigKey === 'GIT'
+                  ? 'REPOSITORY.MISSING_GIT_TOKEN_TITLE'
+                  : 'REPOSITORY.MISSING_SONAR_TITLE',
+              )}
+            </h2>
+            <p className="mt-1.5 text-sm leading-relaxed text-muted">
+              {t(
+                missingConfigKey === 'GIT'
+                  ? 'REPOSITORY.MISSING_GIT_TOKEN_TEXT'
+                  : 'REPOSITORY.MISSING_SONAR_TEXT',
+              )}
+            </p>
+            <div className="mt-6 flex justify-end gap-2">
+              <button
+                type="button"
+                onClick={() => setMissingConfigKey(null)}
+                className="inline-flex h-9 items-center rounded-lg border border-border px-4 text-sm font-medium text-fg transition-colors hover:bg-surface-2"
+              >
+                {t('REPOSITORY.CANCEL')}
+              </button>
+              <button
+                type="button"
+                onClick={() => navigate('/sonarqubeconfig')}
+                className="inline-flex h-9 items-center gap-2 rounded-lg bg-primary px-4 text-sm font-semibold text-primary-fg transition hover:bg-primary-hover active:scale-[0.99]"
+              >
+                <SlidersHorizontal size={15} />
+                {t('REPOSITORY.GO_TO_SETTINGS')}
+              </button>
+            </div>
+          </div>
+        </div>
+      ) : null}
 
       {pendingDelete ? (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
