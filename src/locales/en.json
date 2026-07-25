@@ -630,6 +630,8 @@
   },
   "MY_ASSIGNMENTS": {
     "TITLE": "My Assignments",
+    "SUBTITLE": "Issues currently assigned to you.",
+    "NO_ASSIGNMENTS": "Nothing is assigned to you right now.",
     "TABLE_CAPTION": "Task Assignments",
     "COL_ASSIGNED_TO": "Assigned To",
     "COL_ISSUE": "Issue",

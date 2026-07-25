@@ -23,6 +23,7 @@ import { RepositoryDetailPage } from '@/pages/RepositoryDetailPage';
 import { ScanResultPage } from '@/pages/ScanResultPage';
 import { LogViewerPage } from '@/pages/LogViewerPage';
 import { IssueDetailPage } from '@/pages/IssueDetailPage';
+import { AssignmentsPage } from '@/pages/AssignmentsPage';
 import { PlaceholderPage } from '@/components/common/PlaceholderPage';
 
 const basename = import.meta.env.BASE_URL.replace(/\/$/, '');
@@ -56,7 +57,7 @@ export const router = createBrowserRouter(
                 { path: '/logviewer/:scanId', element: <LogViewerPage /> },
                 { path: '/issue', element: <IssuesPage /> },
                 { path: '/issuedetail/:issuesId', element: <IssueDetailPage /> },
-                { path: '/assignment', element: <PlaceholderPage title="Assignments" /> },
+                { path: '/assignment', element: <AssignmentsPage /> },
                 { path: '/analysis', element: <PlaceholderPage title="Analysis" /> },
                 { path: '/security-dashboard', element: <PlaceholderPage title="Security" /> },
                 { path: '/technical-debt', element: <PlaceholderPage title="Technical Debt" /> },
