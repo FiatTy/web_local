@@ -12,6 +12,7 @@ import { VerifyEmailPage } from '@/pages/VerifyEmailPage';
 import { VerifySuccessPage } from '@/pages/VerifySuccessPage';
 import { VerifyFailedPage } from '@/pages/VerifyFailedPage';
 import { RepositoriesPage } from '@/pages/RepositoriesPage';
+import { ScanHistoryPage } from '@/pages/ScanHistoryPage';
 import { PlaceholderPage } from '@/components/common/PlaceholderPage';
 
 const basename = import.meta.env.BASE_URL.replace(/\/$/, '');
@@ -40,7 +41,7 @@ export const router = createBrowserRouter(
                 { path: '/addrepository', element: <PlaceholderPage title="Add Repository" /> },
                 { path: '/settingrepo/:projectId', element: <PlaceholderPage title="Repository Settings" /> },
                 { path: '/detailrepo/:projectId', element: <PlaceholderPage title="Repository Detail" /> },
-                { path: '/scanhistory', element: <PlaceholderPage title="Scan History" /> },
+                { path: '/scanhistory', element: <ScanHistoryPage /> },
                 { path: '/scanresult/:scanId', element: <PlaceholderPage title="Scan Result" /> },
                 { path: '/logviewer/:scanId', element: <PlaceholderPage title="Log Viewer" /> },
                 { path: '/issue', element: <PlaceholderPage title="Issues" /> },
