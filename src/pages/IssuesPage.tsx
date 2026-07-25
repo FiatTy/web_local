@@ -14,6 +14,7 @@ import {
 } from 'lucide-react';
 import { PageHeader } from '@/components/common/PageHeader';
 import { useIssues } from '@/features/issue/hooks/useIssues';
+import { AssignIssueModal } from '@/features/issue/components/AssignIssueModal';
 import type { Issue } from '@/features/issue/types';
 
 const PAGE_SIZE = 10;
@@ -81,6 +82,7 @@ export function IssuesPage() {
   const [project, setProject] = useState('all');
   const [search, setSearch] = useState('');
   const [page, setPage] = useState(1);
+  const [assignTarget, setAssignTarget] = useState<Issue | null>(null);
 
   const issues = useMemo(() => data ?? [], [data]);
   const projects = useMemo(
@@ -223,11 +225,18 @@ export function IssuesPage() {
                       </td>
                       <td className="whitespace-nowrap px-4 py-3 text-muted">{issue.projectName || '—'}</td>
                       <td className="whitespace-nowrap px-4 py-3">
-                        {issue.assignedName ? (
-                          <span className="text-fg">{issue.assignedName}</span>
-                        ) : (
-                          <span className="text-faint">{t('ISSUE.UNASSIGNED')}</span>
-                        )}
+                        <button
+                          type="button"
+                          onClick={() => setAssignTarget(issue)}
+                          title={t('ISSUE_MODAL.ASSIGN_ISSUE')}
+                          className="rounded-md px-1.5 py-0.5 transition-colors hover:bg-surface-2"
+                        >
+                          {issue.assignedName ? (
+                            <span className="text-fg">{issue.assignedName}</span>
+                          ) : (
+                            <span className="text-faint">{t('ISSUE.UNASSIGNED')}</span>
+                          )}
+                        </button>
                       </td>
                       <td className="px-4 py-3">
                         <span className={`inline-flex whitespace-nowrap rounded-full px-2.5 py-1 text-[11px] font-medium ${badge.cls}`}>
@@ -275,6 +284,14 @@ export function IssuesPage() {
           </div>
         </div>
       )}
+
+      {assignTarget ? (
+        <AssignIssueModal
+          issue={assignTarget}
+          mode="assign"
+          onClose={() => setAssignTarget(null)}
+        />
+      ) : null}
     </div>
   );
 }
