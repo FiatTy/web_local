@@ -13,6 +13,7 @@ import { VerifySuccessPage } from '@/pages/VerifySuccessPage';
 import { VerifyFailedPage } from '@/pages/VerifyFailedPage';
 import { RepositoriesPage } from '@/pages/RepositoriesPage';
 import { ScanHistoryPage } from '@/pages/ScanHistoryPage';
+import { IssuesPage } from '@/pages/IssuesPage';
 import { PlaceholderPage } from '@/components/common/PlaceholderPage';
 
 const basename = import.meta.env.BASE_URL.replace(/\/$/, '');
@@ -44,7 +45,7 @@ export const router = createBrowserRouter(
                 { path: '/scanhistory', element: <ScanHistoryPage /> },
                 { path: '/scanresult/:scanId', element: <PlaceholderPage title="Scan Result" /> },
                 { path: '/logviewer/:scanId', element: <PlaceholderPage title="Log Viewer" /> },
-                { path: '/issue', element: <PlaceholderPage title="Issues" /> },
+                { path: '/issue', element: <IssuesPage /> },
                 { path: '/issuedetail/:issuesId', element: <PlaceholderPage title="Issue Detail" /> },
                 { path: '/assignment', element: <PlaceholderPage title="Assignments" /> },
                 { path: '/analysis', element: <PlaceholderPage title="Analysis" /> },
