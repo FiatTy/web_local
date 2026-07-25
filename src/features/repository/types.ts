@@ -13,6 +13,41 @@ export interface RepoMetrics {
   securityHotspots?: number;
 }
 
+export interface RepositoryPayload {
+  name: string;
+  url: string;
+  type: ProjectType;
+  costPerDay: number;
+}
+
+export interface StartScanRequest {
+  branch: string;
+  sonarToken: string;
+  serverUrl: string | null;
+  gitToken: string | null;
+  angularSettings: {
+    runNpm: boolean;
+    coverage: boolean;
+    tsFiles: boolean;
+    exclusions: string;
+  };
+  springSettings: {
+    runTests: boolean;
+    jacoco: boolean;
+    buildTool: string;
+    jdkVersion: number;
+  };
+  qualityGateSettings: {
+    failOnError: boolean;
+    coverageThreshold: number;
+    maxBugs: number;
+    maxVulnerabilities: number;
+    maxCodeSmells: number;
+    qgMaxDuplications: number;
+    qgMaxSecurityHotspots: number;
+  };
+}
+
 export interface Repository {
   projectId: string;
   name: string;

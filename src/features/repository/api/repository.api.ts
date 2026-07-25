@@ -1,5 +1,16 @@
 import { apiClient } from '@/lib/api-client';
-import type { ProjectType, RepoMetrics, RepoStatus, Repository } from '@/features/repository/types';
+import type {
+  ProjectType,
+  RepoMetrics,
+  RepoStatus,
+  Repository,
+  RepositoryPayload,
+  StartScanRequest,
+} from '@/features/repository/types';
+import type { SonarQubeConfig } from '@/features/setting/types';
+
+const DEFAULT_EXCLUSIONS = '**/node_modules/**,**/*.spec.ts';
+const DEFAULT_JDK_VERSION = 17;
 
 interface RawScan {
   id?: string;
@@ -111,4 +122,69 @@ export async function getAllRepositories(): Promise<Repository[]> {
 
 export async function deleteRepository(projectId: string): Promise<void> {
   await apiClient.delete(`/repository/delete-repository/${projectId}`);
+}
+
+export async function getRepositoryById(projectId: string): Promise<Repository> {
+  const { data } = await apiClient.get<RawProject & { projectId?: string }>(
+    `/repository/search-repositories/${projectId}`,
+  );
+  return mapProject({ ...data, id: data.id ?? data.projectId ?? projectId });
+}
+
+export async function createRepository(payload: RepositoryPayload): Promise<Repository> {
+  const { data } = await apiClient.post<RawProject & { projectId?: string }>(
+    '/repository/new-repository',
+    payload,
+  );
+  return mapProject({ ...data, id: data.id ?? data.projectId ?? '' });
+}
+
+export async function updateRepository(
+  projectId: string,
+  payload: RepositoryPayload,
+): Promise<Repository> {
+  const { data } = await apiClient.put<RawProject & { projectId?: string }>(
+    `/repository/update-repository/${projectId}`,
+    payload,
+  );
+  return mapProject({ ...data, id: data.id ?? data.projectId ?? projectId });
+}
+
+export function buildScanRequest(
+  config: SonarQubeConfig | undefined,
+  branch: string,
+  gitToken?: string | null,
+  serverUrl?: string | null,
+): StartScanRequest {
+  return {
+    branch,
+    sonarToken: config?.authToken || '',
+    serverUrl: serverUrl && serverUrl.trim() !== '' ? serverUrl.trim() : null,
+    gitToken: gitToken && gitToken.trim() !== '' ? gitToken.trim() : null,
+    angularSettings: {
+      runNpm: config?.angularRunNpm || false,
+      coverage: config?.angularCoverage || false,
+      tsFiles: config?.angularTsFiles || false,
+      exclusions: config?.angularExclusions || DEFAULT_EXCLUSIONS,
+    },
+    springSettings: {
+      runTests: config?.springRunTests || false,
+      jacoco: config?.springJacoco || false,
+      buildTool: config?.springBuildTool || 'maven',
+      jdkVersion: config?.springJdkVersion || DEFAULT_JDK_VERSION,
+    },
+    qualityGateSettings: {
+      failOnError: config?.qgFailOnError || false,
+      coverageThreshold: config?.qgCoverageThreshold || 0,
+      maxBugs: config?.qgMaxBugs || 0,
+      maxVulnerabilities: config?.qgMaxVulnerabilities || 0,
+      maxCodeSmells: config?.qgMaxCodeSmells || 0,
+      qgMaxDuplications: config?.qgMaxDuplications || 0,
+      qgMaxSecurityHotspots: config?.qgMaxSecurityHotspots || 0,
+    },
+  };
+}
+
+export async function startScan(projectId: string, request: StartScanRequest): Promise<void> {
+  await apiClient.post(`/${projectId}/scan`, request);
 }

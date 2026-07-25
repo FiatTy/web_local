@@ -18,6 +18,7 @@ import { DashboardPage } from '@/pages/DashboardPage';
 import { SonarQubeConfigPage } from '@/pages/SonarQubeConfigPage';
 import { NotificationSettingsPage } from '@/pages/NotificationSettingsPage';
 import { UserManagementPage } from '@/pages/UserManagementPage';
+import { RepositoryFormPage } from '@/pages/RepositoryFormPage';
 import { PlaceholderPage } from '@/components/common/PlaceholderPage';
 
 const basename = import.meta.env.BASE_URL.replace(/\/$/, '');
@@ -43,8 +44,8 @@ export const router = createBrowserRouter(
               children: [
                 { path: '/dashboard', element: <DashboardPage /> },
                 { path: '/repositories', element: <RepositoriesPage /> },
-                { path: '/addrepository', element: <PlaceholderPage title="Add Repository" /> },
-                { path: '/settingrepo/:projectId', element: <PlaceholderPage title="Repository Settings" /> },
+                { path: '/addrepository', element: <RepositoryFormPage /> },
+                { path: '/settingrepo/:projectId', element: <RepositoryFormPage /> },
                 { path: '/detailrepo/:projectId', element: <PlaceholderPage title="Repository Detail" /> },
                 { path: '/scanhistory', element: <ScanHistoryPage /> },
                 { path: '/scanresult/:scanId', element: <PlaceholderPage title="Scan Result" /> },
