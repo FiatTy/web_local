@@ -28,8 +28,16 @@ export async function logout(): Promise<void> {
   await apiClient.post('/user/logout', {}, { responseType: 'text' });
 }
 
+export async function requestPasswordReset(email: string): Promise<void> {
+  await apiClient.post('/user/forgot-password', { email });
+}
+
 export async function resetPassword(payload: ResetPasswordPayload): Promise<void> {
   await apiClient.post('/user/reset-password', payload);
+}
+
+export async function confirmVerifyEmail(token: string): Promise<void> {
+  await apiClient.post('/api/email-verification/confirm', { token });
 }
 
 export async function validateResetToken(token: string): Promise<ResetTokenValidation> {

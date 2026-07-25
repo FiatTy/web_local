@@ -6,6 +6,7 @@ import { RootLayout } from '@/layouts/RootLayout';
 import { LandingPage } from '@/pages/LandingPage';
 import { LoginPage } from '@/pages/LoginPage';
 import { RegisterPage } from '@/pages/RegisterPage';
+import { ForgotPasswordPage } from '@/pages/ForgotPasswordPage';
 import { PlaceholderPage } from '@/components/common/PlaceholderPage';
 
 const basename = import.meta.env.BASE_URL.replace(/\/$/, '');
@@ -19,7 +20,7 @@ export const router = createBrowserRouter(
         { path: '/login', element: <LoginPage /> },
         { path: '/register', element: <RegisterPage /> },
         { path: '/reset-password', element: <PlaceholderPage title="Reset Password" /> },
-        { path: '/forgot-password', element: <PlaceholderPage title="Forgot Password" /> },
+        { path: '/forgot-password', element: <ForgotPasswordPage /> },
         { path: '/verify-email', element: <PlaceholderPage title="Verify Email" /> },
         { path: '/verify-success', element: <PlaceholderPage title="Verify Success" /> },
         { path: '/verify-failed', element: <PlaceholderPage title="Verify Failed" /> },

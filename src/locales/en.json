@@ -680,6 +680,7 @@
     "EMAIL_INVALID": "Please enter a valid email!",
     "SENDING": "Sending...",
     "SEND_RESET_LINK": "Send Reset Link",
+    "SENT_TITLE": "Check your inbox",
     "SNACK_VALID_EMAIL": "Please fill in a valid email.",
     "SNACK_LINK_SENT": "If the account exists, a reset link has been sent.",
     "SNACK_ERROR": "Something went wrong. Please try again."
