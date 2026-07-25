@@ -570,7 +570,11 @@
     "WARNING": "Warning",
     "FAIL": "Fail",
     "LOADING_RESULTS": "Loading Results...",
-    "LOADING_DESC": "Please wait while we fetch the scan details."
+    "LOADING_DESC": "Please wait while we fetch the scan details.",
+    "EMAIL_SENT": "Report emailed",
+    "EMAIL_FAILED": "Could not send the report",
+    "EMAIL_NO_ADDRESS": "No email address found for your account",
+    "UNKNOWN_PROJECT": "Unknown Project"
   },
   "ISSUE_DETAIL": {
     "BACK_TO_ISSUE": "Back to Issue",

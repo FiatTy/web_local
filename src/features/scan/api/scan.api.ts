@@ -1,5 +1,13 @@
 import { apiClient } from '@/lib/api-client';
-import type { Scan, ScanMetrics, ScanStatus } from '@/features/scan/types';
+import { mapIssue, type RawIssue } from '@/features/issue/api/issue.api';
+import type {
+  AnalysisLog,
+  Scan,
+  ScanDetail,
+  ScanMetrics,
+  ScanReportEmailPayload,
+  ScanStatus,
+} from '@/features/scan/types';
 
 interface RawScan {
   id: string;
@@ -9,6 +17,8 @@ interface RawScan {
   completedAt?: string;
   qualityGate?: string | null;
   metrics?: Record<string, unknown> | null;
+  issueData?: RawIssue[] | null;
+  logFilePath?: string;
 }
 
 function toNumber(value: unknown): number | undefined {
@@ -33,6 +43,17 @@ function mapMetrics(metrics?: Record<string, unknown> | null): ScanMetrics | nul
   };
 }
 
+function mapAnalysisLog(raw: unknown): AnalysisLog {
+  if (typeof raw === 'string') {
+    return { message: raw };
+  }
+  const entry = (raw ?? {}) as { message?: unknown; timestamp?: unknown };
+  return {
+    message: entry.message == null ? '' : String(entry.message),
+    timestamp: entry.timestamp == null ? undefined : String(entry.timestamp),
+  };
+}
+
 function mapScan(raw: RawScan): Scan {
   return {
     id: raw.id,
@@ -54,11 +75,22 @@ export async function getScanHistory(): Promise<Scan[]> {
     .sort((a, b) => new Date(b.startedAt).getTime() - new Date(a.startedAt).getTime());
 }
 
-export async function getScanById(scanId: string): Promise<Scan> {
+export async function getScanById(scanId: string): Promise<ScanDetail> {
   const response = await apiClient.get<RawScan>(`/api/scans/${scanId}`);
-  return mapScan(response.data);
+  const raw = response.data;
+  const logs = raw.metrics?.analysisLogs;
+  return {
+    ...mapScan(raw),
+    issues: (raw.issueData ?? []).map(mapIssue),
+    analysisLogs: Array.isArray(logs) ? logs.map(mapAnalysisLog) : [],
+    logFilePath: raw.logFilePath,
+  };
 }
 
 export async function cancelScan(scanId: string): Promise<void> {
   await apiClient.post(`/scans/${scanId}/cancel`, null);
+}
+
+export async function sendScanReportEmail(payload: ScanReportEmailPayload): Promise<void> {
+  await apiClient.post('/api/email/send', payload);
 }

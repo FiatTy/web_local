@@ -20,6 +20,8 @@ import { NotificationSettingsPage } from '@/pages/NotificationSettingsPage';
 import { UserManagementPage } from '@/pages/UserManagementPage';
 import { RepositoryFormPage } from '@/pages/RepositoryFormPage';
 import { RepositoryDetailPage } from '@/pages/RepositoryDetailPage';
+import { ScanResultPage } from '@/pages/ScanResultPage';
+import { LogViewerPage } from '@/pages/LogViewerPage';
 import { PlaceholderPage } from '@/components/common/PlaceholderPage';
 
 const basename = import.meta.env.BASE_URL.replace(/\/$/, '');
@@ -49,8 +51,8 @@ export const router = createBrowserRouter(
                 { path: '/settingrepo/:projectId', element: <RepositoryFormPage /> },
                 { path: '/detailrepo/:projectId', element: <RepositoryDetailPage /> },
                 { path: '/scanhistory', element: <ScanHistoryPage /> },
-                { path: '/scanresult/:scanId', element: <PlaceholderPage title="Scan Result" /> },
-                { path: '/logviewer/:scanId', element: <PlaceholderPage title="Log Viewer" /> },
+                { path: '/scanresult/:scanId', element: <ScanResultPage /> },
+                { path: '/logviewer/:scanId', element: <LogViewerPage /> },
                 { path: '/issue', element: <IssuesPage /> },
                 { path: '/issuedetail/:issuesId', element: <PlaceholderPage title="Issue Detail" /> },
                 { path: '/assignment', element: <PlaceholderPage title="Assignments" /> },

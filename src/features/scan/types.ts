@@ -12,6 +12,8 @@ export interface ScanMetrics {
   securityRating?: string;
 }
 
+import type { Issue } from '@/features/issue/types';
+
 export interface Scan {
   id: string;
   projectId?: string;
@@ -22,4 +24,23 @@ export interface Scan {
   completedAt?: string;
   qualityGate?: string | null;
   metrics?: ScanMetrics | null;
+}
+
+export interface AnalysisLog {
+  message: string;
+  timestamp?: string;
+}
+
+export interface ScanDetail extends Scan {
+  issues: Issue[];
+  analysisLogs: AnalysisLog[];
+  logFilePath?: string;
+}
+
+export interface ScanReportEmailPayload {
+  type: 'ScanReport';
+  email: string;
+  applicationName: string;
+  subject: string;
+  html: string;
 }

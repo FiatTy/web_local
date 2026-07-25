@@ -1,7 +1,7 @@
 import { apiClient } from '@/lib/api-client';
 import type { Issue } from '@/features/issue/types';
 
-interface RawIssue {
+export interface RawIssue {
   id: string;
   scanId: string;
   projectId?: string;
@@ -18,7 +18,7 @@ interface RawIssue {
   createdAt?: string;
 }
 
-function mapIssue(raw: RawIssue): Issue {
+export function mapIssue(raw: RawIssue): Issue {
   return {
     id: raw.id,
     scanId: raw.scanId,
