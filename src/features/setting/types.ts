@@ -49,6 +49,25 @@ export interface SonarQubeConfigPayload {
   qgMaxSecurityHotspots: number;
 }
 
+export interface NotificationSettings {
+  id: string;
+  userId: string;
+  scansEnabled: boolean;
+  issuesEnabled: boolean;
+  systemEnabled: boolean;
+  reportsEnabled: boolean;
+  createdAt?: string;
+  updatedAt?: string;
+}
+
+export interface NotificationSettingsPayload {
+  userId: string;
+  scansEnabled: boolean;
+  issuesEnabled: boolean;
+  systemEnabled: boolean;
+  reportsEnabled: boolean;
+}
+
 export interface TestConnectionRequest {
   sonarHostUrl: string;
   sonarToken: string;
