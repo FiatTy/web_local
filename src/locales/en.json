@@ -395,6 +395,8 @@
     "WELCOME_TITLE": "Welcome to the community !",
     "WELCOME_TEXT": "Register now to access greater benefits and improve the effectiveness of code review in our organization.",
     "TITLE": "Register",
+    "SUBTITLE": "Create your account to get started.",
+    "ERROR_GENERIC": "Registration failed. Please try again.",
     "USERNAME": "Username",
     "USERNAME_PLACEHOLDER": "Enter your username",
     "USERNAME_REQUIRED": "Username is required",

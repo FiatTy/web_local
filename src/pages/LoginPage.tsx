@@ -3,15 +3,11 @@ import { Link, Navigate, useNavigate } from 'react-router';
 import { useTranslation } from 'react-i18next';
 import { ArrowRight, Eye, EyeOff, Loader2, Lock, Mail } from 'lucide-react';
 import { AuthShell } from '@/features/auth/components/AuthShell';
+import { AuthField } from '@/features/auth/components/AuthField';
 import { useLogin } from '@/features/auth/hooks/useLogin';
 import { useAuth } from '@/lib/auth/auth-context';
 
 const EMAIL_PATTERN = /^[^@\s]+@[^@\s]+\.[a-zA-Z]{2,}$/;
-
-const inputBase =
-  'h-11 w-full rounded-lg border bg-surface pr-3 text-sm text-fg outline-none transition placeholder:text-faint focus:ring-2';
-const inputValid = 'border-border focus:border-primary focus:ring-primary/25';
-const inputError = 'border-danger focus:border-danger focus:ring-danger/20';
 
 export function LoginPage() {
   const { t } = useTranslation();
@@ -90,62 +86,36 @@ export function LoginPage() {
           </div>
         ) : null}
 
-        <div>
-          <label
-            htmlFor="email"
-            className="mb-1.5 block font-mono text-[11px] font-medium uppercase tracking-[0.14em] text-muted"
-          >
-            {t('AUTH.EMAIL')}
-          </label>
-          <div className="relative">
-            <Mail
-              size={16}
-              className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-faint"
-            />
-            <input
-              id="email"
-              name="email"
-              type="email"
-              autoComplete="email"
-              value={email}
-              onChange={(event) => {
-                setEmail(event.target.value);
-                clearServerError();
-              }}
-              placeholder={t('LOGIN.EMAIL_PLACEHOLDER')}
-              className={`${inputBase} pl-10 ${showEmailError ? inputError : inputValid}`}
-              aria-invalid={showEmailError ? true : undefined}
-            />
-          </div>
-          {showEmailError ? <p className="mt-1.5 text-xs text-danger">{t(emailError)}</p> : null}
-        </div>
+        <AuthField
+          id="email"
+          label={t('AUTH.EMAIL')}
+          icon={Mail}
+          type="email"
+          inputMode="email"
+          autoComplete="email"
+          value={email}
+          onChange={(value) => {
+            setEmail(value);
+            clearServerError();
+          }}
+          placeholder={t('LOGIN.EMAIL_PLACEHOLDER')}
+          error={showEmailError ? t(emailError) : null}
+        />
 
-        <div>
-          <label
-            htmlFor="password"
-            className="mb-1.5 block font-mono text-[11px] font-medium uppercase tracking-[0.14em] text-muted"
-          >
-            {t('AUTH.PASSWORD')}
-          </label>
-          <div className="relative">
-            <Lock
-              size={16}
-              className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-faint"
-            />
-            <input
-              id="password"
-              name="password"
-              type={showPassword ? 'text' : 'password'}
-              autoComplete="current-password"
-              value={password}
-              onChange={(event) => {
-                setPassword(event.target.value);
-                clearServerError();
-              }}
-              placeholder={t('LOGIN.PASSWORD_PLACEHOLDER')}
-              className={`${inputBase} pl-10 !pr-10 ${showPasswordError ? inputError : inputValid}`}
-              aria-invalid={showPasswordError ? true : undefined}
-            />
+        <AuthField
+          id="password"
+          label={t('AUTH.PASSWORD')}
+          icon={Lock}
+          type={showPassword ? 'text' : 'password'}
+          autoComplete="current-password"
+          value={password}
+          onChange={(value) => {
+            setPassword(value);
+            clearServerError();
+          }}
+          placeholder={t('LOGIN.PASSWORD_PLACEHOLDER')}
+          error={showPasswordError ? t(passwordError) : null}
+          trailing={
             <button
               type="button"
               onClick={() => setShowPassword((value) => !value)}
@@ -154,11 +124,8 @@ export function LoginPage() {
             >
               {showPassword ? <EyeOff size={16} /> : <Eye size={16} />}
             </button>
-          </div>
-          {showPasswordError ? (
-            <p className="mt-1.5 text-xs text-danger">{t(passwordError)}</p>
-          ) : null}
-        </div>
+          }
+        />
 
         <button
           type="submit"
