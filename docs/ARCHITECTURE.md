@@ -52,12 +52,14 @@ src/
     hooks/use<Thing>.ts     React hook (TanStack Query) ห่อ api ให้ component ใช้ง่าย
     components/             component เฉพาะโดเมน
     types.ts                type เฉพาะโดเมน
-  hooks/                hook ที่ใช้ร่วมข้ามโดเมน
+  hooks/                hook ระดับแอปที่ไม่ได้เป็นของโดเมนไหนโดยเฉพาะ
+    useAppRealtimeSync.ts   ประกอบ event realtime ข้ามโดเมนเข้าด้วยกัน
   lib/                  ของที่ไม่ใช่ UI:
     api-client.ts           axios instance + interceptor (หัวใจ security)
     auth/                   AuthContext + token store (in-memory)
+    realtime/               STOMP client + provider + hook subscribe topic
+    toast/                  ToastProvider + useToast (แทน SweetAlert2)
     i18n.ts, theme.ts       ตั้งค่าภาษา / ธีม
-    utils.ts                ฟังก์ชันช่วยทั่วไป (แทน Angular pipe)
   types/                type กลางที่ใช้หลายโดเมน
 ```
 
@@ -69,7 +71,13 @@ git **ไม่เก็บโฟลเดอร์ว่าง**. `.gitkeep` �
 
 - ไม่มีผลกับการทำงานของแอปเลย เป็นแค่หมุดกันโฟลเดอร์ไว้
 - พอโฟลเดอร์นั้นมีไฟล์จริงแล้ว เรา **ลบ `.gitkeep` ทิ้ง**
-- ตอนนี้เหลืออยู่ไม่กี่ที่ (โฟลเดอร์ที่ยังว่าง เช่น `src/hooks/`) จะหายไปเองเมื่อมีไฟล์จริง
+- ตอนนี้ไม่เหลือแล้ว โฟลเดอร์สุดท้ายที่ยังว่างคือ `src/hooks/` ซึ่งมีไฟล์จริงตั้งแต่ Phase 4
+
+**กติกาว่าอะไรควรอยู่ `src/hooks/` (ชั้นนอก) หรือ `features/<domain>/hooks/` (ชั้นใน):**
+ถ้ามีแค่โดเมนเดียวใช้ ให้อยู่ในโดเมนนั้น (เช่น `useRepositories`, `useIssues`)
+ย้ายขึ้นมาชั้นนอกเมื่อมันไม่ได้เป็นของโดเมนไหนจริง ๆ หรือมี 2 โดเมนขึ้นไปใช้ร่วมกัน
+เช่น `useAppRealtimeSync` ที่แตะ repository + scan + issue + user + notification พร้อมกัน
+(หลักเดียวกับ bulletproof-react)
 
 ---
 
@@ -147,7 +155,7 @@ auth, user, repository, scan, issue, assign, comment, dashboard, notification, r
 | 1 | Foundation — api-client + interceptor, AuthContext, guard, i18n, layout/router, design system | DONE |
 | 2 | หน้า Auth — login, register, reset-password, forgot-password, verify-email/success/failed | DONE |
 | 3 | หน้าโดเมนทีละหมวด — dashboard -> repository -> scan -> issue -> report -> analytics -> settings (พร้อม api/hook ต่อโดเมน + UX/UI สวย) | DONE |
-| 4 | Realtime — WebSocket แจ้งเตือน + comment ต่อ issue, SSE สถานะ scan | ถัดไป |
+| 4 | Realtime — WebSocket แจ้งเตือน + comment ต่อ issue | DONE |
 | CD | Deploy (self-hosted runner + nginx `/codereview/`) | ยังไม่ทำ |
 
 ทุกเฟส: `npm run build` ต้องเขียว, commit + push ต่อ unit, ตอนทำ UI ใช้ design skills (frontend-design, emil-design-eng) + ตรวจด้วย Playwright
@@ -167,8 +175,61 @@ auth, user, repository, scan, issue, assign, comment, dashboard, notification, r
 ของกลางที่เพิ่มระหว่าง Phase 3: `lib/toast` (ToastProvider + useToast แทน SweetAlert2),
 `components/common/{FormField, Switch, GateStatus, PageHeader}`, `components/charts/{DonutChart, BarList}`
 
-ยังไม่ได้ทำ (ค้างจาก Phase 3): export รายงานเป็น Excel / Word / PowerPoint ฝั่ง client
-(ของเดิมใช้ exceljs + docx + pptxgenjs) — ตอนนี้รองรับ PDF ที่ backend เรนเดอร์ให้อย่างเดียว
+### Phase 4 — Realtime (ทำครบแล้ว)
+
+ชั้น infrastructure อยู่ที่ `src/lib/realtime/` (ไม่ import feature ใด ๆ):
+
+| ไฟล์ | หน้าที่ |
+|---|---|
+| `stomp-client.ts` | STOMP over SockJS ตัวเดียวทั้งแอป: แนบ `Authorization` ตอน `beforeConnect`, reconnect 5 วิ, เก็บ handler ต่อ topic แล้ว re-subscribe ให้เองตอน connect ใหม่ |
+| `topics.ts` | ชื่อ topic ทั้ง 7 ตัว (ตรงกับ backend เป๊ะ) |
+| `types.ts` | event payload + map `PENDING -> SCANNING` |
+| `RealtimeProvider.tsx` | เปิด/ปิด connection ตามสถานะ login, ให้ `isConnected` |
+| `useRealtimeTopic.ts` | hook subscribe topic ไหนก็ได้ (คืน cleanup ให้อัตโนมัติ) |
+
+การประกอบข้ามโดเมนอยู่ที่ `src/hooks/useAppRealtimeSync.ts` (ชั้น app ไม่ใช่ชั้น feature)
+เพราะมันแตะหลายโดเมนพร้อมกัน: scan-status, projects, issues, verify-status
+-> invalidate query cache ที่เกี่ยวข้อง + ขึ้น toast ตาม `NotificationSettings`
+ต่อผ่าน route `RealtimeBoundary` (ProtectedRoute -> RealtimeBoundary -> RootLayout)
+
+| Topic | ทำอะไรต่อ |
+|---|---|
+| `/topic/scan-status` | invalidate repository + scan-history + issues, toast เฉพาะ scan ที่เรากดเอง (`sessionStorage: _my_scan_projects` เหมือนของเดิม) แล้วสร้าง noti Scans / Quality Gate / Issues ต่อ |
+| `/topic/notifications/{userId}` + `/global` | ยัดเข้า query cache (กันซ้ำด้วย id) + toast แบบ buffer 2 วิ ตามชนิด |
+| `/topic/projects` | invalidate repositories + toast added/updated/deleted |
+| `/topic/issues` | invalidate issue list + issue detail + issue analysis (AI fix) |
+| `/topic/user/{userId}/verify-status` | ดึง user ใหม่ + อัปเดต login user + toast |
+| `/topic/issue/{issueId}/comments` | `features/issue/hooks/useIssueCommentStream.ts` — คอมเมนต์ใหม่เด้งเข้าหน้า issue detail โดยไม่ต้อง refetch |
+
+UI ใหม่: `features/notification` (api + hooks + `NotificationBell`) — กระดิ่งบน topbar
+มี badge จำนวนที่ยังไม่อ่าน, tab All/Unread/Scans/Issues/System, mark all read,
+คลิกแล้วเด้งไปหน้าที่เกี่ยวข้อง (issue / scan result / detail repo / report history)
+
+---
+
+## 8.1 สิ่งที่ยังไม่ได้ทำ (known gaps)
+
+### ก. พักไว้ตามที่ตกลง
+- export รายงานฝั่ง client เป็น Excel / Word / PowerPoint (ของเดิมใช้ exceljs + docx + pptxgenjs)
+  ตอนนี้รองรับ PDF ที่ backend เรนเดอร์ให้อย่างเดียว ทำให้ปุ่ม export ในหน้า
+  scan history / issue / technical debt / dashboard ยังไม่มี
+
+### ข. ยังไม่ได้พอร์ต (เจอจากการเทียบ i18n key ของเดิมกับของใหม่)
+| หน้า | ของที่ขาด |
+|---|---|
+| Dashboard | เปลี่ยนรหัสผ่าน (`PUT /user/change-password`), ส่งอีเมลยืนยันซ้ำ (`POST /api/email-verification/send`), กราฟ Quality Trends (`/dashboard/:userId/trends`) |
+| Scan History | เปรียบเทียบ 2 scan (compare modal), ล้าง log เก่า |
+| Issue | เลือกหลายรายการเพื่อ assign ทีเดียว (bulk assign) |
+| Issue Detail | ตอบกลับคอมเมนต์ (reply) — ตอนนี้แสดง reply ได้แต่สร้างไม่ได้ |
+| My Assignments | assign พร้อม due date (`PUT /issues/assign/:issueId`) |
+| Technical Debt | กราฟแนวโน้มรายเดือน, แผน action plan ที่แก้ไข/บันทึกได้ |
+| Security Dashboard | กราฟแนวโน้ม |
+| Logout | กล่องยืนยันก่อน logout |
+
+### ค. ไม่พอร์ตโดยตั้งใจ
+- **SSE** (`/api/sse/subscribe?repoId=`) — ของเดิม `SseService` ถูก import ไว้แต่ **ไม่เคยถูกเรียกใช้จริง**
+  (grep แล้วไม่มี call site) สถานะ scan realtime ใช้ WebSocket `/topic/scan-status` แทนทั้งหมด
+  ถ้าจะทำเพิ่มค่อยทำเป็น `features/scan/hooks/useScanSse.ts` ทีหลัง
 
 ---
 
