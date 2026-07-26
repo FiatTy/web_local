@@ -95,9 +95,11 @@ export function IssuesPage() {
     return issues.filter((issue) => {
       if (type !== 'all' && issue.type !== type) return false;
       if (severity !== 'all' && issue.severity !== severity) return false;
-      if (status !== 'all' && statusMeta(issue.status).labelKey !== statusMeta(status).labelKey) return false;
+      if (status !== 'all' && statusMeta(issue.status).labelKey !== statusMeta(status).labelKey)
+        return false;
       if (project !== 'all' && issue.projectName !== project) return false;
-      if (query && !`${issue.component} ${issue.message}`.toLowerCase().includes(query)) return false;
+      if (query && !`${issue.component} ${issue.message}`.toLowerCase().includes(query))
+        return false;
       return true;
     });
   }, [issues, type, severity, status, project, search]);
@@ -118,20 +120,35 @@ export function IssuesPage() {
   const selectClass =
     'h-10 rounded-lg border border-border bg-surface px-3 text-sm text-fg outline-none transition focus:border-primary focus:ring-2 focus:ring-primary/25';
 
-  const headCell = 'px-4 py-3 font-mono text-[10px] font-semibold uppercase tracking-wide text-faint';
+  const headCell =
+    'px-4 py-3 font-mono text-[10px] font-semibold uppercase tracking-wide text-faint';
 
   return (
     <div>
       <PageHeader title={t('ISSUE.TITLE_MGT')} subtitle={t('ISSUE.TABLE_CAPTION')} />
 
       <div className="mb-5 flex flex-wrap items-center gap-2 rounded-xl border border-border bg-surface p-4">
-        <select value={type} onChange={(event) => { setType(event.target.value); setPage(1); }} className={selectClass}>
+        <select
+          value={type}
+          onChange={(event) => {
+            setType(event.target.value);
+            setPage(1);
+          }}
+          className={selectClass}
+        >
           <option value="all">{t('ISSUE.ALL_TYPES')}</option>
           <option value="BUG">{t('ISSUE.BUG')}</option>
           <option value="VULNERABILITY">{t('ISSUE.SECURITY')}</option>
           <option value="CODE_SMELL">{t('ISSUE.CODE_SMELL')}</option>
         </select>
-        <select value={severity} onChange={(event) => { setSeverity(event.target.value); setPage(1); }} className={selectClass}>
+        <select
+          value={severity}
+          onChange={(event) => {
+            setSeverity(event.target.value);
+            setPage(1);
+          }}
+          className={selectClass}
+        >
           <option value="all">{t('ISSUE.ALL_SEVERITY')}</option>
           <option value="BLOCKER">{t('ISSUE.BLOCKER')}</option>
           <option value="CRITICAL">{t('ISSUE.CRITICAL')}</option>
@@ -139,26 +156,48 @@ export function IssuesPage() {
           <option value="MINOR">{t('ISSUE.MINOR')}</option>
           <option value="INFO">{t('ISSUE.INFO')}</option>
         </select>
-        <select value={status} onChange={(event) => { setStatus(event.target.value); setPage(1); }} className={selectClass}>
+        <select
+          value={status}
+          onChange={(event) => {
+            setStatus(event.target.value);
+            setPage(1);
+          }}
+          className={selectClass}
+        >
           <option value="all">{t('ISSUE.ALL_STATUS')}</option>
           <option value="OPEN">{t('ISSUE.OPEN')}</option>
           <option value="IN_PROGRESS">{t('ISSUE.IN_PROGRESS')}</option>
           <option value="DONE">{t('ISSUE.RESOLVED')}</option>
           <option value="REJECT">{t('ISSUE.CLOSED')}</option>
         </select>
-        <select value={project} onChange={(event) => { setProject(event.target.value); setPage(1); }} className={selectClass}>
+        <select
+          value={project}
+          onChange={(event) => {
+            setProject(event.target.value);
+            setPage(1);
+          }}
+          className={selectClass}
+        >
           <option value="all">{t('ISSUE.ALL_PROJECTS')}</option>
           {projects.map((name) => (
-            <option key={name} value={name}>{name}</option>
+            <option key={name} value={name}>
+              {name}
+            </option>
           ))}
         </select>
 
         <div className="relative ml-auto w-full sm:w-56">
-          <Search size={15} className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-faint" />
+          <Search
+            size={15}
+            className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-faint"
+          />
           <input
             type="search"
             value={search}
-            onChange={(event) => { setSearch(event.target.value); setPage(1); }}
+            onChange={(event) => {
+              setSearch(event.target.value);
+              setPage(1);
+            }}
             placeholder={t('ISSUE.SEARCH_PLACEHOLDER')}
             className="h-10 w-full rounded-lg border border-border bg-surface pl-9 pr-3 text-sm text-fg outline-none transition placeholder:text-faint focus:border-primary focus:ring-2 focus:ring-primary/25"
           />
@@ -214,16 +253,32 @@ export function IssuesPage() {
                 {pageRows.map((issue) => {
                   const badge = statusMeta(issue.status);
                   return (
-                    <tr key={issue.id} className="border-b border-border last:border-0 transition-colors hover:bg-surface-2/40">
-                      <td className="px-4 py-3"><TypeCell issue={issue} /></td>
-                      <td className="px-4 py-3"><SeverityCell severity={issue.severity} /></td>
+                    <tr
+                      key={issue.id}
+                      className="border-b border-border last:border-0 transition-colors hover:bg-surface-2/40"
+                    >
+                      <td className="px-4 py-3">
+                        <TypeCell issue={issue} />
+                      </td>
+                      <td className="px-4 py-3">
+                        <SeverityCell severity={issue.severity} />
+                      </td>
                       <td className="max-w-[280px] px-4 py-3">
-                        <p className="truncate text-fg" title={issue.message}>{issue.message || '—'}</p>
+                        <p className="truncate text-fg" title={issue.message}>
+                          {issue.message || '—'}
+                        </p>
                       </td>
                       <td className="max-w-[200px] px-4 py-3">
-                        <p className="truncate font-mono text-xs text-muted" title={issue.component}>{issue.component || '—'}</p>
+                        <p
+                          className="truncate font-mono text-xs text-muted"
+                          title={issue.component}
+                        >
+                          {issue.component || '—'}
+                        </p>
                       </td>
-                      <td className="whitespace-nowrap px-4 py-3 text-muted">{issue.projectName || '—'}</td>
+                      <td className="whitespace-nowrap px-4 py-3 text-muted">
+                        {issue.projectName || '—'}
+                      </td>
                       <td className="whitespace-nowrap px-4 py-3">
                         <button
                           type="button"
@@ -239,7 +294,9 @@ export function IssuesPage() {
                         </button>
                       </td>
                       <td className="px-4 py-3">
-                        <span className={`inline-flex whitespace-nowrap rounded-full px-2.5 py-1 text-[11px] font-medium ${badge.cls}`}>
+                        <span
+                          className={`inline-flex whitespace-nowrap rounded-full px-2.5 py-1 text-[11px] font-medium ${badge.cls}`}
+                        >
                           {t(badge.labelKey)}
                         </span>
                       </td>

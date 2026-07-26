@@ -70,7 +70,10 @@ function GradeChip({ scan }: { scan: Scan }) {
       </span>
     );
   }
-  const passed = String(scan.qualityGate ?? '').trim().toUpperCase() === 'OK';
+  const passed =
+    String(scan.qualityGate ?? '')
+      .trim()
+      .toUpperCase() === 'OK';
   return (
     <span
       className={`inline-flex items-center rounded-full px-2.5 py-1 text-[11px] font-medium ${
@@ -131,7 +134,9 @@ export function ScanHistoryPage() {
 
       <div className="mb-5 flex flex-wrap items-end gap-3 rounded-xl border border-border bg-surface p-4">
         <label className="flex flex-col gap-1">
-          <span className="font-mono text-[10px] uppercase tracking-wide text-faint">{t('SCAN.PROJECT')}</span>
+          <span className="font-mono text-[10px] uppercase tracking-wide text-faint">
+            {t('SCAN.PROJECT')}
+          </span>
           <select
             value={project}
             onChange={(event) => {
@@ -150,7 +155,9 @@ export function ScanHistoryPage() {
         </label>
 
         <label className="flex flex-col gap-1">
-          <span className="font-mono text-[10px] uppercase tracking-wide text-faint">{t('SCAN.SCAN_STATUS')}</span>
+          <span className="font-mono text-[10px] uppercase tracking-wide text-faint">
+            {t('SCAN.SCAN_STATUS')}
+          </span>
           <select
             value={status}
             onChange={(event) => {
@@ -167,7 +174,9 @@ export function ScanHistoryPage() {
         </label>
 
         <label className="flex flex-col gap-1">
-          <span className="font-mono text-[10px] uppercase tracking-wide text-faint">{t('SCAN.START_DATE')}</span>
+          <span className="font-mono text-[10px] uppercase tracking-wide text-faint">
+            {t('SCAN.START_DATE')}
+          </span>
           <input
             type="date"
             value={startDate}
@@ -180,7 +189,9 @@ export function ScanHistoryPage() {
         </label>
 
         <label className="flex flex-col gap-1">
-          <span className="font-mono text-[10px] uppercase tracking-wide text-faint">{t('SCAN.END_DATE')}</span>
+          <span className="font-mono text-[10px] uppercase tracking-wide text-faint">
+            {t('SCAN.END_DATE')}
+          </span>
           <input
             type="date"
             value={endDate}
@@ -229,21 +240,42 @@ export function ScanHistoryPage() {
             <table className="w-full min-w-[720px] text-sm">
               <thead>
                 <tr className="border-b border-border bg-surface-2/50 text-left">
-                  <th className="px-4 py-3 font-mono text-[10px] font-semibold uppercase tracking-wide text-faint">{t('SCAN.COL_DATE_TIME')}</th>
-                  <th className="px-4 py-3 font-mono text-[10px] font-semibold uppercase tracking-wide text-faint">{t('SCAN.COL_PROJECT')}</th>
-                  <th className="px-4 py-3 font-mono text-[10px] font-semibold uppercase tracking-wide text-faint">{t('SCAN.COL_GRADE')}</th>
-                  <th className="px-4 py-3 text-right font-mono text-[10px] font-semibold uppercase tracking-wide text-faint">{t('SCAN.COL_ISSUES')}</th>
-                  <th className="px-4 py-3 text-center font-mono text-[10px] font-semibold uppercase tracking-wide text-faint">{t('SCAN.COL_LOG')}</th>
-                  <th className="px-4 py-3 text-center font-mono text-[10px] font-semibold uppercase tracking-wide text-faint">{t('SCAN.COL_RESULT')}</th>
+                  <th className="px-4 py-3 font-mono text-[10px] font-semibold uppercase tracking-wide text-faint">
+                    {t('SCAN.COL_DATE_TIME')}
+                  </th>
+                  <th className="px-4 py-3 font-mono text-[10px] font-semibold uppercase tracking-wide text-faint">
+                    {t('SCAN.COL_PROJECT')}
+                  </th>
+                  <th className="px-4 py-3 font-mono text-[10px] font-semibold uppercase tracking-wide text-faint">
+                    {t('SCAN.COL_GRADE')}
+                  </th>
+                  <th className="px-4 py-3 text-right font-mono text-[10px] font-semibold uppercase tracking-wide text-faint">
+                    {t('SCAN.COL_ISSUES')}
+                  </th>
+                  <th className="px-4 py-3 text-center font-mono text-[10px] font-semibold uppercase tracking-wide text-faint">
+                    {t('SCAN.COL_LOG')}
+                  </th>
+                  <th className="px-4 py-3 text-center font-mono text-[10px] font-semibold uppercase tracking-wide text-faint">
+                    {t('SCAN.COL_RESULT')}
+                  </th>
                 </tr>
               </thead>
               <tbody>
                 {pageRows.map((scan) => (
-                  <tr key={scan.id} className="border-b border-border last:border-0 transition-colors hover:bg-surface-2/40">
-                    <td className="whitespace-nowrap px-4 py-3 text-muted">{formatDateTime(scan.startedAt)}</td>
+                  <tr
+                    key={scan.id}
+                    className="border-b border-border last:border-0 transition-colors hover:bg-surface-2/40"
+                  >
+                    <td className="whitespace-nowrap px-4 py-3 text-muted">
+                      {formatDateTime(scan.startedAt)}
+                    </td>
                     <td className="px-4 py-3 font-medium text-fg">{scan.projectName || '—'}</td>
-                    <td className="px-4 py-3"><GradeChip scan={scan} /></td>
-                    <td className="px-4 py-3 text-right font-medium text-fg">{issuesCount(scan)}</td>
+                    <td className="px-4 py-3">
+                      <GradeChip scan={scan} />
+                    </td>
+                    <td className="px-4 py-3 text-right font-medium text-fg">
+                      {issuesCount(scan)}
+                    </td>
                     <td className="px-4 py-3 text-center">
                       <Link
                         to={`/logviewer/${scan.id}`}

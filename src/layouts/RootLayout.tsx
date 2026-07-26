@@ -24,6 +24,7 @@ import { useAuth } from '@/lib/auth/auth-context';
 import { BrandMark } from '@/components/common/BrandMark';
 import { LanguageSwitcher } from '@/components/common/LanguageSwitcher';
 import { ThemeToggle } from '@/components/common/ThemeToggle';
+import { NotificationBell } from '@/features/notification/components/NotificationBell';
 
 interface NavItemConfig {
   to: string;
@@ -41,38 +42,91 @@ interface NavSection {
 const NAV_SECTIONS: NavSection[] = [
   {
     heading: 'Overview',
-    items: [{ to: '/dashboard', labelKey: 'NAV.DASHBOARD', fallback: 'Dashboard', icon: LayoutDashboard }],
+    items: [
+      { to: '/dashboard', labelKey: 'NAV.DASHBOARD', fallback: 'Dashboard', icon: LayoutDashboard },
+    ],
   },
   {
     heading: 'Code',
     items: [
-      { to: '/repositories', labelKey: 'NAV.REPOSITORIES', fallback: 'Repositories', icon: FolderGit2 },
-      { to: '/scanhistory', labelKey: 'NAV.SCAN_HISTORY', fallback: 'Scan History', icon: ScanLine },
+      {
+        to: '/repositories',
+        labelKey: 'NAV.REPOSITORIES',
+        fallback: 'Repositories',
+        icon: FolderGit2,
+      },
+      {
+        to: '/scanhistory',
+        labelKey: 'NAV.SCAN_HISTORY',
+        fallback: 'Scan History',
+        icon: ScanLine,
+      },
       { to: '/issue', labelKey: 'NAV.ISSUE', fallback: 'Issues', icon: Bug },
-      { to: '/assignment', labelKey: 'NAV.ASSIGNMENT', fallback: 'Assignments', icon: ClipboardList },
+      {
+        to: '/assignment',
+        labelKey: 'NAV.ASSIGNMENT',
+        fallback: 'Assignments',
+        icon: ClipboardList,
+      },
     ],
   },
   {
     heading: 'Analytics',
     items: [
       { to: '/analysis', labelKey: 'NAV.ANALYSIS', fallback: 'Analysis', icon: LineChart },
-      { to: '/security-dashboard', labelKey: 'NAV.SECURITY', fallback: 'Security', icon: ShieldCheck },
-      { to: '/technical-debt', labelKey: 'NAV.TECHNICAL_DEBT', fallback: 'Technical Debt', icon: TrendingDown },
+      {
+        to: '/security-dashboard',
+        labelKey: 'NAV.SECURITY',
+        fallback: 'Security',
+        icon: ShieldCheck,
+      },
+      {
+        to: '/technical-debt',
+        labelKey: 'NAV.TECHNICAL_DEBT',
+        fallback: 'Technical Debt',
+        icon: TrendingDown,
+      },
     ],
   },
   {
     heading: 'Reports',
     items: [
-      { to: '/generatereport', labelKey: 'NAV.GENERATE_REPORT', fallback: 'Generate Report', icon: FileText },
-      { to: '/reporthistory', labelKey: 'NAV.REPORT_HISTORY', fallback: 'Report History', icon: FileClock },
+      {
+        to: '/generatereport',
+        labelKey: 'NAV.GENERATE_REPORT',
+        fallback: 'Generate Report',
+        icon: FileText,
+      },
+      {
+        to: '/reporthistory',
+        labelKey: 'NAV.REPORT_HISTORY',
+        fallback: 'Report History',
+        icon: FileClock,
+      },
     ],
   },
   {
     heading: 'Settings',
     items: [
-      { to: '/sonarqubeconfig', labelKey: 'NAV.SONARQUBE_CONFIG', fallback: 'SonarQube', icon: SlidersHorizontal },
-      { to: '/notificationsetting', labelKey: 'NAV.NOTIFICATION_SETTING', fallback: 'Notifications', icon: Bell },
-      { to: '/usermanagement', labelKey: 'NAV.USER_MANAGEMENT', fallback: 'User Management', icon: Users, adminOnly: true },
+      {
+        to: '/sonarqubeconfig',
+        labelKey: 'NAV.SONARQUBE_CONFIG',
+        fallback: 'SonarQube',
+        icon: SlidersHorizontal,
+      },
+      {
+        to: '/notificationsetting',
+        labelKey: 'NAV.NOTIFICATION_SETTING',
+        fallback: 'Notifications',
+        icon: Bell,
+      },
+      {
+        to: '/usermanagement',
+        labelKey: 'NAV.USER_MANAGEMENT',
+        fallback: 'User Management',
+        icon: Users,
+        adminOnly: true,
+      },
     ],
   },
 ];
@@ -175,18 +229,14 @@ export function RootLayout() {
 
           <LanguageSwitcher />
           <ThemeToggle />
-          <button
-            type="button"
-            aria-label="Notifications"
-            className="inline-flex h-9 w-9 items-center justify-center rounded-md border border-border text-muted transition-colors hover:text-fg active:scale-95"
-          >
-            <Bell size={16} />
-          </button>
+          <NotificationBell />
 
           <div className="flex items-center gap-2 pl-1">
             <div className="hidden text-right leading-tight sm:block">
               <div className="text-xs font-medium text-fg">{user?.username}</div>
-              <div className="font-mono text-[10px] uppercase tracking-wide text-faint">{user?.role}</div>
+              <div className="font-mono text-[10px] uppercase tracking-wide text-faint">
+                {user?.role}
+              </div>
             </div>
             <div className="flex h-8 w-8 items-center justify-center rounded-full bg-primary-subtle text-sm font-semibold text-primary">
               {initial}

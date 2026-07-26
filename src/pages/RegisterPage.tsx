@@ -82,7 +82,8 @@ export function RegisterPage() {
   }
 
   const rules = getPasswordRules(password);
-  const passwordValid = rules.minLength && rules.upper && rules.lower && rules.number && rules.special;
+  const passwordValid =
+    rules.minLength && rules.upper && rules.lower && rules.number && rules.special;
 
   const usernameErrorKey = !username.trim()
     ? 'REGISTER.USERNAME_REQUIRED'

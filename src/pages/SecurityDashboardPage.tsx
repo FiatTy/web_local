@@ -168,7 +168,9 @@ export function SecurityDashboardPage() {
 
         <section className="rounded-xl border border-border bg-surface lg:col-span-1">
           <div className="border-b border-border px-5 py-4">
-            <h2 className="text-sm font-semibold text-fg">{t('SECURITY_DASHBOARD.OWASP_COVERAGE')}</h2>
+            <h2 className="text-sm font-semibold text-fg">
+              {t('SECURITY_DASHBOARD.OWASP_COVERAGE')}
+            </h2>
           </div>
           {metrics.owaspCoverage.length === 0 ? (
             <p className="px-5 py-10 text-center text-sm text-muted">{t('COMMON.NO_DATA')}</p>

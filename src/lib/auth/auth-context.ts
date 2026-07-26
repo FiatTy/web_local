@@ -8,6 +8,7 @@ export interface AuthContextValue {
   login: (payload: LoginRequest) => Promise<LoginUser>;
   logout: () => Promise<void>;
   refreshSession: () => Promise<boolean>;
+  applyUser: (user: LoginUser) => void;
 }
 
 export const AuthContext = createContext<AuthContextValue | undefined>(undefined);

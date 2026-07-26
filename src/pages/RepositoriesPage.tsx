@@ -133,7 +133,9 @@ function RepoCard({
         <span
           className={`shrink-0 rounded-full px-2.5 py-1 text-[11px] font-medium ${STATUS_BADGE[repo.status]}`}
         >
-          {repo.status === 'Scanning' ? t('REPOSITORY.ANALYZING') : t(`REPOSITORY.STATUS_${repo.status.toUpperCase()}`)}
+          {repo.status === 'Scanning'
+            ? t('REPOSITORY.ANALYZING')
+            : t(`REPOSITORY.STATUS_${repo.status.toUpperCase()}`)}
         </span>
       </div>
 
@@ -151,11 +153,7 @@ function RepoCard({
       <div className="mt-4 flex flex-wrap items-center gap-x-5 gap-y-2 border-t border-border pt-4">
         <Metric icon={Bug} value={repo.metrics?.bugs ?? 0} tone="text-blocker" />
         <Metric icon={ShieldAlert} value={repo.metrics?.vulnerabilities ?? 0} tone="text-major" />
-        <Metric
-          icon={Gauge}
-          value={coverage != null ? `${coverage}%` : '—'}
-          tone="text-primary"
-        />
+        <Metric icon={Gauge} value={coverage != null ? `${coverage}%` : '—'} tone="text-primary" />
         <div className="ml-auto flex items-center gap-1.5">
           {repo.qualityGate ? (
             qualityPassed ? (
@@ -197,7 +195,11 @@ function RepoCard({
             aria-label={t('REPOSITORY.TOOLTIP_RETRY')}
             className="inline-flex h-8 items-center gap-1.5 rounded-md bg-warning/12 px-2.5 text-xs font-medium text-warning transition-colors hover:bg-warning/20 disabled:cursor-not-allowed disabled:opacity-60"
           >
-            {isScanPending ? <Loader2 size={14} className="animate-spin" /> : <RotateCw size={14} />}
+            {isScanPending ? (
+              <Loader2 size={14} className="animate-spin" />
+            ) : (
+              <RotateCw size={14} />
+            )}
             {t('REPOSITORY.TOOLTIP_RETRY')}
           </button>
         ) : null}
@@ -276,7 +278,11 @@ export function RepositoriesPage() {
       });
       showToast({ tone: 'success', title: t('REPOSITORY.SCAN_STARTED'), description: repo.name });
     } catch {
-      showToast({ tone: 'error', title: t('REPOSITORY.SCAN_START_FAILED'), description: repo.name });
+      showToast({
+        tone: 'error',
+        title: t('REPOSITORY.SCAN_START_FAILED'),
+        description: repo.name,
+      });
     } finally {
       setScanningId(null);
     }
@@ -342,10 +348,30 @@ export function RepositoriesPage() {
       />
 
       <div className="mb-6 grid grid-cols-2 gap-3 lg:grid-cols-4">
-        <StatCard icon={Layers} label={t('REPOSITORY.STATS_TOTAL')} value={stats.total} tone="bg-surface-2 text-fg" />
-        <StatCard icon={CheckCircle2} label={t('REPOSITORY.STATS_ACTIVE')} value={stats.active} tone="bg-success/12 text-success" />
-        <StatCard icon={Loader2} label={t('REPOSITORY.STATS_SCANNING')} value={stats.scanning} tone="bg-primary-subtle text-primary" />
-        <StatCard icon={AlertTriangle} label={t('REPOSITORY.STATS_ERROR')} value={stats.error} tone="bg-danger/12 text-danger" />
+        <StatCard
+          icon={Layers}
+          label={t('REPOSITORY.STATS_TOTAL')}
+          value={stats.total}
+          tone="bg-surface-2 text-fg"
+        />
+        <StatCard
+          icon={CheckCircle2}
+          label={t('REPOSITORY.STATS_ACTIVE')}
+          value={stats.active}
+          tone="bg-success/12 text-success"
+        />
+        <StatCard
+          icon={Loader2}
+          label={t('REPOSITORY.STATS_SCANNING')}
+          value={stats.scanning}
+          tone="bg-primary-subtle text-primary"
+        />
+        <StatCard
+          icon={AlertTriangle}
+          label={t('REPOSITORY.STATS_ERROR')}
+          value={stats.error}
+          tone="bg-danger/12 text-danger"
+        />
       </div>
 
       <div className="mb-5 flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
@@ -366,7 +392,10 @@ export function RepositoriesPage() {
 
         <div className="flex items-center gap-2">
           <div className="relative flex-1 lg:w-64">
-            <Search size={15} className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-faint" />
+            <Search
+              size={15}
+              className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-faint"
+            />
             <input
               type="search"
               value={search}
@@ -391,7 +420,10 @@ export function RepositoriesPage() {
       {isPending ? (
         <div className="grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-3">
           {Array.from({ length: 6 }).map((_, index) => (
-            <div key={index} className="h-44 animate-pulse rounded-xl border border-border bg-surface-2" />
+            <div
+              key={index}
+              className="h-44 animate-pulse rounded-xl border border-border bg-surface-2"
+            />
           ))}
         </div>
       ) : isError ? (

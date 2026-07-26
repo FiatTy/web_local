@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Loader2, X } from 'lucide-react';
 import { FIELD_INPUT_CLASS, FormField } from '@/components/common/FormField';
@@ -27,11 +27,13 @@ export function AssignIssueModal({ issue, mode, onClose, onSaved }: AssignIssueM
   const [assignedTo, setAssignedTo] = useState(issue.assignedId ?? '');
   const [status, setStatus] = useState(issue.status || 'OPEN');
   const [error, setError] = useState('');
+  const [loadedIssueId, setLoadedIssueId] = useState(issue.id);
 
-  useEffect(() => {
+  if (issue.id !== loadedIssueId) {
+    setLoadedIssueId(issue.id);
     setAssignedTo(issue.assignedId ?? '');
     setStatus(issue.status || 'OPEN');
-  }, [issue]);
+  }
 
   async function handleSubmit() {
     if (mode === 'status' && !status) {
@@ -90,7 +92,9 @@ export function AssignIssueModal({ issue, mode, onClose, onSaved }: AssignIssueM
             <p className="font-mono text-[10px] font-semibold uppercase tracking-[0.14em] text-faint">
               {t('ISSUE_MODAL.ISSUE_ID')}
             </p>
-            <p className="mt-1 truncate font-mono text-xs text-muted">{issue.issueKey || issue.id}</p>
+            <p className="mt-1 truncate font-mono text-xs text-muted">
+              {issue.issueKey || issue.id}
+            </p>
             <p className="mt-1 truncate text-sm text-fg" title={issue.message}>
               {issue.message}
             </p>

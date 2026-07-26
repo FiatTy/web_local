@@ -20,7 +20,14 @@ const TONE_CLASS: Record<AuthStatusProps['tone'], string> = {
   pending: 'bg-surface-2 text-muted',
 };
 
-export function AuthStatus({ tone, icon: Icon, spinning, title, description, action }: AuthStatusProps) {
+export function AuthStatus({
+  tone,
+  icon: Icon,
+  spinning,
+  title,
+  description,
+  action,
+}: AuthStatusProps) {
   return (
     <div className="flex min-h-screen flex-col bg-bg text-fg">
       <div className="flex items-center justify-between px-6 py-5 lg:px-10">

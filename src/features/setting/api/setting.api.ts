@@ -25,12 +25,16 @@ export async function getSonarQubeConfig(userId: string): Promise<SonarQubeConfi
   return data;
 }
 
-export async function updateSonarQubeConfig(payload: SonarQubeConfigPayload): Promise<SonarQubeConfig> {
+export async function updateSonarQubeConfig(
+  payload: SonarQubeConfigPayload,
+): Promise<SonarQubeConfig> {
   const { data } = await apiClient.put<SonarQubeConfig>('/settings/sonarqube', payload);
   return data;
 }
 
-export async function testSonarConnection(request: TestConnectionRequest): Promise<TestConnectionResponse> {
+export async function testSonarConnection(
+  request: TestConnectionRequest,
+): Promise<TestConnectionResponse> {
   const { data } = await apiClient.post<TestConnectionResponse>('/sonar/test-connect', request);
   return data;
 }

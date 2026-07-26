@@ -70,7 +70,8 @@ function findLatestScan(scans: RawScan[]): RawScan | undefined {
   return scans
     .filter((scan) => Boolean(scan.startedAt))
     .sort(
-      (a, b) => new Date(b.startedAt as string).getTime() - new Date(a.startedAt as string).getTime(),
+      (a, b) =>
+        new Date(b.startedAt as string).getTime() - new Date(a.startedAt as string).getTime(),
     )[0];
 }
 
@@ -211,8 +212,10 @@ function mapScan(raw: RawScan, project: RawProject): Scan {
           securityHotspots: toNumber(metrics.securityHotspots ?? metrics.security_hotspots) ?? 0,
           duplicatedLinesDensity:
             toNumber(metrics.duplicatedLinesDensity ?? metrics.duplicated_lines_density) ?? 0,
-          maintainabilityRating: (metrics.maintainabilityRating ?? metrics.sqale_rating) as string | undefined,
-          reliabilityRating: (metrics.reliabilityRating ?? metrics.reliability_rating) as string | undefined,
+          maintainabilityRating: (metrics.maintainabilityRating ?? metrics.sqale_rating) as
+            string | undefined,
+          reliabilityRating: (metrics.reliabilityRating ?? metrics.reliability_rating) as
+            string | undefined,
           securityRating: (metrics.securityRating ?? metrics.security_rating) as string | undefined,
         }
       : null,

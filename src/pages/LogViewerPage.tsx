@@ -58,7 +58,9 @@ function MetricTile({
   return (
     <div className="rounded-xl border border-border bg-surface p-5">
       <div className="flex items-center justify-between">
-        <span className="font-mono text-[10px] font-medium uppercase tracking-[0.14em] text-faint">{label}</span>
+        <span className="font-mono text-[10px] font-medium uppercase tracking-[0.14em] text-faint">
+          {label}
+        </span>
         <span className={`flex h-8 w-8 items-center justify-center rounded-lg ${tone}`}>
           <Icon size={16} />
         </span>
@@ -68,15 +70,7 @@ function MetricTile({
   );
 }
 
-function IssueTable({
-  title,
-  issues,
-  tone,
-}: {
-  title: string;
-  issues: Issue[];
-  tone: string;
-}) {
+function IssueTable({ title, issues, tone }: { title: string; issues: Issue[]; tone: string }) {
   const { t } = useTranslation();
   const [page, setPage] = useState(1);
   const totalPages = Math.max(1, Math.ceil(issues.length / PAGE_SIZE));
@@ -124,7 +118,10 @@ function IssueTable({
                       </span>
                     </td>
                     <td className="max-w-[10rem] px-5 py-3">
-                      <span className="block truncate font-mono text-xs text-muted" title={issue.component}>
+                      <span
+                        className="block truncate font-mono text-xs text-muted"
+                        title={issue.component}
+                      >
                         {issue.component}
                       </span>
                     </td>
@@ -167,10 +164,17 @@ function buildMarkdown(scan: ScanDetail, scannerType: string): string {
   const metrics = scan.metrics;
   const value = (input: unknown) => (input === null || input === undefined ? '-' : String(input));
   const qualityGate =
-    scan.qualityGate === 'OK' ? 'Passed' : scan.qualityGate === 'ERROR' ? 'Failed' : (scan.qualityGate ?? '-');
+    scan.qualityGate === 'OK'
+      ? 'Passed'
+      : scan.qualityGate === 'ERROR'
+        ? 'Failed'
+        : (scan.qualityGate ?? '-');
   const durationSeconds =
     scan.startedAt && scan.completedAt
-      ? ((new Date(scan.completedAt).getTime() - new Date(scan.startedAt).getTime()) / 1000).toFixed(2)
+      ? (
+          (new Date(scan.completedAt).getTime() - new Date(scan.startedAt).getTime()) /
+          1000
+        ).toFixed(2)
       : '-';
   const details =
     scan.analysisLogs.length > 0
@@ -359,7 +363,11 @@ export function LogViewerPage() {
             disabled={sendEmail.isPending}
             className="inline-flex h-10 items-center gap-2 rounded-lg border border-border px-4 text-sm font-medium text-fg transition-colors hover:bg-surface-2 disabled:cursor-not-allowed disabled:opacity-60"
           >
-            {sendEmail.isPending ? <Loader2 size={15} className="animate-spin" /> : <Mail size={15} />}
+            {sendEmail.isPending ? (
+              <Loader2 size={15} className="animate-spin" />
+            ) : (
+              <Mail size={15} />
+            )}
             {t('LOG_VIEWER.EMAIL')}
           </button>
           <button
@@ -447,16 +455,18 @@ export function LogViewerPage() {
             <caption className="sr-only">{t('LOG_VIEWER.TABLE_CAPTION')}</caption>
             <thead>
               <tr className="border-b border-border">
-                {['LOG_VIEWER.COL_METRIC_GATE', 'LOG_VIEWER.COL_GRADE', 'LOG_VIEWER.COL_STATUS'].map(
-                  (key) => (
-                    <th
-                      key={key}
-                      className="px-5 py-3 font-mono text-[10px] font-semibold uppercase tracking-[0.14em] text-faint"
-                    >
-                      {t(key)}
-                    </th>
-                  ),
-                )}
+                {[
+                  'LOG_VIEWER.COL_METRIC_GATE',
+                  'LOG_VIEWER.COL_GRADE',
+                  'LOG_VIEWER.COL_STATUS',
+                ].map((key) => (
+                  <th
+                    key={key}
+                    className="px-5 py-3 font-mono text-[10px] font-semibold uppercase tracking-[0.14em] text-faint"
+                  >
+                    {t(key)}
+                  </th>
+                ))}
               </tr>
             </thead>
             <tbody className="divide-y divide-border">
@@ -494,7 +504,9 @@ export function LogViewerPage() {
       <section className="overflow-hidden rounded-xl border border-border bg-surface">
         <div className="flex items-center gap-2 border-b border-border px-5 py-4">
           <Terminal size={15} className="text-primary" />
-          <h2 className="text-sm font-semibold text-fg">{t('LOG_VIEWER.DETAILED_ANALYSIS_LOGS')}</h2>
+          <h2 className="text-sm font-semibold text-fg">
+            {t('LOG_VIEWER.DETAILED_ANALYSIS_LOGS')}
+          </h2>
         </div>
         {scan.analysisLogs.length > 0 ? (
           <ol className="max-h-96 divide-y divide-border overflow-y-auto">
@@ -515,7 +527,9 @@ export function LogViewerPage() {
             <p className="text-xs text-muted">{t('LOG_VIEWER.LOG_ENTRIES_STREAM')}</p>
           </div>
         ) : (
-          <p className="px-5 py-12 text-center text-sm text-muted">{t('LOG_VIEWER.NO_DETAILED_LOGS')}</p>
+          <p className="px-5 py-12 text-center text-sm text-muted">
+            {t('LOG_VIEWER.NO_DETAILED_LOGS')}
+          </p>
         )}
       </section>
     </div>

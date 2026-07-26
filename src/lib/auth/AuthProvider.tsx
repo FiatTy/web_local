@@ -53,6 +53,11 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     return loginUser;
   }, []);
 
+  const applyUser = useCallback((next: LoginUser): void => {
+    setLoginUser(next);
+    setUser(next);
+  }, []);
+
   const logout = useCallback(async (): Promise<void> => {
     await authApi.logout().catch(() => undefined);
     clearSession();
@@ -95,8 +100,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }, []);
 
   const value = useMemo<AuthContextValue>(
-    () => ({ user, isAuthenticated, isInitializing, login, logout, refreshSession }),
-    [user, isAuthenticated, isInitializing, login, logout, refreshSession],
+    () => ({ user, isAuthenticated, isInitializing, login, logout, refreshSession, applyUser }),
+    [user, isAuthenticated, isInitializing, login, logout, refreshSession, applyUser],
   );
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;

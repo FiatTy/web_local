@@ -1,6 +1,11 @@
 import axios, { type AxiosError, type InternalAxiosRequestConfig } from 'axios';
 import type { RefreshResponse } from '@/types/user';
-import { clearSession, getAccessToken, hasAccessToken, setAccessToken } from '@/lib/auth/token-store';
+import {
+  clearSession,
+  getAccessToken,
+  hasAccessToken,
+  setAccessToken,
+} from '@/lib/auth/token-store';
 
 const API_BASE = import.meta.env.VITE_API_BASE ?? '/backend';
 

@@ -52,7 +52,9 @@ export function ForgotPasswordPage() {
           <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-primary-subtle text-primary">
             <MailCheck size={22} />
           </div>
-          <h2 className="mt-4 text-base font-semibold text-fg">{t('FORGOT_PASSWORD.SENT_TITLE')}</h2>
+          <h2 className="mt-4 text-base font-semibold text-fg">
+            {t('FORGOT_PASSWORD.SENT_TITLE')}
+          </h2>
           <p className="mt-1.5 text-sm text-muted">{t('FORGOT_PASSWORD.SNACK_LINK_SENT')}</p>
         </div>
       ) : (
@@ -92,7 +94,10 @@ export function ForgotPasswordPage() {
             ) : (
               <>
                 {t('FORGOT_PASSWORD.SEND_RESET_LINK')}
-                <ArrowRight size={16} className="transition-transform group-hover:translate-x-0.5" />
+                <ArrowRight
+                  size={16}
+                  className="transition-transform group-hover:translate-x-0.5"
+                />
               </>
             )}
           </button>

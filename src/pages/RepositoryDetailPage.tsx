@@ -65,7 +65,9 @@ function MetricCard({
   return (
     <div className="rounded-xl border border-border bg-surface p-5">
       <div className="flex items-center justify-between">
-        <span className="font-mono text-[10px] font-medium uppercase tracking-[0.14em] text-faint">{label}</span>
+        <span className="font-mono text-[10px] font-medium uppercase tracking-[0.14em] text-faint">
+          {label}
+        </span>
         <span className={`flex h-8 w-8 items-center justify-center rounded-lg ${tone}`}>
           <Icon size={16} />
         </span>
@@ -81,7 +83,9 @@ function InfoRow({ label, value, mono }: { label: string; value: string; mono?: 
       <span className="shrink-0 font-mono text-[10px] font-semibold uppercase tracking-[0.14em] text-faint">
         {label}
       </span>
-      <span className={`min-w-0 truncate text-right text-sm text-fg ${mono ? 'font-mono text-xs' : ''}`}>
+      <span
+        className={`min-w-0 truncate text-right text-sm text-fg ${mono ? 'font-mono text-xs' : ''}`}
+      >
         {value}
       </span>
     </div>
@@ -97,7 +101,10 @@ function ScanGrade({ scan }: { scan: Scan }) {
       </span>
     );
   }
-  const passed = String(scan.qualityGate ?? '').trim().toUpperCase() === 'OK';
+  const passed =
+    String(scan.qualityGate ?? '')
+      .trim()
+      .toUpperCase() === 'OK';
   return (
     <span
       className={`rounded-full px-2 py-0.5 text-[11px] font-medium ${
@@ -297,7 +304,10 @@ export function RepositoryDetailPage() {
                 label={t('DETAIL_REPO.COST_PER_DAY')}
                 value={repo.costPerDay != null ? repo.costPerDay.toLocaleString() : '—'}
               />
-              <InfoRow label={t('DETAIL_REPO.LAST_ANALYSIS')} value={formatDateTime(repo.lastScan)} />
+              <InfoRow
+                label={t('DETAIL_REPO.LAST_ANALYSIS')}
+                value={formatDateTime(repo.lastScan)}
+              />
             </div>
           </section>
 
@@ -331,7 +341,9 @@ export function RepositoryDetailPage() {
       {tab === 'issues' ? (
         <section className="overflow-hidden rounded-xl border border-border bg-surface">
           {paginatedIssues.length === 0 ? (
-            <p className="px-5 py-14 text-center text-sm text-muted">{t('DETAIL_REPO.NO_ISSUES_FOUND')}</p>
+            <p className="px-5 py-14 text-center text-sm text-muted">
+              {t('DETAIL_REPO.NO_ISSUES_FOUND')}
+            </p>
           ) : (
             <>
               <div className="overflow-x-auto">
@@ -368,7 +380,9 @@ export function RepositoryDetailPage() {
                           >
                             {issue.message}
                           </Link>
-                          <p className="truncate font-mono text-[11px] text-faint">{issue.component}</p>
+                          <p className="truncate font-mono text-[11px] text-faint">
+                            {issue.component}
+                          </p>
                         </td>
                         <td className="px-5 py-3">
                           <span className="inline-flex items-center gap-1.5 text-xs text-muted">
@@ -420,22 +434,26 @@ export function RepositoryDetailPage() {
       {tab === 'history' ? (
         <section className="overflow-hidden rounded-xl border border-border bg-surface">
           {scans.length === 0 ? (
-            <p className="px-5 py-14 text-center text-sm text-muted">{t('DETAIL_REPO.NO_SCAN_HISTORY')}</p>
+            <p className="px-5 py-14 text-center text-sm text-muted">
+              {t('DETAIL_REPO.NO_SCAN_HISTORY')}
+            </p>
           ) : (
             <div className="overflow-x-auto">
               <table className="w-full min-w-[40rem] text-left text-sm">
                 <thead>
                   <tr className="border-b border-border">
-                    {['DETAIL_REPO.COL_DATE', 'DETAIL_REPO.COL_METRICS', 'DETAIL_REPO.QUALITY_GATE'].map(
-                      (key) => (
-                        <th
-                          key={key}
-                          className="px-5 py-3 font-mono text-[10px] font-semibold uppercase tracking-[0.14em] text-faint"
-                        >
-                          {t(key)}
-                        </th>
-                      ),
-                    )}
+                    {[
+                      'DETAIL_REPO.COL_DATE',
+                      'DETAIL_REPO.COL_METRICS',
+                      'DETAIL_REPO.QUALITY_GATE',
+                    ].map((key) => (
+                      <th
+                        key={key}
+                        className="px-5 py-3 font-mono text-[10px] font-semibold uppercase tracking-[0.14em] text-faint"
+                      >
+                        {t(key)}
+                      </th>
+                    ))}
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-border">

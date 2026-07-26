@@ -238,7 +238,9 @@ export function GenerateReportPage() {
                 <dt className="font-mono text-[10px] font-semibold uppercase tracking-[0.14em] text-faint">
                   {t('REPORT_HISTORY.PROJECT')}
                 </dt>
-                <dd className="min-w-0 truncate text-right text-fg">{selectedProject?.name ?? '—'}</dd>
+                <dd className="min-w-0 truncate text-right text-fg">
+                  {selectedProject?.name ?? '—'}
+                </dd>
               </div>
               <div className="flex items-baseline justify-between gap-3">
                 <dt className="font-mono text-[10px] font-semibold uppercase tracking-[0.14em] text-faint">
@@ -260,7 +262,9 @@ export function GenerateReportPage() {
                 ) : (
                   <FileText size={15} />
                 )}
-                {t(generatePdf.isPending ? 'GENERATE_REPORT.GENERATING' : 'GENERATE_REPORT.GENERATE')}
+                {t(
+                  generatePdf.isPending ? 'GENERATE_REPORT.GENERATING' : 'GENERATE_REPORT.GENERATE',
+                )}
               </button>
               <button
                 type="button"

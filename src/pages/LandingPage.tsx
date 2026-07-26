@@ -6,9 +6,24 @@ import { LanguageSwitcher } from '@/components/common/LanguageSwitcher';
 import { useAuth } from '@/lib/auth/auth-context';
 
 const FEATURES = [
-  { icon: Timer, titleKey: 'LANDING.SAVE_TIME', descKey: 'LANDING.SAVE_TIME_DESC', tint: 'bg-primary-subtle text-primary' },
-  { icon: Search, titleKey: 'LANDING.ISSUE_DETECTION', descKey: 'LANDING.ISSUE_DETECTION_DESC', tint: 'bg-info/10 text-info' },
-  { icon: LayoutDashboard, titleKey: 'LANDING.DASHBOARD', descKey: 'LANDING.DASHBOARD_DESC', tint: 'bg-major/10 text-major' },
+  {
+    icon: Timer,
+    titleKey: 'LANDING.SAVE_TIME',
+    descKey: 'LANDING.SAVE_TIME_DESC',
+    tint: 'bg-primary-subtle text-primary',
+  },
+  {
+    icon: Search,
+    titleKey: 'LANDING.ISSUE_DETECTION',
+    descKey: 'LANDING.ISSUE_DETECTION_DESC',
+    tint: 'bg-info/10 text-info',
+  },
+  {
+    icon: LayoutDashboard,
+    titleKey: 'LANDING.DASHBOARD',
+    descKey: 'LANDING.DASHBOARD_DESC',
+    tint: 'bg-major/10 text-major',
+  },
 ];
 
 const NOTIFICATION_LEVELS = [
@@ -93,7 +108,9 @@ export function LandingPage() {
                   key={feature.titleKey}
                   className="rounded-xl border border-border bg-surface p-6 transition-[transform,box-shadow] duration-200 ease-out hover:-translate-y-0.5 hover:shadow-lg hover:shadow-black/5"
                 >
-                  <div className={`inline-flex h-11 w-11 items-center justify-center rounded-lg ${feature.tint}`}>
+                  <div
+                    className={`inline-flex h-11 w-11 items-center justify-center rounded-lg ${feature.tint}`}
+                  >
                     <Icon size={20} />
                   </div>
                   <h3 className="mt-4 text-base font-semibold text-fg">{t(feature.titleKey)}</h3>
@@ -125,7 +142,9 @@ export function LandingPage() {
 
         <section className="mx-auto w-full max-w-6xl px-5 py-20">
           <div className="landing-cta relative overflow-hidden rounded-2xl px-8 py-14 text-center">
-            <h2 className="text-2xl font-semibold tracking-tight text-white">{t('LANDING.CTA_TITLE')}</h2>
+            <h2 className="text-2xl font-semibold tracking-tight text-white">
+              {t('LANDING.CTA_TITLE')}
+            </h2>
             <p className="mx-auto mt-3 max-w-lg text-sm leading-relaxed text-white/85">
               {t('LANDING.CTA_DESC')}
             </p>

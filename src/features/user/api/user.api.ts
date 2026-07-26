@@ -6,6 +6,11 @@ export async function getAllUsers(): Promise<UserInfo[]> {
   return Array.isArray(data) ? data : [];
 }
 
+export async function getUserById(userId: string): Promise<UserInfo> {
+  const { data } = await apiClient.get<UserInfo>(`/user/search-user/${userId}`);
+  return data;
+}
+
 export async function createUser(payload: UserInfo): Promise<void> {
   await apiClient.post('/user/new-user', payload);
 }

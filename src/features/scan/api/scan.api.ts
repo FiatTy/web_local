@@ -36,11 +36,15 @@ function mapMetrics(metrics?: Record<string, unknown> | null): ScanMetrics | nul
     codeSmells: toNumber(metrics.codeSmells ?? metrics.code_smells),
     coverage: toNumber(metrics.coverage),
     securityHotspots: toNumber(metrics.securityHotspots ?? metrics.security_hotspots),
-    duplicatedLinesDensity: toNumber(metrics.duplicatedLinesDensity ?? metrics.duplicated_lines_density),
+    duplicatedLinesDensity: toNumber(
+      metrics.duplicatedLinesDensity ?? metrics.duplicated_lines_density,
+    ),
     technicalDebtMinutes: toNumber(metrics.technicalDebtMinutes ?? metrics.technical_debt_minutes),
     debtRatio: toNumber(metrics.debtRatio ?? metrics.debt_ratio),
-    maintainabilityRating: (metrics.maintainabilityRating ?? metrics.sqale_rating) as string | undefined,
-    reliabilityRating: (metrics.reliabilityRating ?? metrics.reliability_rating) as string | undefined,
+    maintainabilityRating: (metrics.maintainabilityRating ?? metrics.sqale_rating) as
+      string | undefined,
+    reliabilityRating: (metrics.reliabilityRating ?? metrics.reliability_rating) as
+      string | undefined,
     securityRating: (metrics.securityRating ?? metrics.security_rating) as string | undefined,
   };
 }

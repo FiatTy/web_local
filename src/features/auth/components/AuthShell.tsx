@@ -43,7 +43,10 @@ export function AuthShell({
         <div
           aria-hidden
           className="pointer-events-none absolute inset-0"
-          style={{ background: 'radial-gradient(120% 90% at 85% -10%, rgba(45,212,191,0.28), transparent 60%)' }}
+          style={{
+            background:
+              'radial-gradient(120% 90% at 85% -10%, rgba(45,212,191,0.28), transparent 60%)',
+          }}
         />
         <div
           aria-hidden
@@ -66,7 +69,9 @@ export function AuthShell({
           />
           <div className="flex flex-col leading-none">
             <span className="text-[15px] font-semibold tracking-tight text-white">Code Review</span>
-            <span className="font-mono text-[9px] uppercase tracking-[0.22em] text-white/55">PCCTH</span>
+            <span className="font-mono text-[9px] uppercase tracking-[0.22em] text-white/55">
+              PCCTH
+            </span>
           </div>
         </div>
 
@@ -134,7 +139,9 @@ export function AuthShell({
               />
               <div className="flex flex-col leading-none">
                 <span className="text-sm font-semibold tracking-tight text-fg">Code Review</span>
-                <span className="font-mono text-[9px] uppercase tracking-[0.2em] text-faint">PCCTH</span>
+                <span className="font-mono text-[9px] uppercase tracking-[0.2em] text-faint">
+                  PCCTH
+                </span>
               </div>
             </div>
 

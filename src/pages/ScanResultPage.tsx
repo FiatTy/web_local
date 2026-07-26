@@ -43,7 +43,9 @@ function MetricTile({
   return (
     <div className="rounded-xl border border-border bg-surface p-5">
       <div className="flex items-center justify-between">
-        <span className="font-mono text-[10px] font-medium uppercase tracking-[0.14em] text-faint">{label}</span>
+        <span className="font-mono text-[10px] font-medium uppercase tracking-[0.14em] text-faint">
+          {label}
+        </span>
         <span className={`flex h-8 w-8 items-center justify-center rounded-lg ${tone}`}>
           <Icon size={16} />
         </span>
@@ -182,7 +184,10 @@ export function ScanResultPage() {
     );
   }
 
-  const passed = String(scan.qualityGate ?? '').trim().toUpperCase() === 'OK';
+  const passed =
+    String(scan.qualityGate ?? '')
+      .trim()
+      .toUpperCase() === 'OK';
   const duration = formatDuration(scan.startedAt, scan.completedAt);
 
   return (
@@ -216,7 +221,11 @@ export function ScanResultPage() {
             disabled={sendEmail.isPending}
             className="inline-flex h-10 items-center gap-2 rounded-lg border border-border px-4 text-sm font-medium text-fg transition-colors hover:bg-surface-2 disabled:cursor-not-allowed disabled:opacity-60"
           >
-            {sendEmail.isPending ? <Loader2 size={15} className="animate-spin" /> : <Mail size={15} />}
+            {sendEmail.isPending ? (
+              <Loader2 size={15} className="animate-spin" />
+            ) : (
+              <Mail size={15} />
+            )}
             {t('SCAN_RESULT.EMAIL')}
           </button>
           <Link
@@ -336,16 +345,18 @@ export function ScanResultPage() {
             <caption className="sr-only">{t('SCAN_RESULT.TABLE_CAPTION')}</caption>
             <thead>
               <tr className="border-b border-border">
-                {['SCAN_RESULT.COL_METRIC_GATE', 'SCAN_RESULT.COL_GRADE', 'SCAN_RESULT.COL_STATUS'].map(
-                  (key) => (
-                    <th
-                      key={key}
-                      className="px-5 py-3 font-mono text-[10px] font-semibold uppercase tracking-[0.14em] text-faint"
-                    >
-                      {t(key)}
-                    </th>
-                  ),
-                )}
+                {[
+                  'SCAN_RESULT.COL_METRIC_GATE',
+                  'SCAN_RESULT.COL_GRADE',
+                  'SCAN_RESULT.COL_STATUS',
+                ].map((key) => (
+                  <th
+                    key={key}
+                    className="px-5 py-3 font-mono text-[10px] font-semibold uppercase tracking-[0.14em] text-faint"
+                  >
+                    {t(key)}
+                  </th>
+                ))}
               </tr>
             </thead>
             <tbody className="divide-y divide-border">

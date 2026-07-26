@@ -366,7 +366,7 @@
     "SAVE": "บันทึก",
     "CANCEL": "ยกเลิก",
     "DELETE": "ลบ",
-    "EDIT": "แก้ไข", 
+    "EDIT": "แก้ไข",
     "VIEW": "ดู",
     "SEARCH": "ค้นหา",
     "LOADING": "กำลังโหลด...",
@@ -938,5 +938,43 @@
       "FORMAT_NOT_SUPPORTED": "ไม่รองรับรูปแบบไฟล์นี้",
       "DOWNLOAD_ERROR": "เกิดข้อผิดพลาดในการดาวน์โหลดรายงาน"
     }
+  },
+  "NOTIFICATION": {
+    "TITLE": "การแจ้งเตือน",
+    "TAB_ALL": "ทั้งหมด",
+    "TAB_UNREAD": "ยังไม่อ่าน",
+    "TAB_SCANS": "การสแกน",
+    "TAB_ISSUES": "ปัญหา",
+    "TAB_SYSTEM": "ระบบ",
+    "MARK_ALL_READ": "อ่านทั้งหมด",
+    "EMPTY": "ยังไม่มีการแจ้งเตือน",
+    "LOAD_ERROR": "โหลดการแจ้งเตือนไม่สำเร็จ",
+    "JUST_NOW": "เมื่อสักครู่",
+    "MINUTES_AGO": "{{count}} นาทีที่แล้ว",
+    "HOURS_AGO": "{{count}} ชั่วโมงที่แล้ว",
+    "DAYS_AGO": "{{count}} วันที่แล้ว",
+    "CONNECTED": "เชื่อมต่อเรียลไทม์แล้ว",
+    "DISCONNECTED": "ไม่ได้เชื่อมต่อเรียลไทม์",
+    "CANNOT_OPEN_ISSUE": "เปิดปัญหานี้ไม่ได้",
+    "CANNOT_OPEN_SCAN": "เปิดผลการสแกนไม่ได้",
+    "CANNOT_OPEN_PROJECT": "เปิดรายละเอียดโปรเจกต์ไม่ได้",
+    "NO_DETAILS": "ไม่มีรายละเอียดเพิ่มเติม",
+    "TOAST_NEW_ISSUES": "มีปัญหาใหม่เข้ามา",
+    "TOAST_QUALITY_GATE": "Quality Gate ไม่ผ่าน",
+    "TOAST_NEW_COMMENT": "มีคอมเมนต์ใหม่",
+    "TOAST_NEW_ASSIGNED": "มีงานที่ถูกมอบหมายใหม่",
+    "TOAST_NEW_SYSTEM": "มีการแจ้งเตือนจากระบบ"
+  },
+  "REALTIME": {
+    "UNKNOWN_PROJECT": "โปรเจกต์",
+    "SCAN_COMPLETED": "สแกนเสร็จแล้ว",
+    "SCAN_FAILED": "สแกนไม่สำเร็จ",
+    "PROJECT_ADDED": "เพิ่มโปรเจกต์ \"{{name}}\" แล้ว",
+    "PROJECT_UPDATED": "แก้ไขโปรเจกต์ \"{{name}}\" แล้ว",
+    "PROJECT_DELETED": "ลบโปรเจกต์ \"{{name}}\" แล้ว",
+    "EMAIL_VERIFIED": "ยืนยันอีเมลแล้ว",
+    "VERIFICATION_PENDING": "รอการยืนยันอีเมล",
+    "EMAIL_UNVERIFIED": "ยังไม่ได้ยืนยันอีเมล",
+    "NEW_COMMENT": "มีคอมเมนต์ใหม่"
   }
 }

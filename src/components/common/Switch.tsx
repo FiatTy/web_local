@@ -22,7 +22,9 @@ export function Switch({
   align = 'start',
 }: SwitchProps) {
   const control = (
-    <span className={`relative inline-flex h-5 w-9 shrink-0 items-center ${align === 'start' ? 'mt-0.5' : ''}`}>
+    <span
+      className={`relative inline-flex h-5 w-9 shrink-0 items-center ${align === 'start' ? 'mt-0.5' : ''}`}
+    >
       <input
         id={id}
         type="checkbox"
@@ -45,7 +47,9 @@ export function Switch({
       ) : null}
       <span className="min-w-0">
         <span className="block text-sm text-fg">{label}</span>
-        {description ? <span className="mt-0.5 block text-xs text-faint">{description}</span> : null}
+        {description ? (
+          <span className="mt-0.5 block text-xs text-faint">{description}</span>
+        ) : null}
       </span>
     </span>
   );

@@ -2,6 +2,7 @@ import { lazy } from 'react';
 import { createBrowserRouter, Navigate } from 'react-router';
 import { AuthBoundary } from '@/routes/AuthBoundary';
 import { ProtectedRoute } from '@/routes/ProtectedRoute';
+import { RealtimeBoundary } from '@/routes/RealtimeBoundary';
 import { RoleRoute } from '@/routes/RoleRoute';
 import { RootLayout } from '@/layouts/RootLayout';
 import { LandingPage } from '@/pages/LandingPage';
@@ -105,29 +106,34 @@ export const router = createBrowserRouter(
           element: <ProtectedRoute />,
           children: [
             {
-              element: <RootLayout />,
+              element: <RealtimeBoundary />,
               children: [
-                { path: '/dashboard', element: <DashboardPage /> },
-                { path: '/repositories', element: <RepositoriesPage /> },
-                { path: '/addrepository', element: <RepositoryFormPage /> },
-                { path: '/settingrepo/:projectId', element: <RepositoryFormPage /> },
-                { path: '/detailrepo/:projectId', element: <RepositoryDetailPage /> },
-                { path: '/scanhistory', element: <ScanHistoryPage /> },
-                { path: '/scanresult/:scanId', element: <ScanResultPage /> },
-                { path: '/logviewer/:scanId', element: <LogViewerPage /> },
-                { path: '/issue', element: <IssuesPage /> },
-                { path: '/issuedetail/:issuesId', element: <IssueDetailPage /> },
-                { path: '/assignment', element: <AssignmentsPage /> },
-                { path: '/analysis', element: <AnalysisPage /> },
-                { path: '/security-dashboard', element: <SecurityDashboardPage /> },
-                { path: '/technical-debt', element: <TechnicalDebtPage /> },
-                { path: '/generatereport', element: <GenerateReportPage /> },
-                { path: '/reporthistory', element: <ReportHistoryPage /> },
-                { path: '/sonarqubeconfig', element: <SonarQubeConfigPage /> },
-                { path: '/notificationsetting', element: <NotificationSettingsPage /> },
                 {
-                  element: <RoleRoute allowed={['ADMIN']} />,
-                  children: [{ path: '/usermanagement', element: <UserManagementPage /> }],
+                  element: <RootLayout />,
+                  children: [
+                    { path: '/dashboard', element: <DashboardPage /> },
+                    { path: '/repositories', element: <RepositoriesPage /> },
+                    { path: '/addrepository', element: <RepositoryFormPage /> },
+                    { path: '/settingrepo/:projectId', element: <RepositoryFormPage /> },
+                    { path: '/detailrepo/:projectId', element: <RepositoryDetailPage /> },
+                    { path: '/scanhistory', element: <ScanHistoryPage /> },
+                    { path: '/scanresult/:scanId', element: <ScanResultPage /> },
+                    { path: '/logviewer/:scanId', element: <LogViewerPage /> },
+                    { path: '/issue', element: <IssuesPage /> },
+                    { path: '/issuedetail/:issuesId', element: <IssueDetailPage /> },
+                    { path: '/assignment', element: <AssignmentsPage /> },
+                    { path: '/analysis', element: <AnalysisPage /> },
+                    { path: '/security-dashboard', element: <SecurityDashboardPage /> },
+                    { path: '/technical-debt', element: <TechnicalDebtPage /> },
+                    { path: '/generatereport', element: <GenerateReportPage /> },
+                    { path: '/reporthistory', element: <ReportHistoryPage /> },
+                    { path: '/sonarqubeconfig', element: <SonarQubeConfigPage /> },
+                    { path: '/notificationsetting', element: <NotificationSettingsPage /> },
+                    {
+                      element: <RoleRoute allowed={['ADMIN']} />,
+                      children: [{ path: '/usermanagement', element: <UserManagementPage /> }],
+                    },
+                  ],
                 },
               ],
             },

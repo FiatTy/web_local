@@ -90,7 +90,10 @@ const DEFAULT_FORM: SonarQubeFormState = {
   qgMaxSecurityHotspots: 0,
 };
 
-const CONNECTION_META: Record<ConnectionState, { icon: LucideIcon; chip: string; badge: string; labelKey: string }> = {
+const CONNECTION_META: Record<
+  ConnectionState,
+  { icon: LucideIcon; chip: string; badge: string; labelKey: string }
+> = {
   unknown: {
     icon: Plug,
     chip: 'border-border bg-surface-2 text-muted',
@@ -181,7 +184,9 @@ function SectionCard({
   return (
     <section className="rounded-xl border border-border bg-surface">
       <div className="border-b border-border px-5 py-4">
-        <p className="font-mono text-[10px] font-semibold uppercase tracking-[0.15em] text-faint">{eyebrow}</p>
+        <p className="font-mono text-[10px] font-semibold uppercase tracking-[0.15em] text-faint">
+          {eyebrow}
+        </p>
         <h2 className="mt-1 text-sm font-semibold text-fg">{title}</h2>
         {description ? <p className="mt-1 text-xs text-muted">{description}</p> : null}
       </div>
@@ -506,7 +511,9 @@ export function SonarQubeConfigPage() {
           >
             <div className="grid gap-4 xl:grid-cols-2">
               <div className="rounded-lg border border-border bg-surface-2/40 p-4">
-                <h3 className="text-sm font-semibold text-fg">{t('SONARQUBE_CONFIG.ANGULAR_PROJECTS')}</h3>
+                <h3 className="text-sm font-semibold text-fg">
+                  {t('SONARQUBE_CONFIG.ANGULAR_PROJECTS')}
+                </h3>
                 <div className="mt-4 space-y-3">
                   <Switch
                     id="angularRunNpm"
@@ -547,7 +554,9 @@ export function SonarQubeConfigPage() {
               </div>
 
               <div className="rounded-lg border border-border bg-surface-2/40 p-4">
-                <h3 className="text-sm font-semibold text-fg">{t('SONARQUBE_CONFIG.SPRING_PROJECTS')}</h3>
+                <h3 className="text-sm font-semibold text-fg">
+                  {t('SONARQUBE_CONFIG.SPRING_PROJECTS')}
+                </h3>
                 <div className="mt-4 space-y-3">
                   <Switch
                     id="springRunTests"
@@ -632,7 +641,9 @@ export function SonarQubeConfigPage() {
                     className={FIELD_INPUT_CLASS}
                     value={form[field.key]}
                     onFocus={(event) => event.target.select()}
-                    onChange={(event) => updateGate(field.key, readNumber(event.target.value, field.max))}
+                    onChange={(event) =>
+                      updateGate(field.key, readNumber(event.target.value, field.max))
+                    }
                   />
                 </FormField>
               ))}
@@ -646,8 +657,14 @@ export function SonarQubeConfigPage() {
               {t('SONARQUBE_CONFIG.CONNECTION_STATUS')}
             </p>
             <div className="mt-3 flex items-center gap-3">
-              <span className={`flex h-10 w-10 items-center justify-center rounded-xl ${connectionMeta.badge}`}>
-                {isTesting ? <Loader2 size={18} className="animate-spin" /> : <ConnectionIcon size={18} />}
+              <span
+                className={`flex h-10 w-10 items-center justify-center rounded-xl ${connectionMeta.badge}`}
+              >
+                {isTesting ? (
+                  <Loader2 size={18} className="animate-spin" />
+                ) : (
+                  <ConnectionIcon size={18} />
+                )}
               </span>
               <div className="min-w-0">
                 <p className="text-sm font-semibold text-fg">
@@ -700,7 +717,9 @@ export function SonarQubeConfigPage() {
           <div className="rounded-xl border border-border bg-surface p-5">
             <div className="flex items-center gap-2">
               <ShieldCheck size={15} className="text-primary" />
-              <h3 className="text-sm font-semibold text-fg">{t('SONARQUBE_CONFIG.HOW_TO_GET_GIT_TOKEN')}</h3>
+              <h3 className="text-sm font-semibold text-fg">
+                {t('SONARQUBE_CONFIG.HOW_TO_GET_GIT_TOKEN')}
+              </h3>
             </div>
             <ol className="mt-3 space-y-2.5">
               {['STEP_1', 'STEP_2', 'STEP_3', 'STEP_4'].map((step, index) => (

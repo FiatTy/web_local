@@ -95,7 +95,10 @@ export function ResetPasswordPage() {
   }
 
   const stateMeta: Record<TokenState, { titleKey: string; textKey: string }> = {
-    checking: { titleKey: 'RESET_PASSWORD.CHECKING_TITLE', textKey: 'RESET_PASSWORD.CHECKING_TEXT' },
+    checking: {
+      titleKey: 'RESET_PASSWORD.CHECKING_TITLE',
+      textKey: 'RESET_PASSWORD.CHECKING_TEXT',
+    },
     valid: { titleKey: 'RESET_PASSWORD.FORM_TITLE', textKey: '' },
     expired: { titleKey: 'RESET_PASSWORD.EXPIRED_TITLE', textKey: 'RESET_PASSWORD.EXPIRED_TEXT' },
     used: { titleKey: 'RESET_PASSWORD.USED_TITLE', textKey: 'RESET_PASSWORD.USED_TEXT' },
@@ -103,7 +106,9 @@ export function ResetPasswordPage() {
   };
 
   const isSuccess = resetPasswordMutation.isSuccess;
-  const formTitle = isSuccess ? t('RESET_PASSWORD.SUCCESS_TITLE') : t(stateMeta[tokenState].titleKey);
+  const formTitle = isSuccess
+    ? t('RESET_PASSWORD.SUCCESS_TITLE')
+    : t(stateMeta[tokenState].titleKey);
   const formSubtitle = isSuccess
     ? t('RESET_PASSWORD.SUCCESS_TEXT')
     : stateMeta[tokenState].textKey

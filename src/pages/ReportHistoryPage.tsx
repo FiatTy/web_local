@@ -48,7 +48,9 @@ export function ReportHistoryPage() {
       return reports;
     }
     return reports.filter((report) =>
-      `${report.projectName} ${report.format} ${report.generatedBy}`.toLowerCase().includes(keyword),
+      `${report.projectName} ${report.format} ${report.generatedBy}`
+        .toLowerCase()
+        .includes(keyword),
     );
   }, [historyQuery.data, search]);
 
@@ -93,7 +95,10 @@ export function ReportHistoryPage() {
       <PageHeader title={t('REPORT_HISTORY.TITLE')} subtitle={t('REPORT_HISTORY.SUBTITLE')} />
 
       <div className="mb-4 relative sm:max-w-xs">
-        <Search size={15} className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-faint" />
+        <Search
+          size={15}
+          className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-faint"
+        />
         <input
           type="search"
           className={`${FIELD_INPUT_CLASS} pl-9`}
@@ -159,7 +164,9 @@ export function ReportHistoryPage() {
                           {report.format}
                         </span>
                       </td>
-                      <td className="whitespace-nowrap px-5 py-3 text-muted">{report.generatedBy}</td>
+                      <td className="whitespace-nowrap px-5 py-3 text-muted">
+                        {report.generatedBy}
+                      </td>
                       <td className="whitespace-nowrap px-5 py-3 text-muted">
                         {formatDateTime(report.generatedAt)}
                       </td>

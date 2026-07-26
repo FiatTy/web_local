@@ -938,5 +938,43 @@
       "FORMAT_NOT_SUPPORTED": "Format not supported",
       "DOWNLOAD_ERROR": "Error downloading report"
     }
+  },
+  "NOTIFICATION": {
+    "TITLE": "Notifications",
+    "TAB_ALL": "All",
+    "TAB_UNREAD": "Unread",
+    "TAB_SCANS": "Scans",
+    "TAB_ISSUES": "Issues",
+    "TAB_SYSTEM": "System",
+    "MARK_ALL_READ": "Mark all read",
+    "EMPTY": "No notifications yet",
+    "LOAD_ERROR": "Could not load notifications",
+    "JUST_NOW": "Just now",
+    "MINUTES_AGO": "{{count}}m ago",
+    "HOURS_AGO": "{{count}}h ago",
+    "DAYS_AGO": "{{count}}d ago",
+    "CONNECTED": "Realtime connected",
+    "DISCONNECTED": "Realtime disconnected",
+    "CANNOT_OPEN_ISSUE": "Cannot open issue",
+    "CANNOT_OPEN_SCAN": "Cannot open scan results",
+    "CANNOT_OPEN_PROJECT": "Cannot open project details",
+    "NO_DETAILS": "No details available",
+    "TOAST_NEW_ISSUES": "You have new issues",
+    "TOAST_QUALITY_GATE": "Quality gate failed",
+    "TOAST_NEW_COMMENT": "You have a new comment",
+    "TOAST_NEW_ASSIGNED": "You have a new assignment",
+    "TOAST_NEW_SYSTEM": "New system notification"
+  },
+  "REALTIME": {
+    "UNKNOWN_PROJECT": "Project",
+    "SCAN_COMPLETED": "Scan completed",
+    "SCAN_FAILED": "Scan failed",
+    "PROJECT_ADDED": "Project \"{{name}}\" was added",
+    "PROJECT_UPDATED": "Project \"{{name}}\" was updated",
+    "PROJECT_DELETED": "Project \"{{name}}\" was deleted",
+    "EMAIL_VERIFIED": "Email verified",
+    "VERIFICATION_PENDING": "Verification pending",
+    "EMAIL_UNVERIFIED": "Email unverified",
+    "NEW_COMMENT": "New comment received"
   }
 }

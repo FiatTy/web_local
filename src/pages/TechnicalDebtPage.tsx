@@ -135,7 +135,9 @@ export function TechnicalDebtPage() {
         <section className="rounded-xl border border-border bg-surface">
           <div className="flex items-center gap-2 border-b border-border px-5 py-4">
             <Layers size={15} className="text-accent" />
-            <h2 className="text-sm font-semibold text-fg">{t('TECHNICAL_DEBT.DEBT_BY_CATEGORY')}</h2>
+            <h2 className="text-sm font-semibold text-fg">
+              {t('TECHNICAL_DEBT.DEBT_BY_CATEGORY')}
+            </h2>
           </div>
           <div className="px-5 py-5">
             <BarList

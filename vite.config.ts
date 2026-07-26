@@ -5,6 +5,9 @@ import tailwindcss from '@tailwindcss/vite';
 
 export default defineConfig({
   base: '/codereview/',
+  define: {
+    global: 'globalThis',
+  },
   plugins: [react(), tailwindcss()],
   resolve: {
     alias: {

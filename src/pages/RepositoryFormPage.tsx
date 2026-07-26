@@ -20,7 +20,11 @@ import { PageHeader } from '@/components/common/PageHeader';
 import { FIELD_INPUT_CLASS, FormField } from '@/components/common/FormField';
 import { useToast } from '@/lib/toast/toast-context';
 import { useRepositories, useDeleteRepository } from '@/features/repository/hooks/useRepositories';
-import { useRepository, useSaveRepository, useStartScan } from '@/features/repository/hooks/useRepository';
+import {
+  useRepository,
+  useSaveRepository,
+  useStartScan,
+} from '@/features/repository/hooks/useRepository';
 import { useSonarQubeConfig } from '@/features/setting/hooks/useSonarQubeConfig';
 import type { ProjectType } from '@/features/repository/types';
 
@@ -72,7 +76,9 @@ function SectionCard({
   return (
     <section className="rounded-xl border border-border bg-surface">
       <div className="border-b border-border px-5 py-4">
-        <p className="font-mono text-[10px] font-semibold uppercase tracking-[0.15em] text-faint">{eyebrow}</p>
+        <p className="font-mono text-[10px] font-semibold uppercase tracking-[0.15em] text-faint">
+          {eyebrow}
+        </p>
         <h2 className="mt-1 text-sm font-semibold text-fg">{title}</h2>
       </div>
       <div className="px-5 py-5">{children}</div>
@@ -86,7 +92,9 @@ function SummaryRow({ label, value, mono }: { label: string; value: string; mono
       <span className="shrink-0 font-mono text-[10px] font-semibold uppercase tracking-[0.14em] text-faint">
         {label}
       </span>
-      <span className={`min-w-0 truncate text-right text-sm text-fg ${mono ? 'font-mono text-xs' : ''}`}>
+      <span
+        className={`min-w-0 truncate text-right text-sm text-fg ${mono ? 'font-mono text-xs' : ''}`}
+      >
         {value}
       </span>
     </div>
@@ -150,12 +158,12 @@ export function RepositoryFormPage() {
         ? t('REPOSITORY.DUPLICATE_NAME')
         : '',
     projectType: !form.projectType ? t('REPOSITORY.TYPE_REQUIRED') : '',
-    costPerDay:
-      form.costPerDay < MIN_COST_PER_DAY ? t('REPOSITORY.COST_MIN') : '',
+    costPerDay: form.costPerDay < MIN_COST_PER_DAY ? t('REPOSITORY.COST_MIN') : '',
     repositoryUrl: !form.repositoryUrl.trim() ? t('REPOSITORY.URL_REQUIRED') : '',
   };
 
-  const isValid = !errors.name && !errors.projectType && !errors.costPerDay && !errors.repositoryUrl;
+  const isValid =
+    !errors.name && !errors.projectType && !errors.costPerDay && !errors.repositoryUrl;
   const isSubmitting = saveRepository.isPending || startScan.isPending;
 
   function update(patch: Partial<RepositoryFormState>) {
@@ -261,7 +269,9 @@ export function RepositoryFormPage() {
   return (
     <div>
       <PageHeader
-        title={t(isEditMode ? 'REPOSITORY.EDIT_REPOSITORY_TITLE' : 'REPOSITORY.NEW_REPOSITORY_TITLE')}
+        title={t(
+          isEditMode ? 'REPOSITORY.EDIT_REPOSITORY_TITLE' : 'REPOSITORY.NEW_REPOSITORY_TITLE',
+        )}
         subtitle={t('REPOSITORY.CONFIGURE_CONN')}
       />
 
@@ -275,7 +285,10 @@ export function RepositoryFormPage() {
                 error={touched.name ? errors.name : ''}
               >
                 <div className="relative">
-                  <Tag size={15} className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-faint" />
+                  <Tag
+                    size={15}
+                    className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-faint"
+                  />
                   <input
                     id="name"
                     type="text"
@@ -319,7 +332,10 @@ export function RepositoryFormPage() {
                 hint={t('REPOSITORY.COST_MIN')}
               >
                 <div className="relative">
-                  <Wallet size={15} className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-faint" />
+                  <Wallet
+                    size={15}
+                    className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-faint"
+                  />
                   <input
                     id="costPerDay"
                     type="number"
@@ -340,7 +356,10 @@ export function RepositoryFormPage() {
                   error={touched.repositoryUrl ? errors.repositoryUrl : ''}
                 >
                   <div className="relative">
-                    <Link2 size={15} className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-faint" />
+                    <Link2
+                      size={15}
+                      className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-faint"
+                    />
                     <input
                       id="repositoryUrl"
                       type="url"
@@ -365,7 +384,10 @@ export function RepositoryFormPage() {
                 hint={t('REPOSITORY.FROM_SETTINGS')}
               >
                 <div className="relative">
-                  <Server size={15} className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-faint" />
+                  <Server
+                    size={15}
+                    className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-faint"
+                  />
                   <input
                     id="sonarServerUrl"
                     type="text"
@@ -382,7 +404,10 @@ export function RepositoryFormPage() {
                 hint={t('REPOSITORY.PROJECT_KEY_HINT')}
               >
                 <div className="relative">
-                  <Hash size={15} className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-faint" />
+                  <Hash
+                    size={15}
+                    className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-faint"
+                  />
                   <input
                     id="sonarProjectKey"
                     type="text"
@@ -475,8 +500,12 @@ export function RepositoryFormPage() {
             <div className="flex h-11 w-11 items-center justify-center rounded-full bg-warning/12 text-warning">
               <TriangleAlert size={20} />
             </div>
-            <h2 className="mt-4 text-base font-semibold text-fg">{t('REPOSITORY.MISSING_SONAR_TITLE')}</h2>
-            <p className="mt-1.5 text-sm leading-relaxed text-muted">{t('REPOSITORY.MISSING_SONAR_TEXT')}</p>
+            <h2 className="mt-4 text-base font-semibold text-fg">
+              {t('REPOSITORY.MISSING_SONAR_TITLE')}
+            </h2>
+            <p className="mt-1.5 text-sm leading-relaxed text-muted">
+              {t('REPOSITORY.MISSING_SONAR_TEXT')}
+            </p>
             <div className="mt-6 flex justify-end gap-2">
               <button
                 type="button"
@@ -510,7 +539,9 @@ export function RepositoryFormPage() {
             <div className="flex h-11 w-11 items-center justify-center rounded-full bg-danger/12 text-danger">
               <Trash2 size={20} />
             </div>
-            <h2 className="mt-4 text-base font-semibold text-fg">{t('REPOSITORY.DELETE_CONFIRM.TITLE')}</h2>
+            <h2 className="mt-4 text-base font-semibold text-fg">
+              {t('REPOSITORY.DELETE_CONFIRM.TITLE')}
+            </h2>
             <p className="mt-1.5 text-sm text-muted">{t('REPOSITORY.DELETE_CONFIRM.TEXT')}</p>
             <p className="mt-2 truncate text-sm font-medium text-fg">{form.name}</p>
             <div className="mt-6 flex justify-end gap-2">

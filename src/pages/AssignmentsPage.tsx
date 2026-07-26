@@ -47,7 +47,8 @@ export function AssignmentsPage() {
   const [statusTarget, setStatusTarget] = useState<Issue | null>(null);
 
   const assignments = useMemo(
-    () => (issuesQuery.data ?? []).filter((issue) => issue.assignedId && issue.assignedId === user?.id),
+    () =>
+      (issuesQuery.data ?? []).filter((issue) => issue.assignedId && issue.assignedId === user?.id),
     [issuesQuery.data, user?.id],
   );
 
@@ -79,7 +80,9 @@ export function AssignmentsPage() {
             <p>{t('COMMON.ERROR')}</p>
           </div>
         ) : assignments.length === 0 ? (
-          <p className="px-5 py-16 text-center text-sm text-muted">{t('MY_ASSIGNMENTS.NO_ASSIGNMENTS')}</p>
+          <p className="px-5 py-16 text-center text-sm text-muted">
+            {t('MY_ASSIGNMENTS.NO_ASSIGNMENTS')}
+          </p>
         ) : (
           <div className="overflow-x-auto">
             <table className="w-full min-w-[52rem] text-left text-sm">
@@ -111,8 +114,12 @@ export function AssignmentsPage() {
                         {issue.severity}
                       </span>
                     </td>
-                    <td className="whitespace-nowrap px-5 py-3 text-muted">{issue.projectName || '—'}</td>
-                    <td className="whitespace-nowrap px-5 py-3 text-muted">{formatDate(issue.createdAt)}</td>
+                    <td className="whitespace-nowrap px-5 py-3 text-muted">
+                      {issue.projectName || '—'}
+                    </td>
+                    <td className="whitespace-nowrap px-5 py-3 text-muted">
+                      {formatDate(issue.createdAt)}
+                    </td>
                     <td className="px-5 py-3">
                       <button
                         type="button"

@@ -189,7 +189,10 @@ export function UserManagementPage() {
 
       <div className="mb-4 flex flex-col gap-2 sm:flex-row sm:items-center">
         <div className="relative sm:max-w-xs sm:flex-1">
-          <Search size={15} className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-faint" />
+          <Search
+            size={15}
+            className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-faint"
+          />
           <input
             type="search"
             className={`${FIELD_INPUT_CLASS} pl-9`}
@@ -255,7 +258,9 @@ export function UserManagementPage() {
                         </div>
                       </td>
                       <td className="px-5 py-3 text-muted">{user.email}</td>
-                      <td className="px-5 py-3 font-mono text-xs text-muted">{user.phone || '—'}</td>
+                      <td className="px-5 py-3 font-mono text-xs text-muted">
+                        {user.phone || '—'}
+                      </td>
                       <td className="px-5 py-3">
                         <span
                           className={`rounded-full px-2 py-0.5 font-mono text-[10px] font-semibold uppercase tracking-wide ${
@@ -361,7 +366,9 @@ export function UserManagementPage() {
                     />
                     <button
                       type="button"
-                      aria-label={t(showPassword ? 'SONARQUBE_CONFIG.HIDE' : 'SONARQUBE_CONFIG.SHOW')}
+                      aria-label={t(
+                        showPassword ? 'SONARQUBE_CONFIG.HIDE' : 'SONARQUBE_CONFIG.SHOW',
+                      )}
                       onClick={() => setShowPassword((current) => !current)}
                       className="absolute right-1 top-1 inline-flex h-8 w-8 items-center justify-center rounded-md text-faint transition-colors hover:bg-surface-2 hover:text-fg"
                     >
@@ -460,7 +467,9 @@ export function UserManagementPage() {
             <div className="flex h-11 w-11 items-center justify-center rounded-full bg-danger/12 text-danger">
               <Trash2 size={20} />
             </div>
-            <h2 className="mt-4 text-base font-semibold text-fg">{t('USER_MGT.CONFIRM_DELETE_TITLE')}</h2>
+            <h2 className="mt-4 text-base font-semibold text-fg">
+              {t('USER_MGT.CONFIRM_DELETE_TITLE')}
+            </h2>
             <p className="mt-1.5 text-sm text-muted">{t('USER_MGT.CONFIRM_DELETE_TEXT')}</p>
             <p className="mt-2 truncate text-sm font-medium text-fg">{pendingDelete.username}</p>
             <div className="mt-6 flex justify-end gap-2">

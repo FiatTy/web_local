@@ -23,6 +23,7 @@ import {
   useIssueAnalysis,
   useTriggerAiFix,
 } from '@/features/issue/hooks/useIssue';
+import { useIssueCommentStream } from '@/features/issue/hooks/useIssueCommentStream';
 import type { IssueComment } from '@/features/issue/types';
 
 const SEVERITY_BADGE: Record<string, string> = {
@@ -61,7 +62,9 @@ function InfoRow({ label, value, mono }: { label: string; value: string; mono?: 
       <span className="shrink-0 font-mono text-[10px] font-semibold uppercase tracking-[0.14em] text-faint">
         {label}
       </span>
-      <span className={`min-w-0 truncate text-right text-sm text-fg ${mono ? 'font-mono text-xs' : ''}`}>
+      <span
+        className={`min-w-0 truncate text-right text-sm text-fg ${mono ? 'font-mono text-xs' : ''}`}
+      >
         {value}
       </span>
     </div>
@@ -120,9 +123,13 @@ function CommentItem({ comment, replies }: { comment: IssueComment; replies: Iss
         <div className="min-w-0 flex-1">
           <div className="flex flex-wrap items-baseline gap-2">
             <span className="text-sm font-medium text-fg">{comment.username || '—'}</span>
-            <span className="font-mono text-[11px] text-faint">{formatDateTime(comment.createdAt)}</span>
+            <span className="font-mono text-[11px] text-faint">
+              {formatDateTime(comment.createdAt)}
+            </span>
           </div>
-          <p className="mt-1 whitespace-pre-wrap break-words text-sm text-muted">{comment.comment}</p>
+          <p className="mt-1 whitespace-pre-wrap break-words text-sm text-muted">
+            {comment.comment}
+          </p>
         </div>
       </div>
       {replies.length > 0 ? (
@@ -135,9 +142,13 @@ function CommentItem({ comment, replies }: { comment: IssueComment; replies: Iss
               <div className="min-w-0 flex-1">
                 <div className="flex flex-wrap items-baseline gap-2">
                   <span className="text-sm font-medium text-fg">{reply.username || '—'}</span>
-                  <span className="font-mono text-[11px] text-faint">{formatDateTime(reply.createdAt)}</span>
+                  <span className="font-mono text-[11px] text-faint">
+                    {formatDateTime(reply.createdAt)}
+                  </span>
                 </div>
-                <p className="mt-1 whitespace-pre-wrap break-words text-sm text-muted">{reply.comment}</p>
+                <p className="mt-1 whitespace-pre-wrap break-words text-sm text-muted">
+                  {reply.comment}
+                </p>
               </div>
             </li>
           ))}
@@ -156,6 +167,7 @@ export function IssueDetailPage() {
 
   const issueQuery = useIssue(issuesId);
   const analysisQuery = useIssueAnalysis(issuesId);
+  useIssueCommentStream(issuesId);
   const addComment = useAddIssueComment();
   const triggerAiFix = useTriggerAiFix();
 
@@ -266,7 +278,9 @@ export function IssueDetailPage() {
           <ArrowLeft size={14} />
           {t('ISSUE_DETAIL.BACK_TO_ISSUE')}
         </button>
-        <h1 className="mt-2 text-2xl font-semibold leading-snug tracking-tight text-fg">{issue.message}</h1>
+        <h1 className="mt-2 text-2xl font-semibold leading-snug tracking-tight text-fg">
+          {issue.message}
+        </h1>
         <div className="mt-3 flex flex-wrap items-center gap-2">
           <span className="rounded-md bg-surface-2 px-2 py-0.5 font-mono text-[10px] uppercase tracking-wide text-muted">
             {issue.type.replace(/_/g, ' ')}
@@ -353,7 +367,11 @@ export function IssueDetailPage() {
                           ) : (
                             <Sparkles size={13} />
                           )}
-                          {t(aiPending ? 'ISSUE_DETAIL.GENERATING_AI_FIX' : 'ISSUE_DETAIL.GENERATE_AI_FIX')}
+                          {t(
+                            aiPending
+                              ? 'ISSUE_DETAIL.GENERATING_AI_FIX'
+                              : 'ISSUE_DETAIL.GENERATE_AI_FIX',
+                          )}
                         </button>
                       </div>
                     </div>
@@ -444,7 +462,10 @@ export function IssueDetailPage() {
               <InfoRow label={t('ISSUE_DETAIL.ID')} value={issue.issueKey || issue.id} mono />
               <InfoRow label={t('ISSUE_DETAIL.TYPE')} value={issue.type.replace(/_/g, ' ')} />
               <InfoRow label={t('ISSUE_DETAIL.FILE')} value={issue.component || '—'} mono />
-              <InfoRow label={t('ISSUE_DETAIL.LINE')} value={issue.line != null ? String(issue.line) : '—'} />
+              <InfoRow
+                label={t('ISSUE_DETAIL.LINE')}
+                value={issue.line != null ? String(issue.line) : '—'}
+              />
               <InfoRow label={t('ISSUE_DETAIL.CREATED')} value={formatDateTime(issue.createdAt)} />
             </div>
           </div>

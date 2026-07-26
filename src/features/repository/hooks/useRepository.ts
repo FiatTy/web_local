@@ -8,6 +8,7 @@ import {
   updateRepository,
 } from '@/features/repository/api/repository.api';
 import { repositoriesQueryKey } from '@/features/repository/hooks/useRepositories';
+import { markMyTriggeredScan } from '@/features/repository/lib/triggered-scans';
 import type { Repository, RepositoryDetail, RepositoryPayload } from '@/features/repository/types';
 import type { SonarQubeConfig } from '@/features/setting/types';
 
@@ -66,7 +67,8 @@ export function useStartScan() {
   return useMutation<void, unknown, StartScanVariables>({
     mutationFn: ({ projectId, branch, config, gitToken, serverUrl }) =>
       startScan(projectId, buildScanRequest(config, branch, gitToken, serverUrl)),
-    onSuccess: () => {
+    onSuccess: (_result, variables) => {
+      markMyTriggeredScan(variables.projectId);
       void queryClient.invalidateQueries({ queryKey: repositoriesQueryKey });
     },
   });
