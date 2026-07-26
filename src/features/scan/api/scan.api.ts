@@ -93,10 +93,6 @@ export async function getScanById(scanId: string): Promise<ScanDetail> {
   };
 }
 
-export async function cancelScan(scanId: string): Promise<void> {
-  await apiClient.post(`/scans/${scanId}/cancel`, null);
-}
-
 export async function sendScanReportEmail(payload: ScanReportEmailPayload): Promise<void> {
   await apiClient.post('/api/email/send', payload);
 }

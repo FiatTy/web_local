@@ -22,6 +22,7 @@
 | ส่วน | ใช้ |
 |---|---|
 | Build | Vite 8 |
+| Test | Vitest (`npm test`) — unit test ของ logic ล้วน ๆ ใน `*.test.ts` ข้าง ๆ ไฟล์ที่เทส |
 | UI | React 18 + TypeScript (strict) |
 | Styling | Tailwind CSS v4 (design tokens ใน `src/styles/index.css`) |
 | Routing | React Router v7 |
@@ -242,6 +243,25 @@ UI ใหม่: `features/notification` (api + hooks + `NotificationBell`) — 
 ### ค. ไม่พอร์ตโดยตั้งใจ
 - **SSE** (`/api/sse/subscribe?repoId=`) — ของเดิม `SseService` ถูก import ไว้แต่ **ไม่เคยถูกเรียกใช้จริง**
   (grep แล้วไม่มี call site) สถานะ scan realtime ใช้ WebSocket `/topic/scan-status` แทนทั้งหมด
+
+### ง. ฝากไว้ให้ฝั่ง backend
+- `GET /api/email-verification/confirm` redirect ไป `https://gpt.pccth.com/...` แบบ hardcode
+  ทำให้ตอน dev บนเครื่อง คลิกลิงก์ยืนยันแล้วเด้งไป production ควรทำให้ config ตาม environment
+
+---
+
+## 8.1.1 กติกาสำคัญที่เจอตอนต่อ backend จริง
+
+**`POST /api/reports/generate` บันทึก report history ให้เองอยู่แล้ว**
+ฝั่ง frontend **ห้าม** เรียก `POST /report-history/create/{userId}` ซ้ำ ไม่งั้นได้ 2 แถวต่อการกด 1 ครั้ง
+(ของเดิม Angular เรียกเอง เพราะตอนนั้น backend ยังไม่ทำให้ — ตรวจแล้วว่าตอนนี้ทำให้แล้ว)
+ส่วน **notification ของ report** backend ไม่ได้สร้างให้ frontend ต้องสร้างเองผ่าน
+`generateReportNotification` และเช็ค `NotificationSettings.reportsEnabled` ก่อน
+
+**`GET /api/email-verification/confirm` เป็น 302 redirect ไม่ใช่ JSON API**
+เรียกด้วย axios ไม่ได้ (โดน CORS ตอน follow redirect) หน้า `/verify-email` จึงใช้
+`window.location.assign()` ส่ง browser ไปให้ backend จัดการแล้ว redirect กลับมาที่
+`/verify-success` หรือ `/verify-failed` เอง
 
 ---
 

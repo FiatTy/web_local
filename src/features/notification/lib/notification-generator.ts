@@ -27,6 +27,12 @@ export interface ScanNotificationInput {
   succeeded: boolean;
 }
 
+export interface ReportNotificationInput {
+  projectId: string;
+  projectName: string;
+  succeeded: boolean;
+}
+
 async function loadExisting(userId: string): Promise<AppNotification[]> {
   try {
     return await getNotifications(userId);
@@ -52,6 +58,30 @@ export async function generateScanNotification(
         : `${input.projectName} scan failed caused by Git Token is Expired or Failed to connect to Server.`,
       relatedProjectId: input.projectId,
       relatedScanId: input.scanId,
+      isBroadcast: false,
+    });
+    return true;
+  } catch {
+    return false;
+  }
+}
+
+export async function generateReportNotification(
+  input: ReportNotificationInput,
+  userId: string,
+): Promise<boolean> {
+  if (!userId) {
+    return false;
+  }
+  try {
+    await createNotification({
+      userId,
+      type: 'System',
+      title: input.succeeded ? 'Report Generated' : 'Report Generation Failed',
+      message: input.succeeded
+        ? `${input.projectName} report is ready to download`
+        : `${input.projectName} report could not be generated`,
+      relatedProjectId: input.projectId,
       isBroadcast: false,
     });
     return true;

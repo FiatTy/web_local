@@ -2,12 +2,14 @@ import { lazy } from 'react';
 import { createBrowserRouter, Navigate } from 'react-router';
 import { AuthBoundary } from '@/routes/AuthBoundary';
 import { ProtectedRoute } from '@/routes/ProtectedRoute';
-import { RealtimeBoundary } from '@/routes/RealtimeBoundary';
 import { RoleRoute } from '@/routes/RoleRoute';
 import { RootLayout } from '@/layouts/RootLayout';
 import { LandingPage } from '@/pages/LandingPage';
 import { LoginPage } from '@/pages/LoginPage';
 
+const RealtimeBoundary = lazy(() =>
+  import('@/routes/RealtimeBoundary').then((module) => ({ default: module.RealtimeBoundary })),
+);
 const RegisterPage = lazy(() =>
   import('@/pages/RegisterPage').then((module) => ({ default: module.RegisterPage })),
 );

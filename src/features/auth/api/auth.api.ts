@@ -1,4 +1,4 @@
-import { apiClient } from '@/lib/api-client';
+import { API_BASE, apiClient } from '@/lib/api-client';
 import type { LoginRequest, LoginResponse, RefreshResponse, RegisterRequest } from '@/types/user';
 
 export interface ResetPasswordPayload {
@@ -36,8 +36,8 @@ export async function resetPassword(payload: ResetPasswordPayload): Promise<void
   await apiClient.post('/user/reset-password', payload);
 }
 
-export async function confirmVerifyEmail(token: string): Promise<void> {
-  await apiClient.post('/api/email-verification/confirm', { token });
+export function emailVerificationConfirmUrl(token: string): string {
+  return `${API_BASE}/api/email-verification/confirm?token=${encodeURIComponent(token)}`;
 }
 
 export async function validateResetToken(token: string): Promise<ResetTokenValidation> {

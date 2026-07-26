@@ -7,7 +7,7 @@ import {
   setAccessToken,
 } from '@/lib/auth/token-store';
 
-const API_BASE = import.meta.env.VITE_API_BASE ?? '/backend';
+export const API_BASE = import.meta.env.VITE_API_BASE ?? '/backend';
 
 const PUBLIC_PATH_FRAGMENTS = [
   '/login',

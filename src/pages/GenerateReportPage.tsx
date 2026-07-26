@@ -1,6 +1,7 @@
 import { useMemo, useState } from 'react';
 import { useNavigate } from 'react-router';
 import { useTranslation } from 'react-i18next';
+import { useQueryClient } from '@tanstack/react-query';
 import { CalendarRange, FileText, FolderGit2, Layers, Loader2 } from 'lucide-react';
 import { PageHeader } from '@/components/common/PageHeader';
 import { FIELD_INPUT_CLASS, FormField } from '@/components/common/FormField';
@@ -11,6 +12,9 @@ import { useRepositories } from '@/features/repository/hooks/useRepositories';
 import { useScanHistory } from '@/features/scan/hooks/useScanHistory';
 import { useGenerateReportPdf } from '@/features/report/hooks/useReports';
 import { downloadBase64 } from '@/features/report/api/report.api';
+import { notificationsQueryKey } from '@/features/notification/hooks/useNotifications';
+import { generateReportNotification } from '@/features/notification/lib/notification-generator';
+import { useNotificationSettings } from '@/features/setting/hooks/useNotificationSettings';
 import type { ReportSections } from '@/features/report/types';
 
 const SECTION_FIELDS: { key: keyof ReportSections; labelKey: string }[] = [
@@ -66,6 +70,8 @@ export function GenerateReportPage() {
   const repositoriesQuery = useRepositories();
   const scansQuery = useScanHistory();
   const generatePdf = useGenerateReportPdf();
+  const queryClient = useQueryClient();
+  const { data: notificationSettings } = useNotificationSettings();
 
   const [projectId, setProjectId] = useState('');
   const [dateFrom, setDateFrom] = useState('');
@@ -130,18 +136,33 @@ export function GenerateReportPage() {
         generatedBy: user?.username || 'Unknown',
       });
       downloadBase64(response.base64, response.fileName, response.mimeType);
+      notifyReport(selectedProject.name, true);
       showToast({
         tone: 'success',
         title: t('GENERATE_REPORT.SNACKBAR.SUCCESS'),
         description: selectedProject.name,
       });
     } catch {
+      notifyReport(selectedProject.name, false);
       showToast({
         tone: 'error',
         title: t('GENERATE_REPORT.SNACKBAR.FAILED'),
         description: selectedProject.name,
       });
     }
+  }
+
+  function notifyReport(projectName: string, succeeded: boolean) {
+    if (!user?.id || notificationSettings?.reportsEnabled === false) {
+      return;
+    }
+    void generateReportNotification({ projectId, projectName, succeeded }, user.id).then(
+      (created) => {
+        if (created) {
+          void queryClient.invalidateQueries({ queryKey: notificationsQueryKey(user.id) });
+        }
+      },
+    );
   }
 
   return (

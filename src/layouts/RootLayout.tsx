@@ -35,19 +35,19 @@ interface NavItemConfig {
 }
 
 interface NavSection {
-  heading: string;
+  headingKey: string;
   items: NavItemConfig[];
 }
 
 const NAV_SECTIONS: NavSection[] = [
   {
-    heading: 'Overview',
+    headingKey: 'NAV.SECTION_OVERVIEW',
     items: [
       { to: '/dashboard', labelKey: 'NAV.DASHBOARD', fallback: 'Dashboard', icon: LayoutDashboard },
     ],
   },
   {
-    heading: 'Code',
+    headingKey: 'NAV.SECTION_CODE',
     items: [
       {
         to: '/repositories',
@@ -71,7 +71,7 @@ const NAV_SECTIONS: NavSection[] = [
     ],
   },
   {
-    heading: 'Analytics',
+    headingKey: 'NAV.SECTION_ANALYTICS',
     items: [
       { to: '/analysis', labelKey: 'NAV.ANALYSIS', fallback: 'Analysis', icon: LineChart },
       {
@@ -89,7 +89,7 @@ const NAV_SECTIONS: NavSection[] = [
     ],
   },
   {
-    heading: 'Reports',
+    headingKey: 'NAV.SECTION_REPORTS',
     items: [
       {
         to: '/generatereport',
@@ -106,7 +106,7 @@ const NAV_SECTIONS: NavSection[] = [
     ],
   },
   {
-    heading: 'Settings',
+    headingKey: 'NAV.SECTION_SETTINGS',
     items: [
       {
         to: '/sonarqubeconfig',
@@ -142,7 +142,7 @@ export function RootLayout() {
       {mobileOpen ? (
         <button
           type="button"
-          aria-label="Close menu"
+          aria-label={t('NAV.CLOSE_MENU')}
           className="fixed inset-0 z-30 bg-black/40 lg:hidden"
           onClick={() => setMobileOpen(false)}
         />
@@ -157,7 +157,7 @@ export function RootLayout() {
           <BrandMark size={28} />
           <button
             type="button"
-            aria-label="Close menu"
+            aria-label={t('NAV.CLOSE_MENU')}
             className="text-muted hover:text-fg lg:hidden"
             onClick={() => setMobileOpen(false)}
           >
@@ -172,9 +172,9 @@ export function RootLayout() {
               return null;
             }
             return (
-              <div key={section.heading}>
+              <div key={section.headingKey}>
                 <p className="px-3 pb-1.5 font-mono text-[10px] font-semibold uppercase tracking-[0.15em] text-faint">
-                  {section.heading}
+                  {t(section.headingKey)}
                 </p>
                 <div className="space-y-0.5">
                   {items.map((item) => {
@@ -217,7 +217,7 @@ export function RootLayout() {
         <header className="sticky top-0 z-20 flex h-14 items-center gap-3 border-b border-border bg-surface/80 px-4 backdrop-blur">
           <button
             type="button"
-            aria-label="Open menu"
+            aria-label={t('NAV.OPEN_MENU')}
             className="inline-flex h-9 w-9 items-center justify-center rounded-md border border-border text-muted transition-colors hover:text-fg lg:hidden"
             onClick={() => setMobileOpen(true)}
           >
