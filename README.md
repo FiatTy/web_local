@@ -1,90 +1,96 @@
 # PCCTH Automate Code Review — Frontend
 
-Web client for the Automate Code Review platform. Connect a Git repository, run a SonarQube
-scan, then read the issues, security posture and technical debt it produced.
-
-Built with Vite + React + TypeScript. The Angular 18 original is kept under `angular-legacy/`
-as the reference while the migration finishes.
-
----
-
 ## Requirements
 
-| Tool    | Version                                                        |
+| ตัว     | เวอร์ชัน                                                       |
 | ------- | -------------------------------------------------------------- |
-| Node    | 20.19+ or 22.12+ (Vite 8 requirement)                          |
+| Node    | 20.19+ หรือ 22.12+                                             |
 | npm     | 10+                                                            |
-| Backend | `pccth_code_review_service` running on `http://localhost:8080` |
+| Backend | `pccth_code_review_service` รันอยู่ที่ `http://localhost:8080` |
 
 ## Quick start
 
 ```bash
 npm install
-cp .env.example .env      # then point VITE_API_BASE at your backend
-npm run dev               # http://localhost:5173/codereview/
+cp .env.example .env      # แก้ VITE_API_BASE ให้ชี้ไป backend
+npm run dev               # เปิด http://localhost:5173/codereview/
 ```
 
-The backend allows CORS from `http://localhost:5173` only, so keep that port when running
-against a local service.
+backend เปิด CORS ให้แค่ port `5173` เท่านั้น ตอน dev อย่าเปลี่ยน port
 
 ## Scripts
 
-| Command              | What it does                                             |
-| -------------------- | -------------------------------------------------------- |
-| `npm run dev`        | Dev server with HMR                                      |
-| `npm run build`      | Type-check (`tsc -b`) then production build into `dist/` |
-| `npm run preview`    | Serve the production build locally                       |
-| `npm run lint`       | ESLint over the whole repo                               |
-| `npm test`           | Vitest unit tests, single run                            |
-| `npm run test:watch` | Vitest in watch mode                                     |
+| คำสั่ง            | ทำอะไร                                |
+| ----------------- | ------------------------------------- |
+| `npm run dev`     | รัน dev server แก้โค้ดแล้วเห็นผลทันที |
+| `npm run build`   | เช็ค type แล้ว build ลง `dist/`       |
+| `npm run preview` | เปิดดูของที่ build แล้ว               |
+| `npm run lint`    | ตรวจโค้ดด้วย ESLint                   |
+| `npm test`        | รัน unit test                         |
 
-## Environment
-
-| Variable        | Purpose                                      |
-| --------------- | -------------------------------------------- |
-| `VITE_API_BASE` | Backend origin, e.g. `http://localhost:8080` |
-
-The app is served under the `/codereview/` base path (`vite.config.ts`), matching the nginx
-deployment.
-
-## Project structure
+## Structure
 
 ```
 src/
-  main.tsx              entry: theme + i18n, renders <App/>
-  App.tsx               QueryClient + Toast + Router providers
-  router.tsx            every route, each page lazy loaded
-  pages/                one file per route
-  features/<domain>/    api/ hooks/ components/ lib/ types.ts per domain
-  components/           UI shared across features
-  layouts/              RootLayout: sidebar + topbar
-  routes/               guards: AuthBoundary, ProtectedRoute, RoleRoute, RealtimeBoundary
-  hooks/                app-level hooks that span several domains
-  lib/                  api-client, auth, realtime, toast, i18n, theme
-  types/                types shared by more than one feature
-  locales/              en.json, th.json
-  styles/               design tokens and keyframes
+  main.tsx          จุดเริ่มของแอป โหลดธีมกับภาษาแล้วสั่ง render
+  App.tsx           ครอบ provider ทั้งหมด (query, toast, router)
+  router.tsx        รวม route ทุกหน้าไว้ที่เดียว
+
+  assets/           รูปภาพ โลโก้ ที่ import เข้าโค้ด
+  locales/          ไฟล์แปลภาษา en.json / th.json
+  styles/           สีธีม ตัวแปร CSS และ animation
+
+  pages/            หน้าเว็บ 1 route = 1 ไฟล์
+  layouts/          โครงหน้าหลัง login (sidebar + topbar)
+  routes/           ตัวกันทาง เช็ค login / เช็ค role ก่อนเข้าหน้า
+
+  features/         แยกตามงาน 1 โฟลเดอร์ = 1 เรื่อง
+    <ชื่องาน>/
+      api/          ฟังก์ชันยิง backend
+      hooks/        ห่อ api ให้หน้าเว็บเรียกง่าย จัดการ loading/error ให้
+      components/   UI ที่ใช้เฉพาะงานนี้
+      lib/          การคำนวณของงานนี้ ไม่เกี่ยวกับ UI
+      types.ts      หน้าตาข้อมูลของงานนี้
+
+  components/       UI ที่ใช้ข้ามงาน
+    common/         ปุ่ม ฟอร์ม modal ทั่วไป
+    charts/         กราฟ
+
+  hooks/            hook ที่ใช้หลายงานพร้อมกัน ไม่ใช่ของงานไหนงานเดียว
+  lib/              ของกลางที่ไม่ใช่ UI (ยิง API, auth, realtime, ธีม, ภาษา)
+  types/            type ที่ใช้ข้ามงาน
 ```
 
-Where a piece of code lives follows one rule: keep it inside the feature that owns it, and
-promote it to the shared layer only once a second feature genuinely needs it.
+## ข้อกำหนดของแต่ละส่วน
 
-## Architecture notes
+**features/** — ของใครของมัน
+งานหนึ่งเรื่องเก็บไว้ที่เดียวจบ อยากรู้เรื่อง scan เปิดโฟลเดอร์ `scan/` อ่านที่เดียวครบ
+ห้าม feature เรียกหากันเอง ถ้า 2 feature ต้องใช้ข้อมูลร่วมกัน ให้ `pages/` เป็นคนดึงมาต่อกัน
 
-`docs/ARCHITECTURE.md` carries the detail: the realtime topic map, the parity gaps against the
-Angular original, and the backend contracts that are easy to get wrong (report history is
-written by the backend, email verification is a redirect rather than a JSON call).
+**api/ กับ hooks/** — แยกกันคนละชั้น
+`api/` ยิง backend อย่างเดียว ไม่รู้จัก React
+`hooks/` ห่อ `api/` อีกที จัดการ loading / error / cache ให้หน้าเว็บ
+หน้าเว็บเรียก `hooks/` เท่านั้น ไม่เรียก `api/` ตรง
 
-## Security model
+**components/ กับ hooks/ ข้างนอก** — ย้ายขึ้นมาเมื่อมีคนใช้จริง 2 เจ้า
+เริ่มจากเก็บไว้ใน feature ก่อนเสมอ พอ feature ที่สองต้องใช้จริงค่อยย้ายขึ้นมา
+อย่าย้ายขึ้นมาเพราะ "คิดว่าน่าจะได้ใช้อีก"
 
-- Access token lives in memory only, never in `localStorage` or `sessionStorage`
-- Refresh token is an HttpOnly + Secure + SameSite=Strict cookie the client cannot read
-- Axios attaches the bearer token and refreshes once on 401/403
-- Routes are guarded by session and by role
+**lib/** — ห้ามเรียก features/
+`lib/` เป็นชั้นล่างสุด ถ้ามันเรียก `features/` จะกลายเป็นวนกลับ (circular)
+`types/` มีไว้เพราะเหตุนี้ เอา type ที่ `lib/` ต้องใช้มาไว้ตรงกลาง
 
-## Conventions
+**pages/** — เป็นคนประกอบ ไม่ใช่คนคิด
+หน้าเว็บมีหน้าที่จัดวางกับเรียก hook เท่านั้น
+ถ้าเริ่มมีสูตรคำนวณยาว ๆ ให้ย้ายไป `features/<ชื่องาน>/lib/`
 
-- TypeScript strict, no `any`
-- Every user-facing string goes through i18n in both `en` and `th`
-- Every fetch renders a loading state and an error state
-- Prettier and ESLint must both pass before a commit
+**กฎรวมทุกไฟล์**
+
+- TypeScript strict ห้ามใช้ `any`
+- ข้อความที่ผู้ใช้เห็นต้องผ่าน i18n ครบทั้ง `en` และ `th`
+- ทุกที่ที่ยิง API ต้องมีทั้งตอนโหลดและตอน error
+- `npm run lint` กับ `npm run build` ต้องผ่านก่อน commit
+
+## เอกสารเพิ่มเติม
+
+`docs/ARCHITECTURE.md` — รายละเอียด realtime, สิ่งที่ยังไม่ได้ทำ และข้อควรระวังของ backend
