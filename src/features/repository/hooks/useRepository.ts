@@ -47,9 +47,7 @@ export function useSaveRepository() {
   return useMutation<Repository, unknown, SaveRepositoryVariables>({
     mutationFn: ({ projectId, payload }) =>
       projectId ? updateRepository(projectId, payload) : createRepository(payload),
-    onSuccess: () => {
-      void queryClient.invalidateQueries({ queryKey: repositoriesQueryKey });
-    },
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: repositoriesQueryKey }),
   });
 }
 
@@ -69,7 +67,7 @@ export function useStartScan() {
       startScan(projectId, buildScanRequest(config, branch, gitToken, serverUrl)),
     onSuccess: (_result, variables) => {
       markMyTriggeredScan(variables.projectId);
-      void queryClient.invalidateQueries({ queryKey: repositoriesQueryKey });
+      return queryClient.invalidateQueries({ queryKey: repositoriesQueryKey });
     },
   });
 }

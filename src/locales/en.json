@@ -488,7 +488,8 @@
     "CHANGE_STATUS": "Change Status",
     "STATUS": "Status:",
     "PLEASE_SELECT_STATUS": "Please select a status",
-    "PLEASE_SELECT_USER": "Please select a user"
+    "PLEASE_SELECT_USER": "Please select a user",
+    "USER_LIST_UNAVAILABLE": "Only an administrator can load the user list"
   },
   "MY_ASSIGNMENTS": {
     "TITLE": "My Assignments",

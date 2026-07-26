@@ -16,9 +16,7 @@ export function useCreateUser() {
 
   return useMutation<void, unknown, UserInfo>({
     mutationFn: createUser,
-    onSuccess: () => {
-      void queryClient.invalidateQueries({ queryKey: usersQueryKey });
-    },
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: usersQueryKey }),
   });
 }
 
@@ -27,9 +25,7 @@ export function useUpdateUser() {
 
   return useMutation<void, unknown, UserInfo>({
     mutationFn: updateUser,
-    onSuccess: () => {
-      void queryClient.invalidateQueries({ queryKey: usersQueryKey });
-    },
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: usersQueryKey }),
   });
 }
 
@@ -38,8 +34,6 @@ export function useDeleteUser() {
 
   return useMutation<void, unknown, string>({
     mutationFn: deleteUser,
-    onSuccess: () => {
-      void queryClient.invalidateQueries({ queryKey: usersQueryKey });
-    },
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: usersQueryKey }),
   });
 }

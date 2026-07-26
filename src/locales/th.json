@@ -488,7 +488,8 @@
     "CHANGE_STATUS": "เปลี่ยนสถานะ",
     "STATUS": "สถานะ:",
     "PLEASE_SELECT_STATUS": "กรุณาเลือกสถานะ",
-    "PLEASE_SELECT_USER": "กรุณาเลือกผู้ใช้"
+    "PLEASE_SELECT_USER": "กรุณาเลือกผู้ใช้",
+    "USER_LIST_UNAVAILABLE": "เฉพาะผู้ดูแลระบบเท่านั้นที่ดึงรายชื่อผู้ใช้ได้"
   },
   "MY_ASSIGNMENTS": {
     "TITLE": "งานที่ได้รับมอบหมายของฉัน",

@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Loader2, X } from 'lucide-react';
 import { FIELD_INPUT_CLASS, FormField } from '@/components/common/FormField';
-import { useUsers } from '@/features/user/hooks/useUsers';
+import { UserSelect } from '@/features/user/components/UserSelect';
 import { useUpdateIssue } from '@/features/issue/hooks/useIssue';
 import type { Issue } from '@/features/issue/types';
 
@@ -21,7 +21,6 @@ interface AssignIssueModalProps {
 
 export function AssignIssueModal({ issue, mode, onClose, onSaved }: AssignIssueModalProps) {
   const { t } = useTranslation();
-  const usersQuery = useUsers();
   const updateIssue = useUpdateIssue();
 
   const [assignedTo, setAssignedTo] = useState(issue.assignedId ?? '');
@@ -101,21 +100,7 @@ export function AssignIssueModal({ issue, mode, onClose, onSaved }: AssignIssueM
           </div>
 
           {mode === 'assign' ? (
-            <FormField id="assignedTo" label={t('ISSUE_MODAL.ASSIGN_TO')}>
-              <select
-                id="assignedTo"
-                className={FIELD_INPUT_CLASS}
-                value={assignedTo}
-                onChange={(event) => setAssignedTo(event.target.value)}
-              >
-                <option value="">{t('ISSUE_MODAL.SELECT_USER')}</option>
-                {(usersQuery.data ?? []).map((user) => (
-                  <option key={user.id} value={user.id}>
-                    {user.username}
-                  </option>
-                ))}
-              </select>
-            </FormField>
+            <UserSelect id="assignedTo" value={assignedTo} onChange={setAssignedTo} />
           ) : (
             <FormField id="issueStatus" label={t('ISSUE_MODAL.STATUS')} error={error}>
               <select

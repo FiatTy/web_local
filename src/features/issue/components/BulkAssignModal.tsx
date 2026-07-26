@@ -1,8 +1,7 @@
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Loader2, X } from 'lucide-react';
-import { FIELD_INPUT_CLASS, FormField } from '@/components/common/FormField';
-import { useUsers } from '@/features/user/hooks/useUsers';
+import { UserSelect } from '@/features/user/components/UserSelect';
 import { useBulkAssignIssues } from '@/features/issue/hooks/useIssue';
 import { useToast } from '@/lib/toast/toast-context';
 import type { Issue } from '@/features/issue/types';
@@ -16,7 +15,6 @@ interface BulkAssignModalProps {
 export function BulkAssignModal({ issues, onClose, onDone }: BulkAssignModalProps) {
   const { t } = useTranslation();
   const { showToast } = useToast();
-  const usersQuery = useUsers();
   const bulkAssign = useBulkAssignIssues();
 
   const [assignedTo, setAssignedTo] = useState('');
@@ -80,21 +78,12 @@ export function BulkAssignModal({ issues, onClose, onDone }: BulkAssignModalProp
             ))}
           </ul>
 
-          <FormField id="bulkAssignedTo" label={t('ISSUE_MODAL.ASSIGN_TO')} error={error}>
-            <select
-              id="bulkAssignedTo"
-              className={FIELD_INPUT_CLASS}
-              value={assignedTo}
-              onChange={(event) => setAssignedTo(event.target.value)}
-            >
-              <option value="">{t('ISSUE_MODAL.SELECT_USER')}</option>
-              {(usersQuery.data ?? []).map((user) => (
-                <option key={user.id} value={user.id}>
-                  {user.username}
-                </option>
-              ))}
-            </select>
-          </FormField>
+          <UserSelect
+            id="bulkAssignedTo"
+            value={assignedTo}
+            onChange={setAssignedTo}
+            error={error}
+          />
         </div>
 
         <div className="flex justify-end gap-2 border-t border-border px-5 py-4">

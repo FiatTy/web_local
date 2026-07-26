@@ -40,12 +40,11 @@ export function useUpdateIssue() {
 
   return useMutation<void, unknown, UpdateIssuePayload>({
     mutationFn: updateIssue,
-    onSuccess: (_result, payload) => {
-      void queryClient.invalidateQueries({
-        queryKey: issueQueryKey(payload.id),
-      });
-      void queryClient.invalidateQueries({ queryKey: issuesQueryKey });
-    },
+    onSuccess: (_result, payload) =>
+      Promise.all([
+        queryClient.invalidateQueries({ queryKey: issueQueryKey(payload.id) }),
+        queryClient.invalidateQueries({ queryKey: issuesQueryKey }),
+      ]),
   });
 }
 
@@ -70,9 +69,7 @@ export function useBulkAssignIssues() {
       const succeeded = results.filter((result) => result.status === 'fulfilled').length;
       return { succeeded, failed: results.length - succeeded };
     },
-    onSuccess: () => {
-      void queryClient.invalidateQueries({ queryKey: issuesQueryKey });
-    },
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: issuesQueryKey }),
   });
 }
 
@@ -81,11 +78,8 @@ export function useAddIssueComment() {
 
   return useMutation<void, unknown, AddCommentPayload>({
     mutationFn: addIssueComment,
-    onSuccess: (_result, payload) => {
-      void queryClient.invalidateQueries({
-        queryKey: issueQueryKey(payload.issueId),
-      });
-    },
+    onSuccess: (_result, payload) =>
+      queryClient.invalidateQueries({ queryKey: issueQueryKey(payload.issueId) }),
   });
 }
 
@@ -99,10 +93,7 @@ export function useTriggerAiFix() {
 
   return useMutation<void, unknown, TriggerAiFixVariables>({
     mutationFn: ({ projectId, issueId }) => triggerRecommendFixAi(projectId, issueId),
-    onSuccess: (_result, variables) => {
-      void queryClient.invalidateQueries({
-        queryKey: issueAnalysisQueryKey(variables.issueId),
-      });
-    },
+    onSuccess: (_result, variables) =>
+      queryClient.invalidateQueries({ queryKey: issueAnalysisQueryKey(variables.issueId) }),
   });
 }

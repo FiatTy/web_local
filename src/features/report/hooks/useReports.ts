@@ -28,10 +28,7 @@ export function useGenerateReportPdf() {
 
   return useMutation<ReportGenerateResponse, unknown, ReportGenerateRequest>({
     mutationFn: generateReportPdf,
-    onSuccess: () => {
-      void queryClient.invalidateQueries({
-        queryKey: reportHistoryQueryKey(user?.id ?? ''),
-      });
-    },
+    onSuccess: () =>
+      queryClient.invalidateQueries({ queryKey: reportHistoryQueryKey(user?.id ?? '') }),
   });
 }
