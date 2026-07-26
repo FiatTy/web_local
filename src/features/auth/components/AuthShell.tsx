@@ -1,10 +1,11 @@
 import type { ReactNode } from 'react';
 import { Link } from 'react-router';
 import { useTranslation } from 'react-i18next';
-import { ChevronLeft, ShieldCheck } from 'lucide-react';
+import { ChevronLeft } from 'lucide-react';
 import logoUrl from '@/assets/logo.png';
 import { LanguageSwitcher } from '@/components/common/LanguageSwitcher';
 import { ThemeToggle } from '@/components/common/ThemeToggle';
+import { ScanLogPanel } from '@/features/auth/components/ScanLogPanel';
 
 interface AuthShellProps {
   asideEyebrow: string;
@@ -15,13 +16,6 @@ interface AuthShellProps {
   children: ReactNode;
   footer?: ReactNode;
 }
-
-const SEVERITY_LEGEND = [
-  { labelKey: 'ISSUE.BLOCKER', dotClass: 'bg-blocker' },
-  { labelKey: 'ISSUE.CRITICAL', dotClass: 'bg-critical' },
-  { labelKey: 'ISSUE.MAJOR', dotClass: 'bg-major' },
-  { labelKey: 'ISSUE.MINOR', dotClass: 'bg-minor' },
-];
 
 export function AuthShell({
   asideEyebrow,
@@ -85,24 +79,8 @@ export function AuthShell({
           />
           <p className="mt-4 text-[15px] leading-relaxed text-white/70">{asideText}</p>
 
-          <div className="mt-9 rounded-2xl border border-white/12 bg-white/[0.06] p-5 backdrop-blur-sm">
-            <div className="flex items-center justify-between">
-              <span className="font-mono text-[10px] uppercase tracking-[0.2em] text-white/55">
-                {t('DASHBOARD.QUALITY_GATE', 'Quality Gate')}
-              </span>
-              <span className="inline-flex items-center gap-1.5 rounded-full bg-white/10 px-2.5 py-1 text-[11px] font-medium text-white/90">
-                <ShieldCheck size={12} />
-                {t('DASHBOARD.PASSED', 'Passed')}
-              </span>
-            </div>
-            <div className="mt-4 grid grid-cols-2 gap-x-4 gap-y-2.5">
-              {SEVERITY_LEGEND.map((item) => (
-                <div key={item.labelKey} className="flex items-center gap-2">
-                  <span className={`h-2 w-2 rounded-full ${item.dotClass}`} />
-                  <span className="text-[13px] text-white/75">{t(item.labelKey)}</span>
-                </div>
-              ))}
-            </div>
+          <div className="mt-9">
+            <ScanLogPanel branch="main" />
           </div>
         </div>
 

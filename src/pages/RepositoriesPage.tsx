@@ -14,6 +14,7 @@ import {
   Plus,
   RefreshCw,
   RotateCw,
+  ScanLine,
   Search,
   Settings2,
   ShieldAlert,
@@ -114,9 +115,14 @@ function RepoCard({
   const lastScan = formatDateTime(repo.lastScan);
   const coverage = repo.metrics?.coverage;
   const qualityPassed = repo.qualityGate === 'Passed';
+  const isScanning = repo.status === 'Scanning';
 
   return (
-    <div className="group flex flex-col rounded-xl border border-border bg-surface p-5 transition-colors hover:border-border-strong">
+    <div
+      className={`group flex flex-col rounded-xl border bg-surface p-5 transition-colors ${
+        isScanning ? 'scan-card border-primary/40' : 'border-border hover:border-border-strong'
+      }`}
+    >
       <div className="flex items-start justify-between gap-3">
         <div className="min-w-0">
           <h3 className="truncate text-sm font-semibold text-fg">{repo.name}</h3>
@@ -131,9 +137,10 @@ function RepoCard({
           </a>
         </div>
         <span
-          className={`shrink-0 rounded-full px-2.5 py-1 text-[11px] font-medium ${STATUS_BADGE[repo.status]}`}
+          className={`inline-flex shrink-0 items-center gap-1.5 rounded-full px-2.5 py-1 text-[11px] font-medium ${STATUS_BADGE[repo.status]}`}
         >
-          {repo.status === 'Scanning'
+          {isScanning ? <Loader2 size={11} className="animate-spin" /> : null}
+          {isScanning
             ? t('REPOSITORY.ANALYZING')
             : t(`REPOSITORY.STATUS_${repo.status.toUpperCase()}`)}
         </span>
@@ -204,7 +211,12 @@ function RepoCard({
           </button>
         ) : null}
 
-        {repo.status === 'Scanning' ? null : (
+        {isScanning ? (
+          <span className="mr-auto inline-flex items-center gap-2 text-xs text-primary">
+            <ScanLine size={14} className="shrink-0" />
+            {t('REPOSITORY.SCAN_IN_PROGRESS')}
+          </span>
+        ) : (
           <>
             <Link
               to={`/detailrepo/${repo.projectId}`}

@@ -130,7 +130,8 @@
       "SUCCESS_TEXT": "Repository has been deleted",
       "FAILED_TITLE": "Delete Failed",
       "FAILED_TEXT": "An error occurred while deleting the repository"
-    }
+    },
+    "SCAN_IN_PROGRESS": "Scanning in progress"
   },
   "SCAN": {
     "TITLE": "Scan History",

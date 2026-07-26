@@ -8,7 +8,6 @@ import {
   useNotifications,
 } from '@/features/notification/hooks/useNotifications';
 import { useToast } from '@/lib/toast/toast-context';
-import { useRealtime } from '@/lib/realtime/realtime-context';
 import type { AppNotification } from '@/features/notification/types';
 
 type NotificationTab = 'All' | 'Unread' | 'Scans' | 'Issues' | 'System';
@@ -52,7 +51,6 @@ export function NotificationBell() {
   const { t } = useTranslation();
   const navigate = useNavigate();
   const { showToast } = useToast();
-  const { isConnected } = useRealtime();
   const timeAgo = useTimeAgo();
 
   const [isOpen, setIsOpen] = useState(false);
@@ -188,12 +186,6 @@ export function NotificationBell() {
             {unreadCount > 9 ? '9+' : unreadCount}
           </span>
         ) : null}
-        <span
-          className={`absolute -bottom-0.5 -left-0.5 h-1.5 w-1.5 rounded-full ${
-            isConnected ? 'bg-success' : 'bg-faint'
-          }`}
-          title={isConnected ? t('NOTIFICATION.CONNECTED') : t('NOTIFICATION.DISCONNECTED')}
-        />
       </button>
 
       {isOpen ? (
