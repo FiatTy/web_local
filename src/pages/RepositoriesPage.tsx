@@ -83,6 +83,10 @@ function StatCard({
   );
 }
 
+function formatMetric(value?: number): string {
+  return value == null ? '—' : String(value);
+}
+
 function Metric({
   icon: Icon,
   value,
@@ -158,8 +162,12 @@ function RepoCard({
       </div>
 
       <div className="mt-4 flex flex-wrap items-center gap-x-5 gap-y-2 border-t border-border pt-4">
-        <Metric icon={Bug} value={repo.metrics?.bugs ?? 0} tone="text-blocker" />
-        <Metric icon={ShieldAlert} value={repo.metrics?.vulnerabilities ?? 0} tone="text-major" />
+        <Metric icon={Bug} value={formatMetric(repo.metrics?.bugs)} tone="text-blocker" />
+        <Metric
+          icon={ShieldAlert}
+          value={formatMetric(repo.metrics?.vulnerabilities)}
+          tone="text-major"
+        />
         <Metric icon={Gauge} value={coverage != null ? `${coverage}%` : '—'} tone="text-primary" />
         <div className="ml-auto flex items-center gap-1.5">
           {repo.qualityGate ? (
