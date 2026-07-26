@@ -37,10 +37,9 @@ export function LineChart({
   maxValue,
   emptyLabel,
 }: LineChartProps) {
-  const length = series[0]?.points.length ?? 0;
-  const hasData = series.some((line) => line.points.some((point) => point.value > 0));
+  const length = Math.max(0, ...series.map((line) => line.points.length));
 
-  if (length === 0 || !hasData) {
+  if (length === 0) {
     return (
       <div
         className="flex items-center justify-center rounded-lg border border-dashed border-border text-xs text-faint"
@@ -64,7 +63,9 @@ export function LineChart({
     PADDING_X + (length === 1 ? plotWidth / 2 : (index / (length - 1)) * plotWidth);
   const yOf = (value: number) => PADDING_TOP + plotHeight - (value / top) * plotHeight;
 
-  const labels = series[0].points.map((point) => point.label);
+  const labels = (series.find((line) => line.points.length === length) ?? series[0]).points.map(
+    (point) => point.label,
+  );
   const labelStride = Math.max(1, Math.ceil(length / 7));
 
   return (
@@ -118,10 +119,13 @@ export function LineChart({
       )}
 
       {series.map((line) => {
+        if (line.points.length === 0) {
+          return null;
+        }
         const path = line.points
           .map((point, index) => `${index === 0 ? 'M' : 'L'}${xOf(index)},${yOf(point.value)}`)
           .join(' ');
-        const area = `${path} L${xOf(length - 1)},${yOf(0)} L${xOf(0)},${yOf(0)} Z`;
+        const area = `${path} L${xOf(line.points.length - 1)},${yOf(0)} L${xOf(0)},${yOf(0)} Z`;
         return (
           <g key={line.name}>
             <path d={area} fill={line.color} opacity={0.1} />

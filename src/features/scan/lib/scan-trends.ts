@@ -57,6 +57,10 @@ export function buildDailyTrend(scans: Scan[], select: MetricSelector, days = 30
   const keyOf = (date: Date) => `${date.getFullYear()}-${date.getMonth() + 1}-${date.getDate()}`;
   const buckets = bucketBy(scans, select, keyOf);
 
+  if (buckets.size === 0) {
+    return [];
+  }
+
   const points: TrendPoint[] = [];
   const today = new Date();
   let carried = 0;
@@ -75,6 +79,10 @@ export function buildDailyTrend(scans: Scan[], select: MetricSelector, days = 30
 export function buildMonthlyTrend(scans: Scan[], select: MetricSelector, months = 6): TrendPoint[] {
   const keyOf = (date: Date) => `${date.getFullYear()}-${date.getMonth()}`;
   const buckets = bucketBy(scans, select, keyOf);
+
+  if (buckets.size === 0) {
+    return [];
+  }
 
   const points: TrendPoint[] = [];
   const today = new Date();

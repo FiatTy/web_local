@@ -207,29 +207,64 @@ UI ใหม่: `features/notification` (api + hooks + `NotificationBell`) — 
 
 ---
 
-## 8.1 สิ่งที่ยังไม่ได้ทำ (known gaps)
+## 8.1 Parity gap ที่ปิดไปแล้ว
+
+| หน้า | ของที่เพิ่ม | หมายเหตุ |
+|---|---|---|
+| Topbar | `features/user/components/ProfileMenu` — เปลี่ยนรหัสผ่าน, ส่งอีเมลยืนยันซ้ำ, ยืนยันก่อน logout | ของเดิมอยู่ใน dropdown หน้า dashboard |
+| Dashboard | กราฟ Quality Trends (coverage 30 วัน) | คำนวณจาก `/api/scans` ฝั่ง client |
+| Scan History | เปรียบเทียบ 2-3 scan พร้อม delta ต่อ metric | เลือกด้วย checkbox |
+| Issue | เลือกหลายรายการแล้ว assign ทีเดียว | ยิง `POST /api/issues/update` ทีละตัวแบบขนาน |
+| Issue Detail | ตอบกลับคอมเมนต์ (ส่ง `parentCommentId`) | |
+| Technical Debt | กราฟหนี้รายเดือน + action plan ที่ copy/download ได้ | |
+| Security Dashboard | กราฟ vulnerabilities / hotspots จาก scan ล่าสุด | |
+
+กราฟทั้งหมดใช้ `components/charts/LineChart` (SVG ล้วน ไม่มี dependency)
+และ `features/scan/lib/scan-trends.ts` เป็นตัวปั้นข้อมูล
+
+> backend จริงไม่มี endpoint `/dashboard/:userId/trends|history` (ดู `/v3/api-docs` — มี 55 endpoint)
+> เทรนด์ทุกตัวจึงคำนวณจาก scan history ฝั่ง client
+
+---
+
+## 8.2 สิ่งที่ยังไม่ได้ทำ (known gaps)
 
 ### ก. พักไว้ตามที่ตกลง
 - export รายงานฝั่ง client เป็น Excel / Word / PowerPoint (ของเดิมใช้ exceljs + docx + pptxgenjs)
-  ตอนนี้รองรับ PDF ที่ backend เรนเดอร์ให้อย่างเดียว ทำให้ปุ่ม export ในหน้า
-  scan history / issue / technical debt / dashboard ยังไม่มี
+  ตอนนี้รองรับ PDF ที่ backend เรนเดอร์ให้อย่างเดียว
 
-### ข. ยังไม่ได้พอร์ต (เจอจากการเทียบ i18n key ของเดิมกับของใหม่)
-| หน้า | ของที่ขาด |
-|---|---|
-| Dashboard | เปลี่ยนรหัสผ่าน (`PUT /user/change-password`), ส่งอีเมลยืนยันซ้ำ (`POST /api/email-verification/send`), กราฟ Quality Trends (`/dashboard/:userId/trends`) |
-| Scan History | เปรียบเทียบ 2 scan (compare modal), ล้าง log เก่า |
-| Issue | เลือกหลายรายการเพื่อ assign ทีเดียว (bulk assign) |
-| Issue Detail | ตอบกลับคอมเมนต์ (reply) — ตอนนี้แสดง reply ได้แต่สร้างไม่ได้ |
-| My Assignments | assign พร้อม due date (`PUT /issues/assign/:issueId`) |
-| Technical Debt | กราฟแนวโน้มรายเดือน, แผน action plan ที่แก้ไข/บันทึกได้ |
-| Security Dashboard | กราฟแนวโน้ม |
-| Logout | กล่องยืนยันก่อน logout |
+### ข. backend ไม่รองรับ
+- **assign พร้อม due date** — ของเดิมยิง `PUT /issues/assign/:issueId` และ `GET|PUT /assign/...`
+  แต่ backend ปัจจุบันไม่มี endpoint กลุ่มนี้เลย (ยืนยันจาก `/v3/api-docs`)
+  การมอบหมายทั้งหมดจึงผ่าน `POST /api/issues/update` ซึ่งรับแค่ `id`, `status`, `assignedTo`
+- **ยกเลิก scan** — ของเดิมมี `cancelScan` แต่ backend ไม่มี `/scans/:id/cancel`
 
 ### ค. ไม่พอร์ตโดยตั้งใจ
 - **SSE** (`/api/sse/subscribe?repoId=`) — ของเดิม `SseService` ถูก import ไว้แต่ **ไม่เคยถูกเรียกใช้จริง**
   (grep แล้วไม่มี call site) สถานะ scan realtime ใช้ WebSocket `/topic/scan-status` แทนทั้งหมด
-  ถ้าจะทำเพิ่มค่อยทำเป็น `features/scan/hooks/useScanSse.ts` ทีหลัง
+
+---
+
+## 8.3 ผลทดสอบกับ backend จริง (localhost:8080)
+
+ทดสอบด้วย Playwright ผ่าน UI จริงทั้งหมด ไม่ mock
+
+**Security 7/8 ผ่าน**
+- access token ไม่โผล่ใน localStorage / sessionStorage (มีแค่ `theme`, `app_lang`, `login_user`)
+- `refresh_token` เป็น HttpOnly + Secure + SameSite=Strict อ่านจาก `document.cookie` ไม่ได้
+- เข้า `/dashboard` โดยไม่ล็อกอิน -> เด้งไป `/login`
+- user role `USER` เข้า `/usermanagement` ไม่ได้ -> เด้งกลับ dashboard
+- เรียก API โดยไม่มี token -> 403
+- logout แล้ว `login_user` ถูกล้าง
+- ข้อที่ไม่ผ่านคือ `GET /ws/info` ไม่มี Authorization header ซึ่ง **ถูกต้องตาม protocol**
+  (SockJS handshake ยังไม่ใช่ STOMP frame; auth อยู่ใน CONNECT frame) ไม่ใช่ช่องโหว่
+
+**Flow จริง**
+- login -> เปลี่ยน Git access token ในหน้า SonarQube Config -> `PUT /settings/sonarqube` 200 และค่าคงอยู่หลัง reload
+- สั่ง scan `JDK25Test` (https://github.com/FiatTy/JDK25Test.git) -> `POST /{projectId}/scan` 202
+- WebSocket ดันสถานะเป็น Analyzing ทันที, การ์ดและตัวนับ SCANNING ขยับเอง
+- scan จบเป็น SUCCESS / quality gate OK
+- คอมเมนต์ + ตอบกลับ (`parentCommentId`) ทำงานจริง แสดงผลแบบ thread
 
 ---
 
