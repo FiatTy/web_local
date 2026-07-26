@@ -170,6 +170,25 @@
     animation: scan-log-line 320ms ease-out both;
   }
 
+  .skeleton {
+    position: relative;
+    overflow: hidden;
+  }
+
+  .skeleton::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    transform: translateX(-100%);
+    background: linear-gradient(
+      90deg,
+      transparent,
+      color-mix(in oklab, var(--fg) 6%, transparent),
+      transparent
+    );
+    animation: skeleton-shimmer 1.4s ease-in-out infinite;
+  }
+
   .scan-caret::after {
     content: '';
     display: inline-block;
@@ -239,6 +258,12 @@
   }
 }
 
+@keyframes skeleton-shimmer {
+  to {
+    transform: translateX(100%);
+  }
+}
+
 @keyframes scan-caret {
   0%,
   100% {
@@ -252,7 +277,8 @@
 @media (prefers-reduced-motion: reduce) {
   .toast-enter,
   .dialog-enter,
-  .scan-log-line {
+  .scan-log-line,
+  .skeleton::after {
     animation: none;
   }
 

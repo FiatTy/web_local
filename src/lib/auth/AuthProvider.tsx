@@ -100,7 +100,15 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }, []);
 
   const value = useMemo<AuthContextValue>(
-    () => ({ user, isAuthenticated, isInitializing, login, logout, refreshSession, applyUser }),
+    () => ({
+      user,
+      isAuthenticated,
+      isInitializing,
+      login,
+      logout,
+      refreshSession,
+      applyUser,
+    }),
     [user, isAuthenticated, isInitializing, login, logout, refreshSession, applyUser],
   );
 

@@ -100,9 +100,18 @@ export function ResetPasswordPage() {
       textKey: 'RESET_PASSWORD.CHECKING_TEXT',
     },
     valid: { titleKey: 'RESET_PASSWORD.FORM_TITLE', textKey: '' },
-    expired: { titleKey: 'RESET_PASSWORD.EXPIRED_TITLE', textKey: 'RESET_PASSWORD.EXPIRED_TEXT' },
-    used: { titleKey: 'RESET_PASSWORD.USED_TITLE', textKey: 'RESET_PASSWORD.USED_TEXT' },
-    invalid: { titleKey: 'RESET_PASSWORD.INVALID_TITLE', textKey: 'RESET_PASSWORD.INVALID_TEXT' },
+    expired: {
+      titleKey: 'RESET_PASSWORD.EXPIRED_TITLE',
+      textKey: 'RESET_PASSWORD.EXPIRED_TEXT',
+    },
+    used: {
+      titleKey: 'RESET_PASSWORD.USED_TITLE',
+      textKey: 'RESET_PASSWORD.USED_TEXT',
+    },
+    invalid: {
+      titleKey: 'RESET_PASSWORD.INVALID_TITLE',
+      textKey: 'RESET_PASSWORD.INVALID_TEXT',
+    },
   };
 
   const isSuccess = resetPasswordMutation.isSuccess;

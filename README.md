@@ -89,8 +89,5 @@ src/
 - TypeScript strict ห้ามใช้ `any`
 - ข้อความที่ผู้ใช้เห็นต้องผ่าน i18n ครบทั้ง `en` และ `th`
 - ทุกที่ที่ยิง API ต้องมีทั้งตอนโหลดและตอน error
-- `npm run lint` กับ `npm run build` ต้องผ่านก่อน commit
 
-## เอกสารเพิ่มเติม
 
-`docs/ARCHITECTURE.md` — รายละเอียด realtime, สิ่งที่ยังไม่ได้ทำ และข้อควรระวังของ backend

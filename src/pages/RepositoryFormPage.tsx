@@ -184,7 +184,12 @@ export function RepositoryFormPage() {
   }
 
   async function handleSubmit() {
-    setTouched({ name: true, projectType: true, costPerDay: true, repositoryUrl: true });
+    setTouched({
+      name: true,
+      projectType: true,
+      costPerDay: true,
+      repositoryUrl: true,
+    });
     if (!isValid) {
       return;
     }

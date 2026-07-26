@@ -50,7 +50,10 @@ describe('latestScanPerProject', () => {
   });
 
   it('ignores scans with no project attached', () => {
-    const orphan = { ...scan('x', 'p1', '2026-07-01T00:00:00Z'), projectId: undefined };
+    const orphan = {
+      ...scan('x', 'p1', '2026-07-01T00:00:00Z'),
+      projectId: undefined,
+    };
     expect(latestScanPerProject([orphan])).toEqual([]);
   });
 });
@@ -94,7 +97,12 @@ describe('computeTotalDebt', () => {
   });
 
   it('returns zeros for an empty portfolio', () => {
-    expect(computeTotalDebt([])).toEqual({ days: 0, hours: 0, minutes: 0, cost: 0 });
+    expect(computeTotalDebt([])).toEqual({
+      days: 0,
+      hours: 0,
+      minutes: 0,
+      cost: 0,
+    });
   });
 });
 

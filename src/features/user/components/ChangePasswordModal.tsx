@@ -67,7 +67,10 @@ export function ChangePasswordModal({ onClose }: ChangePasswordModalProps) {
     }
 
     try {
-      await changePassword.mutateAsync({ currentPassword: oldPassword, newPassword });
+      await changePassword.mutateAsync({
+        currentPassword: oldPassword,
+        newPassword,
+      });
       showToast({ tone: 'success', title: t('ACCOUNT.PASSWORD_CHANGED') });
       onClose();
     } catch (caught) {

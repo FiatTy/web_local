@@ -120,7 +120,10 @@ export function NotificationBell() {
 
     if (notification.type === 'Issues') {
       if (!notification.relatedIssueId) {
-        showToast({ tone: 'error', title: t('NOTIFICATION.CANNOT_OPEN_ISSUE') });
+        showToast({
+          tone: 'error',
+          title: t('NOTIFICATION.CANNOT_OPEN_ISSUE'),
+        });
         return;
       }
       navigate(`/issuedetail/${notification.relatedIssueId}`);
@@ -145,7 +148,10 @@ export function NotificationBell() {
       if (notification.relatedProjectId) {
         navigate(`/detailrepo/${notification.relatedProjectId}`);
       } else {
-        showToast({ tone: 'error', title: t('NOTIFICATION.CANNOT_OPEN_PROJECT') });
+        showToast({
+          tone: 'error',
+          title: t('NOTIFICATION.CANNOT_OPEN_PROJECT'),
+        });
       }
       return;
     }

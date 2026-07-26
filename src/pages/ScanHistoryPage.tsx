@@ -13,6 +13,7 @@ import {
   ScrollText,
 } from 'lucide-react';
 import { PageHeader } from '@/components/common/PageHeader';
+import { SkeletonTable } from '@/components/common/Skeleton';
 import { ScanCompareModal } from '@/features/scan/components/ScanCompareModal';
 import { useScanHistory } from '@/features/scan/hooks/useScanHistory';
 import type { Scan } from '@/features/scan/types';
@@ -251,7 +252,7 @@ export function ScanHistoryPage() {
       </div>
 
       {isPending ? (
-        <div className="h-80 animate-pulse rounded-xl border border-border bg-surface-2" />
+        <SkeletonTable rows={6} columns={6} />
       ) : isError ? (
         <div className="flex flex-col items-center justify-center rounded-xl border border-border bg-surface py-16 text-center">
           <AlertTriangle size={28} className="text-danger" />

@@ -142,7 +142,10 @@ export function ScanCompareModal({ scans, onClose }: ScanCompareModalProps) {
                 type="button"
                 aria-pressed={enabled[metric.key]}
                 onClick={() =>
-                  setEnabled((current) => ({ ...current, [metric.key]: !current[metric.key] }))
+                  setEnabled((current) => ({
+                    ...current,
+                    [metric.key]: !current[metric.key],
+                  }))
                 }
                 className={`rounded-full px-3 py-1 text-[11px] font-medium transition-colors ${
                   enabled[metric.key]

@@ -37,7 +37,11 @@ function formatDate(value?: string): string {
   const date = new Date(value);
   return Number.isNaN(date.getTime())
     ? '—'
-    : date.toLocaleDateString(undefined, { year: 'numeric', month: 'short', day: '2-digit' });
+    : date.toLocaleDateString(undefined, {
+        year: 'numeric',
+        month: 'short',
+        day: '2-digit',
+      });
 }
 
 export function AssignmentsPage() {

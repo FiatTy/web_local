@@ -71,7 +71,10 @@ export function buildDailyTrend(scans: Scan[], select: MetricSelector, days = 30
     if (values && values.length > 0) {
       carried = average(values);
     }
-    points.push({ label: `${date.getDate()}/${date.getMonth() + 1}`, value: carried });
+    points.push({
+      label: `${date.getDate()}/${date.getMonth() + 1}`,
+      value: carried,
+    });
   }
   return points;
 }

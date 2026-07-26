@@ -41,7 +41,36 @@ export function useUpdateIssue() {
   return useMutation<void, unknown, UpdateIssuePayload>({
     mutationFn: updateIssue,
     onSuccess: (_result, payload) => {
-      void queryClient.invalidateQueries({ queryKey: issueQueryKey(payload.id) });
+      void queryClient.invalidateQueries({
+        queryKey: issueQueryKey(payload.id),
+      });
+      void queryClient.invalidateQueries({ queryKey: issuesQueryKey });
+    },
+  });
+}
+
+interface BulkAssignVariables {
+  issueIds: string[];
+  assignedTo: string;
+}
+
+export interface BulkAssignResult {
+  succeeded: number;
+  failed: number;
+}
+
+export function useBulkAssignIssues() {
+  const queryClient = useQueryClient();
+
+  return useMutation<BulkAssignResult, unknown, BulkAssignVariables>({
+    mutationFn: async ({ issueIds, assignedTo }) => {
+      const results = await Promise.allSettled(
+        issueIds.map((id) => updateIssue({ id, assignedTo, status: 'IN_PROGRESS' })),
+      );
+      const succeeded = results.filter((result) => result.status === 'fulfilled').length;
+      return { succeeded, failed: results.length - succeeded };
+    },
+    onSuccess: () => {
       void queryClient.invalidateQueries({ queryKey: issuesQueryKey });
     },
   });
@@ -53,7 +82,9 @@ export function useAddIssueComment() {
   return useMutation<void, unknown, AddCommentPayload>({
     mutationFn: addIssueComment,
     onSuccess: (_result, payload) => {
-      void queryClient.invalidateQueries({ queryKey: issueQueryKey(payload.issueId) });
+      void queryClient.invalidateQueries({
+        queryKey: issueQueryKey(payload.issueId),
+      });
     },
   });
 }
@@ -69,7 +100,9 @@ export function useTriggerAiFix() {
   return useMutation<void, unknown, TriggerAiFixVariables>({
     mutationFn: ({ projectId, issueId }) => triggerRecommendFixAi(projectId, issueId),
     onSuccess: (_result, variables) => {
-      void queryClient.invalidateQueries({ queryKey: issueAnalysisQueryKey(variables.issueId) });
+      void queryClient.invalidateQueries({
+        queryKey: issueAnalysisQueryKey(variables.issueId),
+      });
     },
   });
 }

@@ -32,7 +32,9 @@ export function AuthShell({
     <div className="grid min-h-screen bg-bg lg:grid-cols-[1.05fr_1fr]">
       <aside
         className="relative hidden overflow-hidden px-12 py-12 lg:flex lg:flex-col lg:justify-between xl:px-16"
-        style={{ background: 'linear-gradient(155deg, #082e2a 0%, #0c4a44 48%, #0d9488 130%)' }}
+        style={{
+          background: 'linear-gradient(155deg, #082e2a 0%, #0c4a44 48%, #0d9488 130%)',
+        }}
       >
         <div
           aria-hidden

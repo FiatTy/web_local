@@ -2,7 +2,11 @@ import { useCallback, useEffect, useRef } from 'react';
 import { useQueryClient } from '@tanstack/react-query';
 import { useTranslation } from 'react-i18next';
 import { useAuth } from '@/lib/auth/auth-context';
-import { useToast } from '@/lib/toast/toast-context';
+import { useToast, type ToastTone } from '@/lib/toast/toast-context';
+import {
+  pickSystemNotificationKind,
+  type SystemNotificationKind,
+} from '@/features/notification/lib/classify';
 import { useRealtimeTopic } from '@/lib/realtime/useRealtimeTopic';
 import { GLOBAL_NOTIFICATIONS_TOPIC, userNotificationsTopic } from '@/lib/realtime/topics';
 import type { NotificationEvent } from '@/lib/realtime/types';
@@ -11,6 +15,13 @@ import { useNotificationSettings } from '@/features/setting/hooks/useNotificatio
 import type { AppNotification } from '@/features/notification/types';
 
 const TOAST_BUFFER_MS = 2000;
+
+const SYSTEM_TOAST: Record<SystemNotificationKind, { tone: ToastTone; titleKey: string }> = {
+  qualityGate: { tone: 'warning', titleKey: 'NOTIFICATION.TOAST_QUALITY_GATE' },
+  comment: { tone: 'info', titleKey: 'NOTIFICATION.TOAST_NEW_COMMENT' },
+  assignment: { tone: 'info', titleKey: 'NOTIFICATION.TOAST_NEW_ASSIGNED' },
+  generic: { tone: 'info', titleKey: 'NOTIFICATION.TOAST_NEW_SYSTEM' },
+};
 
 function toNotification(event: NotificationEvent): AppNotification {
   return {
@@ -60,16 +71,9 @@ export function useNotificationStream(): void {
 
     const systemBatch = batch.filter((item) => item.type === 'System');
     if (systemBatch.length > 0 && (!current || current.systemEnabled)) {
-      const titles = systemBatch.map((item) => item.title.toLowerCase());
-      if (titles.some((title) => title.includes('quality gate'))) {
-        showToast({ tone: 'warning', title: t('NOTIFICATION.TOAST_QUALITY_GATE') });
-      } else if (titles.some((title) => title.includes('comment'))) {
-        showToast({ tone: 'info', title: t('NOTIFICATION.TOAST_NEW_COMMENT') });
-      } else if (titles.some((title) => title.includes('assigned'))) {
-        showToast({ tone: 'info', title: t('NOTIFICATION.TOAST_NEW_ASSIGNED') });
-      } else {
-        showToast({ tone: 'info', title: t('NOTIFICATION.TOAST_NEW_SYSTEM') });
-      }
+      const kind = pickSystemNotificationKind(systemBatch);
+      const toast = SYSTEM_TOAST[kind];
+      showToast({ tone: toast.tone, title: t(toast.titleKey) });
     }
   }, [showToast, t]);
 

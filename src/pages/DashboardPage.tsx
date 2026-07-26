@@ -149,8 +149,16 @@ export function DashboardPage() {
     const angular = repos.filter((repo) => repo.projectType === 'ANGULAR').length;
     const spring = repos.filter((repo) => repo.projectType === 'SPRING_BOOT').length;
     return [
-      { label: t('REPOSITORY.TAB_ANGULAR'), value: angular, color: 'var(--color-primary)' },
-      { label: t('REPOSITORY.TAB_SPRING'), value: spring, color: 'var(--color-accent)' },
+      {
+        label: t('REPOSITORY.TAB_ANGULAR'),
+        value: angular,
+        color: 'var(--color-primary)',
+      },
+      {
+        label: t('REPOSITORY.TAB_SPRING'),
+        value: spring,
+        color: 'var(--color-accent)',
+      },
     ];
   }, [repos, t]);
 
@@ -164,7 +172,12 @@ export function DashboardPage() {
   );
 
   const metricCards = [
-    { icon: Bug, label: t('DASHBOARD.BUGS'), value: metrics.bugs, tone: 'text-blocker' },
+    {
+      icon: Bug,
+      label: t('DASHBOARD.BUGS'),
+      value: metrics.bugs,
+      tone: 'text-blocker',
+    },
     {
       icon: ShieldAlert,
       label: t('DASHBOARD.SECURITY'),

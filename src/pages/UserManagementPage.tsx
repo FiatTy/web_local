@@ -38,7 +38,15 @@ const STATUS_BADGE: Record<string, string> = {
 };
 
 function emptyUser(): UserInfo {
-  return { id: '0', username: '', password: '', email: '', phone: '', role: 'USER', status: '' };
+  return {
+    id: '0',
+    username: '',
+    password: '',
+    email: '',
+    phone: '',
+    role: 'USER',
+    status: '',
+  };
 }
 
 export function UserManagementPage() {

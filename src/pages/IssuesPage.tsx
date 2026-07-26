@@ -14,6 +14,7 @@ import {
   Waves,
 } from 'lucide-react';
 import { PageHeader } from '@/components/common/PageHeader';
+import { SkeletonTable } from '@/components/common/Skeleton';
 import { useIssues } from '@/features/issue/hooks/useIssues';
 import { AssignIssueModal } from '@/features/issue/components/AssignIssueModal';
 import { BulkAssignModal } from '@/features/issue/components/BulkAssignModal';
@@ -23,13 +24,29 @@ const PAGE_SIZE = 10;
 
 const TYPE_META: Record<string, { labelKey: string; icon: typeof Bug; tone: string }> = {
   BUG: { labelKey: 'ISSUE.BUG', icon: Bug, tone: 'text-blocker' },
-  VULNERABILITY: { labelKey: 'ISSUE.SECURITY', icon: ShieldAlert, tone: 'text-major' },
-  CODE_SMELL: { labelKey: 'ISSUE.CODE_SMELL', icon: Waves, tone: 'text-primary' },
+  VULNERABILITY: {
+    labelKey: 'ISSUE.SECURITY',
+    icon: ShieldAlert,
+    tone: 'text-major',
+  },
+  CODE_SMELL: {
+    labelKey: 'ISSUE.CODE_SMELL',
+    icon: Waves,
+    tone: 'text-primary',
+  },
 };
 
 const SEVERITY_META: Record<string, { labelKey: string; text: string; dot: string }> = {
-  BLOCKER: { labelKey: 'ISSUE.BLOCKER', text: 'text-blocker', dot: 'bg-blocker' },
-  CRITICAL: { labelKey: 'ISSUE.CRITICAL', text: 'text-critical', dot: 'bg-critical' },
+  BLOCKER: {
+    labelKey: 'ISSUE.BLOCKER',
+    text: 'text-blocker',
+    dot: 'bg-blocker',
+  },
+  CRITICAL: {
+    labelKey: 'ISSUE.CRITICAL',
+    text: 'text-critical',
+    dot: 'bg-critical',
+  },
   MAJOR: { labelKey: 'ISSUE.MAJOR', text: 'text-major', dot: 'bg-major' },
   MINOR: { labelKey: 'ISSUE.MINOR', text: 'text-minor', dot: 'bg-minor' },
   INFO: { labelKey: 'ISSUE.INFO', text: 'text-faint', dot: 'bg-faint' },
@@ -39,7 +56,10 @@ function statusMeta(status: string): { labelKey: string; cls: string } {
   switch (status) {
     case 'IN_PROGRESS':
     case 'PENDING':
-      return { labelKey: 'ISSUE.IN_PROGRESS', cls: 'bg-warning/12 text-warning' };
+      return {
+        labelKey: 'ISSUE.IN_PROGRESS',
+        cls: 'bg-warning/12 text-warning',
+      };
     case 'DONE':
     case 'RESOLVED':
       return { labelKey: 'ISSUE.RESOLVED', cls: 'bg-success/12 text-success' };
@@ -53,7 +73,11 @@ function statusMeta(status: string): { labelKey: string; cls: string } {
 
 function TypeCell({ issue }: { issue: Issue }) {
   const { t } = useTranslation();
-  const meta = TYPE_META[issue.type] ?? { labelKey: 'ISSUE.TITLE', icon: Bug, tone: 'text-muted' };
+  const meta = TYPE_META[issue.type] ?? {
+    labelKey: 'ISSUE.TITLE',
+    icon: Bug,
+    tone: 'text-muted',
+  };
   const Icon = meta.icon;
   return (
     <div className="flex items-center gap-2">
@@ -240,7 +264,7 @@ export function IssuesPage() {
       </div>
 
       {isPending ? (
-        <div className="h-96 animate-pulse rounded-xl border border-border bg-surface-2" />
+        <SkeletonTable rows={8} columns={6} />
       ) : isError ? (
         <div className="flex flex-col items-center justify-center rounded-xl border border-border bg-surface py-16 text-center">
           <AlertTriangle size={28} className="text-danger" />

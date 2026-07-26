@@ -1,11 +1,9 @@
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useQueryClient } from '@tanstack/react-query';
 import { Loader2, X } from 'lucide-react';
 import { FIELD_INPUT_CLASS, FormField } from '@/components/common/FormField';
 import { useUsers } from '@/features/user/hooks/useUsers';
-import { updateIssue } from '@/features/issue/api/issue.api';
-import { issuesQueryKey } from '@/features/issue/hooks/useIssues';
+import { useBulkAssignIssues } from '@/features/issue/hooks/useIssue';
 import { useToast } from '@/lib/toast/toast-context';
 import type { Issue } from '@/features/issue/types';
 
@@ -18,12 +16,11 @@ interface BulkAssignModalProps {
 export function BulkAssignModal({ issues, onClose, onDone }: BulkAssignModalProps) {
   const { t } = useTranslation();
   const { showToast } = useToast();
-  const queryClient = useQueryClient();
   const usersQuery = useUsers();
+  const bulkAssign = useBulkAssignIssues();
 
   const [assignedTo, setAssignedTo] = useState('');
   const [error, setError] = useState('');
-  const [isSaving, setIsSaving] = useState(false);
 
   async function handleSubmit() {
     if (!assignedTo) {
@@ -31,15 +28,11 @@ export function BulkAssignModal({ issues, onClose, onDone }: BulkAssignModalProp
       return;
     }
     setError('');
-    setIsSaving(true);
 
-    const results = await Promise.allSettled(
-      issues.map((issue) => updateIssue({ id: issue.id, assignedTo, status: 'IN_PROGRESS' })),
-    );
-    const succeeded = results.filter((result) => result.status === 'fulfilled').length;
-
-    void queryClient.invalidateQueries({ queryKey: issuesQueryKey });
-    setIsSaving(false);
+    const { succeeded, failed } = await bulkAssign.mutateAsync({
+      issueIds: issues.map((issue) => issue.id),
+      assignedTo,
+    });
 
     if (succeeded === 0) {
       setError(t('ISSUE.BULK_ASSIGN_FAILED'));
@@ -47,9 +40,9 @@ export function BulkAssignModal({ issues, onClose, onDone }: BulkAssignModalProp
     }
 
     showToast({
-      tone: succeeded === issues.length ? 'success' : 'warning',
+      tone: failed === 0 ? 'success' : 'warning',
       title: t('ISSUE.BULK_ASSIGN_DONE', { count: succeeded }),
-      description: succeeded === issues.length ? undefined : t('ISSUE.BULK_ASSIGN_FAILED'),
+      description: failed === 0 ? undefined : t('ISSUE.BULK_ASSIGN_FAILED'),
     });
     onDone();
     onClose();
@@ -115,10 +108,10 @@ export function BulkAssignModal({ issues, onClose, onDone }: BulkAssignModalProp
           <button
             type="button"
             onClick={() => void handleSubmit()}
-            disabled={isSaving}
+            disabled={bulkAssign.isPending}
             className="inline-flex h-9 items-center gap-2 rounded-lg bg-primary px-4 text-sm font-semibold text-primary-fg transition hover:bg-primary-hover active:scale-[0.99] disabled:cursor-not-allowed disabled:opacity-60"
           >
-            {isSaving ? <Loader2 size={15} className="animate-spin" /> : null}
+            {bulkAssign.isPending ? <Loader2 size={15} className="animate-spin" /> : null}
             {t('ISSUE_MODAL.SAVE')}
           </button>
         </div>

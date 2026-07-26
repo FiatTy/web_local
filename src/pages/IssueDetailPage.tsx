@@ -191,7 +191,10 @@ export function IssueDetailPage() {
 
   const [modalMode, setModalMode] = useState<'assign' | 'status' | null>(null);
   const [commentText, setCommentText] = useState('');
-  const [replyTo, setReplyTo] = useState<{ id: string; username: string } | null>(null);
+  const [replyTo, setReplyTo] = useState<{
+    id: string;
+    username: string;
+  } | null>(null);
   const [copied, setCopied] = useState(false);
 
   const issue = issueQuery.data;
@@ -246,7 +249,10 @@ export function IssueDetailPage() {
       return;
     }
     try {
-      await triggerAiFix.mutateAsync({ projectId: issue.projectId, issueId: issue.id });
+      await triggerAiFix.mutateAsync({
+        projectId: issue.projectId,
+        issueId: issue.id,
+      });
     } catch {
       showToast({ tone: 'error', title: t('COMMON.ERROR') });
     }
@@ -272,7 +278,10 @@ export function IssueDetailPage() {
   }
 
   function startReply(comment: IssueComment) {
-    setReplyTo({ id: comment.parentCommentId || comment.id, username: comment.username });
+    setReplyTo({
+      id: comment.parentCommentId || comment.id,
+      username: comment.username,
+    });
     setCommentText(comment.username ? `@${comment.username} ` : '');
     document.getElementById('newComment')?.focus();
   }
@@ -455,7 +464,9 @@ export function IssueDetailPage() {
                 <div className="mb-2 flex items-center gap-2 rounded-lg bg-primary-subtle px-3 py-1.5">
                   <CornerDownRight size={12} className="text-primary" />
                   <span className="flex-1 truncate text-xs text-primary">
-                    {t('ISSUE_DETAIL.REPLYING_TO', { name: replyTo.username || '—' })}
+                    {t('ISSUE_DETAIL.REPLYING_TO', {
+                      name: replyTo.username || '—',
+                    })}
                   </span>
                   <button
                     type="button"

@@ -43,7 +43,12 @@ const NAV_SECTIONS: NavSection[] = [
   {
     headingKey: 'NAV.SECTION_OVERVIEW',
     items: [
-      { to: '/dashboard', labelKey: 'NAV.DASHBOARD', fallback: 'Dashboard', icon: LayoutDashboard },
+      {
+        to: '/dashboard',
+        labelKey: 'NAV.DASHBOARD',
+        fallback: 'Dashboard',
+        icon: LayoutDashboard,
+      },
     ],
   },
   {
@@ -73,7 +78,12 @@ const NAV_SECTIONS: NavSection[] = [
   {
     headingKey: 'NAV.SECTION_ANALYTICS',
     items: [
-      { to: '/analysis', labelKey: 'NAV.ANALYSIS', fallback: 'Analysis', icon: LineChart },
+      {
+        to: '/analysis',
+        labelKey: 'NAV.ANALYSIS',
+        fallback: 'Analysis',
+        icon: LineChart,
+      },
       {
         to: '/security-dashboard',
         labelKey: 'NAV.SECURITY',

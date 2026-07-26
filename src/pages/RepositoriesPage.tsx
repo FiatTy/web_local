@@ -23,6 +23,7 @@ import {
   XCircle,
 } from 'lucide-react';
 import { PageHeader } from '@/components/common/PageHeader';
+import { SkeletonCard } from '@/components/common/Skeleton';
 import { useToast } from '@/lib/toast/toast-context';
 import { useDeleteRepository, useRepositories } from '@/features/repository/hooks/useRepositories';
 import { useStartScan } from '@/features/repository/hooks/useRepository';
@@ -296,7 +297,11 @@ export function RepositoriesPage() {
         gitToken,
         serverUrl: config.serverUrl,
       });
-      showToast({ tone: 'success', title: t('REPOSITORY.SCAN_STARTED'), description: repo.name });
+      showToast({
+        tone: 'success',
+        title: t('REPOSITORY.SCAN_STARTED'),
+        description: repo.name,
+      });
     } catch {
       showToast({
         tone: 'error',
@@ -440,10 +445,7 @@ export function RepositoriesPage() {
       {isPending ? (
         <div className="grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-3">
           {Array.from({ length: 6 }).map((_, index) => (
-            <div
-              key={index}
-              className="h-44 animate-pulse rounded-xl border border-border bg-surface-2"
-            />
+            <SkeletonCard key={index} />
           ))}
         </div>
       ) : isError ? (

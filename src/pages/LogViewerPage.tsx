@@ -273,7 +273,9 @@ export function LogViewerPage() {
     if (!scan) {
       return;
     }
-    const blob = new Blob([buildMarkdown(scan, scannerType)], { type: 'text/markdown' });
+    const blob = new Blob([buildMarkdown(scan, scannerType)], {
+      type: 'text/markdown',
+    });
     const url = URL.createObjectURL(blob);
     const link = document.createElement('a');
     const date = scan.startedAt ? new Date(scan.startedAt) : new Date();
@@ -303,7 +305,11 @@ export function LogViewerPage() {
         subject: `Scan Report: ${applicationName}`,
         html: wrapAsPre(buildMarkdown(scan, scannerType)),
       });
-      showToast({ tone: 'success', title: t('SCAN_RESULT.EMAIL_SENT'), description: user.email });
+      showToast({
+        tone: 'success',
+        title: t('SCAN_RESULT.EMAIL_SENT'),
+        description: user.email,
+      });
     } catch {
       showToast({ tone: 'error', title: t('SCAN_RESULT.EMAIL_FAILED') });
     }
@@ -345,7 +351,9 @@ export function LogViewerPage() {
             {t('LOG_VIEWER.REPORT_TITLE', { name: scan.projectName || '—' })}
           </h1>
           <p className="mt-1 text-sm text-muted">
-            {t('LOG_VIEWER.EXECUTED_ON', { date: formatDateTime(scan.startedAt) })}
+            {t('LOG_VIEWER.EXECUTED_ON', {
+              date: formatDateTime(scan.startedAt),
+            })}
           </p>
         </div>
         <div className="flex flex-wrap items-center gap-2">
@@ -490,12 +498,16 @@ export function LogViewerPage() {
 
       <div className="mb-4 grid gap-4 xl:grid-cols-2">
         <IssueTable
-          title={t('LOG_VIEWER.WARNINGS_WITH_COUNT', { count: grouped.major.length })}
+          title={t('LOG_VIEWER.WARNINGS_WITH_COUNT', {
+            count: grouped.major.length,
+          })}
           issues={grouped.major}
           tone="bg-major"
         />
         <IssueTable
-          title={t('LOG_VIEWER.ERRORS_WITH_COUNT', { count: grouped.critical.length })}
+          title={t('LOG_VIEWER.ERRORS_WITH_COUNT', {
+            count: grouped.critical.length,
+          })}
           issues={grouped.critical}
           tone="bg-critical"
         />

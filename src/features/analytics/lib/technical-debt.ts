@@ -195,11 +195,26 @@ export function computeDebtCategories(scans: Scan[]): DebtCategory[] {
   const share = (value: number) => Number(((value / total) * 100).toFixed(1));
 
   return [
-    { labelKey: 'TECHNICAL_DEBT.CAT_DOCUMENTATION', percent: share(averages.documentation) },
-    { labelKey: 'TECHNICAL_DEBT.CAT_ARCHITECTURE', percent: share(averages.architecture) },
-    { labelKey: 'TECHNICAL_DEBT.CAT_CODE_QUALITY', percent: share(averages.codeQuality) },
-    { labelKey: 'TECHNICAL_DEBT.CAT_TEST_COVERAGE', percent: share(averages.testCoverage) },
-    { labelKey: 'TECHNICAL_DEBT.CAT_SECURITY', percent: share(averages.security) },
+    {
+      labelKey: 'TECHNICAL_DEBT.CAT_DOCUMENTATION',
+      percent: share(averages.documentation),
+    },
+    {
+      labelKey: 'TECHNICAL_DEBT.CAT_ARCHITECTURE',
+      percent: share(averages.architecture),
+    },
+    {
+      labelKey: 'TECHNICAL_DEBT.CAT_CODE_QUALITY',
+      percent: share(averages.codeQuality),
+    },
+    {
+      labelKey: 'TECHNICAL_DEBT.CAT_TEST_COVERAGE',
+      percent: share(averages.testCoverage),
+    },
+    {
+      labelKey: 'TECHNICAL_DEBT.CAT_SECURITY',
+      percent: share(averages.security),
+    },
   ];
 }
 

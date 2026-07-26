@@ -60,7 +60,10 @@ export function ReportHistoryPage() {
 
   async function handleDownload(report: ReportHistoryEntry) {
     if (report.format.toUpperCase() !== 'PDF') {
-      showToast({ tone: 'warning', title: t('REPORT_HISTORY.SNACKBAR.FORMAT_NOT_SUPPORTED') });
+      showToast({
+        tone: 'warning',
+        title: t('REPORT_HISTORY.SNACKBAR.FORMAT_NOT_SUPPORTED'),
+      });
       return;
     }
     setDownloadingId(report.id);
@@ -81,7 +84,10 @@ export function ReportHistoryPage() {
       });
       downloadBase64(response.base64, response.fileName, response.mimeType);
     } catch {
-      showToast({ tone: 'error', title: t('REPORT_HISTORY.SNACKBAR.DOWNLOAD_ERROR') });
+      showToast({
+        tone: 'error',
+        title: t('REPORT_HISTORY.SNACKBAR.DOWNLOAD_ERROR'),
+      });
     } finally {
       setDownloadingId(null);
     }

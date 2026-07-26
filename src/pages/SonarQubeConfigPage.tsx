@@ -364,12 +364,22 @@ export function SonarQubeConfigPage() {
   const ConnectionIcon = connectionMeta.icon;
 
   const gateFields: { key: GateKey; labelKey: string; max?: number }[] = [
-    { key: 'qgCoverageThreshold', labelKey: 'SONARQUBE_CONFIG.COVERAGE_THRESHOLD', max: 100 },
+    {
+      key: 'qgCoverageThreshold',
+      labelKey: 'SONARQUBE_CONFIG.COVERAGE_THRESHOLD',
+      max: 100,
+    },
     { key: 'qgMaxBugs', labelKey: 'SONARQUBE_CONFIG.MAX_BUGS' },
-    { key: 'qgMaxVulnerabilities', labelKey: 'SONARQUBE_CONFIG.MAX_VULNERABILITIES' },
+    {
+      key: 'qgMaxVulnerabilities',
+      labelKey: 'SONARQUBE_CONFIG.MAX_VULNERABILITIES',
+    },
     { key: 'qgMaxCodeSmells', labelKey: 'SONARQUBE_CONFIG.MAX_CODE_SMELLS' },
     { key: 'qgMaxDuplications', labelKey: 'SONARQUBE_CONFIG.MAX_DUPLICATIONS' },
-    { key: 'qgMaxSecurityHotspots', labelKey: 'SONARQUBE_CONFIG.MAX_SECURITY_HOTSPOTS' },
+    {
+      key: 'qgMaxSecurityHotspots',
+      labelKey: 'SONARQUBE_CONFIG.MAX_SECURITY_HOTSPOTS',
+    },
   ];
 
   if (configQuery.isLoading) {

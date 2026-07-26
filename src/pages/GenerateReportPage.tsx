@@ -18,11 +18,23 @@ import { useNotificationSettings } from '@/features/setting/hooks/useNotificatio
 import type { ReportSections } from '@/features/report/types';
 
 const SECTION_FIELDS: { key: keyof ReportSections; labelKey: string }[] = [
-  { key: 'qualityGate', labelKey: 'GENERATE_REPORT.SECTIONS.QualityGateSummary' },
-  { key: 'issueBreakdown', labelKey: 'GENERATE_REPORT.SECTIONS.IssueBreakdown' },
-  { key: 'securityAnalysis', labelKey: 'GENERATE_REPORT.SECTIONS.SecurityAnalysis' },
+  {
+    key: 'qualityGate',
+    labelKey: 'GENERATE_REPORT.SECTIONS.QualityGateSummary',
+  },
+  {
+    key: 'issueBreakdown',
+    labelKey: 'GENERATE_REPORT.SECTIONS.IssueBreakdown',
+  },
+  {
+    key: 'securityAnalysis',
+    labelKey: 'GENERATE_REPORT.SECTIONS.SecurityAnalysis',
+  },
   { key: 'technicalDebt', labelKey: 'GENERATE_REPORT.SECTIONS.TechnicalDebt' },
-  { key: 'recommendations', labelKey: 'GENERATE_REPORT.SECTIONS.Recommendations' },
+  {
+    key: 'recommendations',
+    labelKey: 'GENERATE_REPORT.SECTIONS.Recommendations',
+  },
 ];
 
 const DEFAULT_SECTIONS: ReportSections = {
@@ -159,7 +171,9 @@ export function GenerateReportPage() {
     void generateReportNotification({ projectId, projectName, succeeded }, user.id).then(
       (created) => {
         if (created) {
-          void queryClient.invalidateQueries({ queryKey: notificationsQueryKey(user.id) });
+          void queryClient.invalidateQueries({
+            queryKey: notificationsQueryKey(user.id),
+          });
         }
       },
     );

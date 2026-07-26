@@ -1,8 +1,15 @@
 import type { Scan, ScanMetrics } from '@/features/scan/types';
+import type { GateTone } from '@/types/gate';
 
-export type GateTone = 'pass' | 'warning' | 'fail' | 'pending' | 'none';
+export type { GateTone };
 
-const RATING_TO_NUMBER: Record<string, number> = { A: 1, B: 2, C: 3, D: 4, E: 5 };
+const RATING_TO_NUMBER: Record<string, number> = {
+  A: 1,
+  B: 2,
+  C: 3,
+  D: 4,
+  E: 5,
+};
 
 export function ratingTone(rating: string | undefined, isPending: boolean): GateTone {
   if (isPending) {

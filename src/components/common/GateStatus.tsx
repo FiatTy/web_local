@@ -1,6 +1,6 @@
 import { useTranslation } from 'react-i18next';
 import { CheckCircle2, Loader2, TriangleAlert, XCircle } from 'lucide-react';
-import type { GateTone } from '@/features/scan/lib/scan-rating';
+import type { GateTone } from '@/types/gate';
 
 interface GateStatusProps {
   tone: GateTone;

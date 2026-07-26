@@ -29,7 +29,9 @@ export interface ChangePasswordPayload {
 }
 
 export async function changePassword(payload: ChangePasswordPayload): Promise<void> {
-  await apiClient.put('/user/change-password', payload, { responseType: 'text' });
+  await apiClient.put('/user/change-password', payload, {
+    responseType: 'text',
+  });
 }
 
 export async function sendVerificationEmail(userId: string): Promise<void> {

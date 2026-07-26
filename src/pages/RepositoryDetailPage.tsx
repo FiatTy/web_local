@@ -405,7 +405,10 @@ export function RepositoryDetailPage() {
               </div>
               <div className="flex items-center justify-between border-t border-border px-5 py-3">
                 <span className="font-mono text-[11px] text-faint">
-                  {t('DETAIL_REPO.PAGE_INFO', { current: currentPage, total: totalPages })}
+                  {t('DETAIL_REPO.PAGE_INFO', {
+                    current: currentPage,
+                    total: totalPages,
+                  })}
                 </span>
                 <div className="flex gap-2">
                   <button

@@ -150,7 +150,9 @@ export function SecurityDashboardPage() {
               {t('SECURITY_DASHBOARD.VULNERABILITIES_BY_SEVERITY')}
             </h2>
             <p className="mt-0.5 text-xs text-muted">
-              {t('SECURITY_DASHBOARD.TOTAL_VULNERABILITIES', { count: totalVulnerabilities })}
+              {t('SECURITY_DASHBOARD.TOTAL_VULNERABILITIES', {
+                count: totalVulnerabilities,
+              })}
             </p>
           </div>
           <div className="flex flex-col items-center gap-4 px-5 py-6">
@@ -169,7 +171,9 @@ export function SecurityDashboardPage() {
                   <span className="flex items-center gap-2 text-muted">
                     <span
                       className="h-2.5 w-2.5 rounded-sm"
-                      style={{ background: SEVERITY_COLOR[item.severity] ?? 'var(--color-faint)' }}
+                      style={{
+                        background: SEVERITY_COLOR[item.severity] ?? 'var(--color-faint)',
+                      }}
                     />
                     {t(SEVERITY_LABEL[item.severity] ?? item.severity)}
                   </span>

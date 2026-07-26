@@ -71,8 +71,12 @@ export function useAppRealtimeSync(): void {
   const invalidateRepository = useCallback(
     (projectId: string) => {
       void queryClient.invalidateQueries({ queryKey: repositoriesQueryKey });
-      void queryClient.invalidateQueries({ queryKey: repositoryQueryKey(projectId) });
-      void queryClient.invalidateQueries({ queryKey: repositoryDetailQueryKey(projectId) });
+      void queryClient.invalidateQueries({
+        queryKey: repositoryQueryKey(projectId),
+      });
+      void queryClient.invalidateQueries({
+        queryKey: repositoryDetailQueryKey(projectId),
+      });
     },
     [queryClient],
   );
@@ -127,7 +131,9 @@ export function useAppRealtimeSync(): void {
       }
 
       if (created) {
-        void queryClient.invalidateQueries({ queryKey: notificationsQueryKey(userId) });
+        void queryClient.invalidateQueries({
+          queryKey: notificationsQueryKey(userId),
+        });
       }
     },
     [projectNameOf, queryClient, userId],
@@ -201,8 +207,12 @@ export function useAppRealtimeSync(): void {
       }
       void queryClient.invalidateQueries({ queryKey: issuesQueryKey });
       if (event.issueId) {
-        void queryClient.invalidateQueries({ queryKey: issueQueryKey(event.issueId) });
-        void queryClient.invalidateQueries({ queryKey: issueAnalysisQueryKey(event.issueId) });
+        void queryClient.invalidateQueries({
+          queryKey: issueQueryKey(event.issueId),
+        });
+        void queryClient.invalidateQueries({
+          queryKey: issueAnalysisQueryKey(event.issueId),
+        });
       }
     },
     [queryClient],

@@ -18,7 +18,11 @@ describe('getPasswordRules', () => {
       lower: true,
       upper: false,
     });
-    expect(getPasswordRules('ABC1')).toMatchObject({ upper: true, number: true, minLength: false });
+    expect(getPasswordRules('ABC1')).toMatchObject({
+      upper: true,
+      number: true,
+      minLength: false,
+    });
     expect(getPasswordRules('a@b').special).toBe(true);
   });
 
