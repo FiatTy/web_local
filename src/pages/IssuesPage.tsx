@@ -10,11 +10,13 @@ import {
   RefreshCw,
   Search,
   ShieldAlert,
+  UserPlus,
   Waves,
 } from 'lucide-react';
 import { PageHeader } from '@/components/common/PageHeader';
 import { useIssues } from '@/features/issue/hooks/useIssues';
 import { AssignIssueModal } from '@/features/issue/components/AssignIssueModal';
+import { BulkAssignModal } from '@/features/issue/components/BulkAssignModal';
 import type { Issue } from '@/features/issue/types';
 
 const PAGE_SIZE = 10;
@@ -83,6 +85,8 @@ export function IssuesPage() {
   const [search, setSearch] = useState('');
   const [page, setPage] = useState(1);
   const [assignTarget, setAssignTarget] = useState<Issue | null>(null);
+  const [selectedIds, setSelectedIds] = useState<string[]>([]);
+  const [showBulkAssign, setShowBulkAssign] = useState(false);
 
   const issues = useMemo(() => data ?? [], [data]);
   const projects = useMemo(
@@ -108,13 +112,36 @@ export function IssuesPage() {
   const currentPage = Math.min(page, totalPages);
   const pageRows = filtered.slice((currentPage - 1) * PAGE_SIZE, currentPage * PAGE_SIZE);
 
+  const selectedIssues = useMemo(
+    () => issues.filter((issue) => selectedIds.includes(issue.id)),
+    [issues, selectedIds],
+  );
+  const allPageSelected =
+    pageRows.length > 0 && pageRows.every((issue) => selectedIds.includes(issue.id));
+
   function resetFilters() {
     setType('all');
     setSeverity('all');
     setStatus('all');
     setProject('all');
     setSearch('');
+    setSelectedIds([]);
     setPage(1);
+  }
+
+  function toggleSelected(issueId: string) {
+    setSelectedIds((current) =>
+      current.includes(issueId) ? current.filter((id) => id !== issueId) : [...current, issueId],
+    );
+  }
+
+  function toggleSelectPage() {
+    const pageIds = pageRows.map((issue) => issue.id);
+    setSelectedIds((current) =>
+      allPageSelected
+        ? current.filter((id) => !pageIds.includes(id))
+        : Array.from(new Set([...current, ...pageIds])),
+    );
   }
 
   const selectClass =
@@ -239,6 +266,15 @@ export function IssuesPage() {
             <table className="w-full min-w-[900px] text-sm">
               <thead>
                 <tr className="border-b border-border bg-surface-2/50 text-left">
+                  <th className="w-10 px-4 py-3">
+                    <input
+                      type="checkbox"
+                      aria-label={t('ISSUE.SELECT_ALL')}
+                      checked={allPageSelected}
+                      onChange={toggleSelectPage}
+                      className="h-4 w-4 cursor-pointer accent-[var(--color-primary)]"
+                    />
+                  </th>
                   <th className={headCell}>{t('ISSUE.COL_TYPE')}</th>
                   <th className={headCell}>{t('ISSUE.COL_SEVERITY')}</th>
                   <th className={headCell}>{t('ISSUE.COL_ISSUE')}</th>
@@ -257,6 +293,15 @@ export function IssuesPage() {
                       key={issue.id}
                       className="border-b border-border last:border-0 transition-colors hover:bg-surface-2/40"
                     >
+                      <td className="px-4 py-3">
+                        <input
+                          type="checkbox"
+                          aria-label={`${t('ISSUE.SELECT_ALL')} ${issue.issueKey}`}
+                          checked={selectedIds.includes(issue.id)}
+                          onChange={() => toggleSelected(issue.id)}
+                          className="h-4 w-4 cursor-pointer accent-[var(--color-primary)]"
+                        />
+                      </td>
                       <td className="px-4 py-3">
                         <TypeCell issue={issue} />
                       </td>
@@ -342,11 +387,42 @@ export function IssuesPage() {
         </div>
       )}
 
+      {selectedIds.length > 0 ? (
+        <div className="sticky bottom-4 z-30 mt-4 flex flex-wrap items-center gap-3 rounded-xl border border-border bg-surface px-4 py-3 shadow-lg shadow-black/10">
+          <span className="text-sm text-fg">
+            {t('ISSUE.SELECTED_ISSUES_LABEL', { count: selectedIds.length })}
+          </span>
+          <button
+            type="button"
+            onClick={() => setSelectedIds([])}
+            className="text-xs font-medium text-muted transition-colors hover:text-fg"
+          >
+            {t('ISSUE.CLEAR_SELECTION')}
+          </button>
+          <button
+            type="button"
+            onClick={() => setShowBulkAssign(true)}
+            className="ml-auto inline-flex h-9 items-center gap-2 rounded-lg bg-primary px-4 text-sm font-semibold text-primary-fg transition hover:bg-primary-hover active:scale-[0.99]"
+          >
+            <UserPlus size={15} />
+            {t('ISSUE.ASSIGN_SELECTED')}
+          </button>
+        </div>
+      ) : null}
+
       {assignTarget ? (
         <AssignIssueModal
           issue={assignTarget}
           mode="assign"
           onClose={() => setAssignTarget(null)}
+        />
+      ) : null}
+
+      {showBulkAssign && selectedIssues.length > 0 ? (
+        <BulkAssignModal
+          issues={selectedIssues}
+          onClose={() => setShowBulkAssign(false)}
+          onDone={() => setSelectedIds([])}
         />
       ) : null}
     </div>

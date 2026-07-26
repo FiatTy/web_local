@@ -15,6 +15,8 @@ import { useRepositories } from '@/features/repository/hooks/useRepositories';
 import { useScanHistory } from '@/features/scan/hooks/useScanHistory';
 import { useIssues } from '@/features/issue/hooks/useIssues';
 import { DonutChart } from '@/components/charts/DonutChart';
+import { LineChart } from '@/components/charts/LineChart';
+import { buildDailyTrend } from '@/features/scan/lib/scan-trends';
 import type { Scan } from '@/features/scan/types';
 
 const OPEN_STATUSES = new Set(['OPEN', 'IN_PROGRESS', 'PENDING']);
@@ -105,6 +107,11 @@ export function DashboardPage() {
   const repos = useMemo(() => repositoriesQuery.data ?? [], [repositoriesQuery.data]);
   const scans = useMemo(() => scansQuery.data ?? [], [scansQuery.data]);
   const issues = useMemo(() => issuesQuery.data ?? [], [issuesQuery.data]);
+
+  const coverageTrend = useMemo(
+    () => buildDailyTrend(scans, (scan) => scan.metrics?.coverage, 30),
+    [scans],
+  );
 
   const openIssues = issues.filter((issue) => OPEN_STATUSES.has(issue.status)).length;
   const resolvedIssues = issues.filter((issue) => RESOLVED_STATUSES.has(issue.status)).length;
@@ -305,6 +312,31 @@ export function DashboardPage() {
           )}
         </section>
       </div>
+
+      <section className="mt-4 rounded-xl border border-border bg-surface">
+        <div className="flex flex-wrap items-baseline justify-between gap-2 border-b border-border px-5 py-4">
+          <h2 className="text-sm font-semibold text-fg">{t('DASHBOARD.QUALITY_TRENDS')}</h2>
+          <p className="text-xs text-muted">{t('DASHBOARD.TREND_SUBTITLE')}</p>
+        </div>
+        <div className="px-5 py-4">
+          {scansQuery.isPending ? (
+            <div className="h-56 animate-pulse rounded-lg bg-surface-2" />
+          ) : (
+            <LineChart
+              series={[
+                {
+                  name: t('DASHBOARD.TREND_COVERAGE'),
+                  color: 'var(--color-primary)',
+                  points: coverageTrend,
+                },
+              ]}
+              suffix="%"
+              maxValue={100}
+              emptyLabel={t('DASHBOARD.TREND_EMPTY')}
+            />
+          )}
+        </div>
+      </section>
 
       <section className="mt-4 rounded-xl border border-border bg-surface">
         <div className="flex items-center justify-between border-b border-border px-5 py-4">

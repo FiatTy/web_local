@@ -7,6 +7,7 @@ import { AuthShell } from '@/features/auth/components/AuthShell';
 import { AuthField } from '@/features/auth/components/AuthField';
 import { useRegister } from '@/features/auth/hooks/useRegister';
 import { useAuth } from '@/lib/auth/auth-context';
+import { getPasswordRules } from '@/lib/password-rules';
 
 const EMAIL_PATTERN = /^[^@\s]+@[^@\s]+\.[a-zA-Z]{2,}$/;
 const PHONE_PATTERN = /^0\d{9}$/;
@@ -24,16 +25,6 @@ function isInvalidDomain(email: string): boolean {
     return false;
   }
   return !ALLOWED_DOMAINS.includes(parts[1]);
-}
-
-function getPasswordRules(password: string) {
-  return {
-    minLength: password.length >= 8,
-    upper: /[A-Z]/.test(password),
-    lower: /[a-z]/.test(password),
-    number: /\d/.test(password),
-    special: /[!@#$%&*.]/.test(password),
-  };
 }
 
 function extractDuplicateFields(error: unknown): DuplicateFields {

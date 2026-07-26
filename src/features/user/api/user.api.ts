@@ -22,3 +22,16 @@ export async function updateUser(payload: UserInfo): Promise<void> {
 export async function deleteUser(userId: string): Promise<void> {
   await apiClient.delete(`/user/delete-user/${userId}`);
 }
+
+export interface ChangePasswordPayload {
+  currentPassword: string;
+  newPassword: string;
+}
+
+export async function changePassword(payload: ChangePasswordPayload): Promise<void> {
+  await apiClient.put('/user/change-password', payload, { responseType: 'text' });
+}
+
+export async function sendVerificationEmail(userId: string): Promise<void> {
+  await apiClient.post('/api/email-verification/send', { userId });
+}

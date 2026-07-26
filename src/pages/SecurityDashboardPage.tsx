@@ -13,7 +13,10 @@ import {
 import { PageHeader } from '@/components/common/PageHeader';
 import { BarList } from '@/components/charts/BarList';
 import { DonutChart } from '@/components/charts/DonutChart';
+import { LineChart } from '@/components/charts/LineChart';
 import { useSecurityMetrics } from '@/features/security/hooks/useSecurityMetrics';
+import { useScanHistory } from '@/features/scan/hooks/useScanHistory';
+import { buildRecentScanTrend } from '@/features/scan/lib/scan-trends';
 import type { OwaspCategory } from '@/features/security/types';
 
 const SEVERITY_COLOR: Record<string, string> = {
@@ -61,6 +64,17 @@ function OwaspIcon({ status }: { status: OwaspCategory['status'] }) {
 export function SecurityDashboardPage() {
   const { t } = useTranslation();
   const metricsQuery = useSecurityMetrics();
+  const scansQuery = useScanHistory();
+
+  const scans = useMemo(() => scansQuery.data ?? [], [scansQuery.data]);
+  const vulnerabilityTrend = useMemo(
+    () => buildRecentScanTrend(scans, (scan) => scan.metrics?.vulnerabilities, 12),
+    [scans],
+  );
+  const hotspotTrend = useMemo(
+    () => buildRecentScanTrend(scans, (scan) => scan.metrics?.securityHotspots, 12),
+    [scans],
+  );
 
   const metrics = metricsQuery.data;
   const vulnerabilities = useMemo(() => metrics?.vulnerabilities ?? [], [metrics]);
@@ -206,6 +220,46 @@ export function SecurityDashboardPage() {
           </div>
         </section>
       </div>
+
+      <section className="mt-4 rounded-xl border border-border bg-surface">
+        <div className="flex flex-wrap items-baseline justify-between gap-2 border-b border-border px-5 py-4">
+          <h2 className="text-sm font-semibold text-fg">{t('SECURITY_DASHBOARD.TREND_TITLE')}</h2>
+          <p className="text-xs text-muted">{t('SECURITY_DASHBOARD.TREND_SUBTITLE')}</p>
+        </div>
+        <div className="px-5 py-4">
+          {scansQuery.isPending ? (
+            <div className="h-56 animate-pulse rounded-lg bg-surface-2" />
+          ) : (
+            <>
+              <LineChart
+                series={[
+                  {
+                    name: t('SECURITY_DASHBOARD.TREND_VULNERABILITIES'),
+                    color: 'var(--color-danger)',
+                    points: vulnerabilityTrend,
+                  },
+                  {
+                    name: t('SECURITY_DASHBOARD.TREND_HOTSPOTS'),
+                    color: 'var(--color-warning)',
+                    points: hotspotTrend,
+                  },
+                ]}
+                emptyLabel={t('SECURITY_DASHBOARD.TREND_EMPTY')}
+              />
+              <div className="mt-3 flex flex-wrap items-center gap-4">
+                <span className="flex items-center gap-1.5 text-xs text-muted">
+                  <span className="h-2 w-2 rounded-full bg-danger" />
+                  {t('SECURITY_DASHBOARD.TREND_VULNERABILITIES')}
+                </span>
+                <span className="flex items-center gap-1.5 text-xs text-muted">
+                  <span className="h-2 w-2 rounded-full bg-warning" />
+                  {t('SECURITY_DASHBOARD.TREND_HOTSPOTS')}
+                </span>
+              </div>
+            </>
+          )}
+        </div>
+      </section>
     </div>
   );
 }

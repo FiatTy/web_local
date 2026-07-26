@@ -92,7 +92,10 @@
     "OLD_PASSWORD_REQUIRED": "จำเป็นต้องกรอกรหัสผ่านเดิม",
     "CONFIRM_PASSWORD_REQUIRED": "จำเป็นต้องยืนยันรหัสผ่านใหม่",
     "PASSWORD_MISMATCH": "รหัสผ่านไม่ตรงกัน",
-    "CANCEL": "ยกเลิก"
+    "CANCEL": "ยกเลิก",
+    "TREND_COVERAGE": "Coverage",
+    "TREND_SUBTITLE": "Coverage จากการสแกน 30 วันล่าสุด",
+    "TREND_EMPTY": "ข้อมูลการสแกนยังไม่พอ"
   },
   "REPOSITORY": {
     "TITLE": "คลังโค้ด",
@@ -226,18 +229,18 @@
     "VIEW_RESULT_TOOLTIP": "ดูผลการสแกน",
     "PAGE_INFO": "หน้า {{current}} จาก {{total}}",
     "EXPORT_HISTORY": "ส่งออกประวัติสแกน",
-    "COMPARE_SCANS": "เปรียบเทียบผลสแกน",
+    "COMPARE_SCANS": "เปรียบเทียบ",
     "CLEAR_OLD_LOGS": "ล้างประวัติล็อกเก่า",
-    "COMPARE_MODAL_TITLE": "เปรียบเทียบผลสแกน",
-    "COMPARE_MODAL_DESC": "กรุณาเลือกข้อมูลที่คุณต้องการเปรียบเทียบ",
-    "COMPARE_GRADE": "ผลการทดสอบ",
-    "COMPARE_BUGS": "ข้อผิดพลาด (Bugs)",
-    "COMPARE_CODE_SMELLS": "โค้ดที่ควรปรับปรุง (Code Smells)",
-    "COMPARE_COVERAGE": "การครอบคลุมโค้ด (Coverage)",
-    "COMPARE_DUPLICATIONS": "ส่วนที่ซ้ำซ้อน (Duplications)",
-    "COMPARE_TABLE_CAPTION": "ข้อมูลเปรียบเทียบผลการสแกน",
+    "COMPARE_MODAL_TITLE": "เปรียบเทียบผลการสแกน",
+    "COMPARE_MODAL_DESC": "เลือกตัวชี้วัดที่ต้องการเทียบ",
+    "COMPARE_GRADE": "Quality Gate",
+    "COMPARE_BUGS": "Bugs",
+    "COMPARE_CODE_SMELLS": "Code Smells",
+    "COMPARE_COVERAGE": "Coverage",
+    "COMPARE_DUPLICATIONS": "Duplications",
+    "COMPARE_TABLE_CAPTION": "ตารางเทียบตัวชี้วัดของ scan ที่เลือก",
     "COL_METRIC": "ตัวชี้วัด",
-    "COL_CHANGE": "การเปลี่ยนแปลง",
+    "COL_CHANGE": "เปลี่ยนแปลง",
     "CLOSE": "ปิด",
     "BUGS": "ข้อผิดพลาด",
     "SECURITY": "ความปลอดภัย",
@@ -253,7 +256,11 @@
       "TITLE": "กรุณาเลือกรายการ",
       "TEXT": "กรุณาเลือกอย่างน้อย 1 รายการเพื่อส่งออกข้อมูล",
       "CONFIRM": "ตกลง"
-    }
+    },
+    "COL_SELECT": "เลือก",
+    "COMPARE_HINT": "เลือก 2-3 รายการเพื่อเปรียบเทียบ",
+    "COMPARE_SELECTED": "เลือกแล้ว {{count}} รายการ",
+    "COMPARE_NO_METRIC": "เลือกอย่างน้อย 1 ตัวชี้วัด"
   },
   "ISSUE": {
     "TITLE": "ปัญหา",
@@ -298,7 +305,7 @@
     "NO_ISSUES_FOUND": "ไม่พบปัญหา",
     "NO_ISSUES_FOUND_DESC": "ลองปรับการกรองข้อมูลของคุณ หรือทำการสแกนใหม่อีกครั้ง",
     "ASSIGN_MODAL_TITLE": "มอบหมายผู้ดูแล",
-    "SELECTED_ISSUES_LABEL": "รายการปัญหาที่เลือก:",
+    "SELECTED_ISSUES_LABEL": "เลือกแล้ว {{count}} รายการ",
     "ISSUES_SELECTED": "เลือกไว้ {{count}} รายการ",
     "ASSIGN_TO": "มอบหมายให้:",
     "SELECT_USER": "-- เลือกผู้ใช้ --",
@@ -312,7 +319,13 @@
     "EXPORT_WARNING_TITLE": "เลือกรายการไม่เพียงพอ",
     "EXPORT_WARNING_TEXT": "กรุณาเลือกอย่างน้อย 1 รายการเพื่อส่งออก",
     "INVALID_DATA_TITLE": "ข้อมูลไม่ถูกต้อง",
-    "INVALID_DATA_TEXT": "ไม่ได้เลือกรายการปัญหา"
+    "INVALID_DATA_TEXT": "ไม่ได้เลือกรายการปัญหา",
+    "SELECT_ALL": "เลือกทั้งหมด",
+    "ASSIGN_SELECTED": "มอบหมายที่เลือก",
+    "BULK_ASSIGN_TITLE": "มอบหมาย {{count}} รายการ",
+    "BULK_ASSIGN_DONE": "มอบหมายแล้ว {{count}} รายการ",
+    "BULK_ASSIGN_FAILED": "มอบหมายบางรายการไม่สำเร็จ",
+    "CLEAR_SELECTION": "ล้างที่เลือก"
   },
   "REPORT": {
     "TITLE": "สร้างรายงาน",
@@ -606,11 +619,12 @@
     "COMMENTS": "ความคิดเห็น",
     "REPLY": "ตอบกลับ",
     "NO_COMMENTS_YET": "ยังไม่มีความคิดเห็น ร่วมแสดงความคิดเห็นเป็นคนแรกได้ที่นี่!",
-    "REPLYING_TO": "ตอบกลับไปยัง",
+    "REPLYING_TO": "กำลังตอบกลับ {{name}}",
     "CANCEL": "ยกเลิก",
     "WRITE_COMMENT_PLACEHOLDER": "เขียนความคิดเห็น...",
     "WRITE_COMMENT_TOOLTIP": "เขียนความคิดเห็นของคุณ",
-    "POST_COMMENT_TOOLTIP": "ส่งความคิดเห็น"
+    "POST_COMMENT_TOOLTIP": "ส่งความคิดเห็น",
+    "CANCEL_REPLY": "ยกเลิกการตอบกลับ"
   },
   "ISSUE_MODAL": {
     "CHANGE_ASSIGNMENT": "เปลี่ยนผู้รับผิดชอบ",
@@ -653,7 +667,7 @@
     "NO_HOT_ISSUES": "ไม่พบปัญหาความปลอดภัยหลัก",
     "VIEW_ALL_ISSUES": "ดูปัญหาความปลอดภัยทั้งหมด",
     "LOADING_TREND": "กำลังโหลดข้อมูลแนวโน้ม...",
-    "TREND_TITLE": "แนวโน้มความปลอดภัย (ย้อนหลัง 7 วัน)",
+    "TREND_TITLE": "แนวโน้มความปลอดภัย",
     "RISK_SAFE": "ปลอดภัย",
     "RISK_LOW": "ต่ำ",
     "RISK_MEDIUM": "ปานกลาง",
@@ -662,7 +676,11 @@
     "SEVERITY_CRITICAL": "วิกฤต",
     "SEVERITY_HIGH": "สูง",
     "SEVERITY_MEDIUM": "ปานกลาง",
-    "SEVERITY_LOW": "ต่ำ"
+    "SEVERITY_LOW": "ต่ำ",
+    "TREND_SUBTITLE": "Vulnerabilities และ Hotspots จากการสแกนล่าสุด",
+    "TREND_VULNERABILITIES": "Vulnerabilities",
+    "TREND_HOTSPOTS": "Security Hotspots",
+    "TREND_EMPTY": "ข้อมูลการสแกนยังไม่พอ"
   },
   "TECHNICAL_DEBT": {
     "TITLE": "การวิเคราะห์หนี้ทางเทคนิค",
@@ -674,7 +692,7 @@
     "DEBT_DISTRIBUTION_BY_PROJECT": "การกระจายหนี้แบ่งตามโปรเจกต์",
     "PER_DAY": "วัน",
     "DEBT_BY_CATEGORY": "หนี้ทางเทคนิคแบ่งตามหมวดหมู่",
-    "DEBT_TREND_MONTHLY": "แนวโน้มหนี้ทางเทคนิค (รายเดือน)",
+    "DEBT_TREND_MONTHLY": "หนี้เทคนิครายเดือน (วัน)",
     "TOP_DEBT_PROJECT": "โปรเจกต์ที่มีหนี้ทางเทคนิคสูงสุด",
     "TABLE_CAPTION": "ตัวชี้วัดหนี้ทางเทคนิค",
     "COL_PRIORITY": "ระดับความสำคัญ",
@@ -683,7 +701,7 @@
     "COL_COST": "ค่าใช้จ่าย (บาท)",
     "GENERATE_DEBT_REPORT": "สร้างรายงานหนี้ทางเทคนิค",
     "EXPORT_TO_EXCEL": "ส่งออกไปยัง Excel",
-    "ACTION_PLAN_DRAFT": "แผนการดำเนินการ (ร่าง)",
+    "ACTION_PLAN_DRAFT": "ร่างแผนแก้ไข",
     "CLOSE": "ปิด",
     "SAVE_PLAN": "บันทึกแผน",
     "CAT_DOCUMENTATION": "เอกสารประกอบระบบ",
@@ -691,7 +709,13 @@
     "CAT_CODE_QUALITY": "คุณภาพของโค้ด",
     "CAT_TEST_COVERAGE": "การครอบคลุมของชุดทดสอบ",
     "CAT_SECURITY": "ความปลอดภัย",
-    "TREND_TITLE": "การเติบโตของหนี้สะสม (โปรเจกต์ใหม่ - ย้อนหลัง 60 วัน)"
+    "TREND_TITLE": "แนวโน้มหนี้เทคนิค",
+    "TREND_EMPTY": "ข้อมูลการสแกนยังไม่พอ",
+    "ACTION_PLAN": "แผนแก้ไข",
+    "COPY_PLAN": "คัดลอก",
+    "DOWNLOAD_PLAN": "ดาวน์โหลด",
+    "PLAN_COPIED": "คัดลอกแผนแล้ว",
+    "PLAN_EMPTY": "ยังไม่มีรายการหนี้ให้วางแผน"
   },
   "FORGOT_PASSWORD": {
     "TITLE": "ลืมรหัสผ่าน?",
@@ -976,5 +1000,33 @@
     "VERIFICATION_PENDING": "รอการยืนยันอีเมล",
     "EMAIL_UNVERIFIED": "ยังไม่ได้ยืนยันอีเมล",
     "NEW_COMMENT": "มีคอมเมนต์ใหม่"
+  },
+  "ACCOUNT": {
+    "MENU": "เมนูบัญชี",
+    "VERIFIED": "ยืนยันแล้ว",
+    "UNVERIFIED": "ยังไม่ยืนยัน",
+    "CHANGE_PASSWORD": "เปลี่ยนรหัสผ่าน",
+    "OLD_PASSWORD": "รหัสผ่านปัจจุบัน",
+    "NEW_PASSWORD": "รหัสผ่านใหม่",
+    "CONFIRM_PASSWORD": "ยืนยันรหัสผ่านใหม่",
+    "OLD_PASSWORD_REQUIRED": "กรุณากรอกรหัสผ่านปัจจุบัน",
+    "CONFIRM_PASSWORD_REQUIRED": "กรุณายืนยันรหัสผ่านใหม่",
+    "PASSWORD_MISMATCH": "รหัสผ่านไม่ตรงกัน",
+    "PASSWORD_WEAK": "รหัสผ่านใหม่ยังไม่ครบตามเงื่อนไข",
+    "OLD_PASSWORD_WRONG": "รหัสผ่านปัจจุบันไม่ถูกต้อง",
+    "PASSWORD_CHANGED": "เปลี่ยนรหัสผ่านแล้ว",
+    "RULE_MINLENGTH": "อย่างน้อย 8 ตัวอักษร",
+    "RULE_UPPERCASE": "มีตัวพิมพ์ใหญ่",
+    "RULE_LOWERCASE": "มีตัวพิมพ์เล็ก",
+    "RULE_NUMBER": "มีตัวเลข",
+    "RULE_SPECIAL": "มีอักขระพิเศษ",
+    "SHOW_PASSWORD": "แสดงรหัสผ่าน",
+    "HIDE_PASSWORD": "ซ่อนรหัสผ่าน",
+    "SEND_VERIFY_EMAIL": "ส่งอีเมลยืนยันอีกครั้ง",
+    "VERIFY_EMAIL_SENT": "ส่งอีเมลยืนยันแล้ว",
+    "VERIFY_EMAIL_FAILED": "ส่งอีเมลยืนยันไม่สำเร็จ",
+    "LOGOUT_CONFIRM_TITLE": "ออกจากระบบ?",
+    "LOGOUT_CONFIRM_TEXT": "ต้องเข้าสู่ระบบใหม่เพื่อใช้งานต่อ",
+    "LOGOUT_FAILED": "ออกจากระบบไม่สำเร็จ"
   }
 }

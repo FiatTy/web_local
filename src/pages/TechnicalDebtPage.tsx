@@ -1,9 +1,20 @@
-import { useMemo } from 'react';
+import { useMemo, useState } from 'react';
 import { Link } from 'react-router';
 import { useTranslation } from 'react-i18next';
-import { Clock, FileText, Layers, Loader2, TrendingDown, Wallet } from 'lucide-react';
+import {
+  ClipboardList,
+  Clock,
+  FileText,
+  Layers,
+  Loader2,
+  TrendingDown,
+  Wallet,
+} from 'lucide-react';
 import { PageHeader } from '@/components/common/PageHeader';
 import { BarList } from '@/components/charts/BarList';
+import { LineChart } from '@/components/charts/LineChart';
+import { ActionPlanModal } from '@/features/analytics/components/ActionPlanModal';
+import { buildMonthlyTrend } from '@/features/scan/lib/scan-trends';
 import { useScanHistory } from '@/features/scan/hooks/useScanHistory';
 import { useRepositories } from '@/features/repository/hooks/useRepositories';
 import {
@@ -48,6 +59,32 @@ export function TechnicalDebtPage() {
   const totalDebt = useMemo(() => computeTotalDebt(projectDebts), [projectDebts]);
   const categories = useMemo(() => computeDebtCategories(scans), [scans]);
   const topItems = useMemo(() => computeTopDebtItems(projectDebts), [projectDebts]);
+
+  const debtTrend = useMemo(
+    () =>
+      buildMonthlyTrend(
+        scans,
+        (scan) =>
+          scan.metrics?.technicalDebtMinutes != null
+            ? Math.round((scan.metrics.technicalDebtMinutes / (60 * 8)) * 10) / 10
+            : null,
+        6,
+      ),
+    [scans],
+  );
+
+  const actionPlan = useMemo(
+    () =>
+      topItems
+        .map(
+          (item, index) =>
+            `${index + 1}. [${item.priority}] ${item.name} - Owner: <assign>, ETA: <date>`,
+        )
+        .join('\n'),
+    [topItems],
+  );
+
+  const [showActionPlan, setShowActionPlan] = useState(false);
 
   const isLoading = scansQuery.isLoading || repositoriesQuery.isLoading;
   const headCell =
@@ -153,9 +190,40 @@ export function TechnicalDebtPage() {
         </section>
       </div>
 
+      <section className="mb-4 rounded-xl border border-border bg-surface">
+        <div className="flex flex-wrap items-baseline justify-between gap-2 border-b border-border px-5 py-4">
+          <h2 className="text-sm font-semibold text-fg">{t('TECHNICAL_DEBT.TREND_TITLE')}</h2>
+          <p className="text-xs text-muted">{t('TECHNICAL_DEBT.DEBT_TREND_MONTHLY')}</p>
+        </div>
+        <div className="px-5 py-4">
+          {isLoading ? (
+            <div className="h-56 animate-pulse rounded-lg bg-surface-2" />
+          ) : (
+            <LineChart
+              series={[
+                {
+                  name: t('TECHNICAL_DEBT.TREND_TITLE'),
+                  color: 'var(--color-accent)',
+                  points: debtTrend,
+                },
+              ]}
+              emptyLabel={t('TECHNICAL_DEBT.TREND_EMPTY')}
+            />
+          )}
+        </div>
+      </section>
+
       <section className="overflow-hidden rounded-xl border border-border bg-surface">
-        <div className="border-b border-border px-5 py-4">
+        <div className="flex items-center justify-between gap-2 border-b border-border px-5 py-4">
           <h2 className="text-sm font-semibold text-fg">{t('TECHNICAL_DEBT.TOP_DEBT_PROJECT')}</h2>
+          <button
+            type="button"
+            onClick={() => setShowActionPlan(true)}
+            className="inline-flex h-8 items-center gap-1.5 rounded-lg border border-border px-3 text-xs font-medium text-fg transition-colors hover:bg-surface-2"
+          >
+            <ClipboardList size={14} className="text-muted" />
+            {t('TECHNICAL_DEBT.ACTION_PLAN')}
+          </button>
         </div>
         {topItems.length === 0 ? (
           <p className="px-5 py-14 text-center text-sm text-muted">
@@ -206,6 +274,10 @@ export function TechnicalDebtPage() {
           </div>
         )}
       </section>
+
+      {showActionPlan ? (
+        <ActionPlanModal plan={actionPlan} onClose={() => setShowActionPlan(false)} />
+      ) : null}
     </div>
   );
 }

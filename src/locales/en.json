@@ -80,7 +80,7 @@
     "NO_PROJECT_DATA": "No project data available",
     "TOP_ISSUES": "Top Issues",
     "NO_ISSUES_FOUND": "No issues found",
-    "QUALITY_TRENDS": "Quality Trends",
+    "QUALITY_TRENDS": "Quality trends",
     "OLD_PASSWORD": "Old Password",
     "NEW_PASSWORD": "New Password",
     "CONFIRM_PASSWORD": "Confirm Password",
@@ -92,7 +92,10 @@
     "OLD_PASSWORD_REQUIRED": "Old password is required",
     "CONFIRM_PASSWORD_REQUIRED": "Confirm password is required",
     "PASSWORD_MISMATCH": "Passwords do not match",
-    "CANCEL": "Cancel"
+    "CANCEL": "Cancel",
+    "TREND_COVERAGE": "Coverage",
+    "TREND_SUBTITLE": "Coverage from the last 30 days of scans",
+    "TREND_EMPTY": "Not enough scan data yet"
   },
   "REPOSITORY": {
     "TITLE": "Repositories",
@@ -226,16 +229,16 @@
     "VIEW_RESULT_TOOLTIP": "View Result Scan",
     "PAGE_INFO": "Page {{current}} of {{total}}",
     "EXPORT_HISTORY": "Export History",
-    "COMPARE_SCANS": "Compare Scans",
+    "COMPARE_SCANS": "Compare scans",
     "CLEAR_OLD_LOGS": "Clear Old Logs",
-    "COMPARE_MODAL_TITLE": "Compare Scans",
-    "COMPARE_MODAL_DESC": "Please select the data you want to compare.",
-    "COMPARE_GRADE": "Grade",
+    "COMPARE_MODAL_TITLE": "Scan comparison",
+    "COMPARE_MODAL_DESC": "Choose the metrics to compare",
+    "COMPARE_GRADE": "Quality gate",
     "COMPARE_BUGS": "Bugs",
-    "COMPARE_CODE_SMELLS": "Code Smells",
+    "COMPARE_CODE_SMELLS": "Code smells",
     "COMPARE_COVERAGE": "Coverage",
     "COMPARE_DUPLICATIONS": "Duplications",
-    "COMPARE_TABLE_CAPTION": "Scan Comparison Data",
+    "COMPARE_TABLE_CAPTION": "Metric comparison between the selected scans",
     "COL_METRIC": "Metric",
     "COL_CHANGE": "Change",
     "CLOSE": "Close",
@@ -253,7 +256,11 @@
       "TITLE": "Please select items",
       "TEXT": "Please select at least 1 item to export",
       "CONFIRM": "OK"
-    }
+    },
+    "COL_SELECT": "Select",
+    "COMPARE_HINT": "Select 2 or 3 scans to compare",
+    "COMPARE_SELECTED": "{{count}} selected",
+    "COMPARE_NO_METRIC": "Select at least one metric"
   },
   "ISSUE": {
     "TITLE": "Issues",
@@ -298,7 +305,7 @@
     "NO_ISSUES_FOUND": "No Issues Found",
     "NO_ISSUES_FOUND_DESC": "Try adjusting your filters or run a new scan.",
     "ASSIGN_MODAL_TITLE": "Assign Issues",
-    "SELECTED_ISSUES_LABEL": "Selected Issues:",
+    "SELECTED_ISSUES_LABEL": "{{count}} issues selected",
     "ISSUES_SELECTED": "{{count}} issues selected",
     "ASSIGN_TO": "Assign to:",
     "SELECT_USER": "-- Select user --",
@@ -312,7 +319,13 @@
     "EXPORT_WARNING_TITLE": "Not enough items selected",
     "EXPORT_WARNING_TEXT": "Please select at least 1 items to export",
     "INVALID_DATA_TITLE": "Invalid Data",
-    "INVALID_DATA_TEXT": "Don't Select Issue"
+    "INVALID_DATA_TEXT": "Don't Select Issue",
+    "SELECT_ALL": "Select all",
+    "ASSIGN_SELECTED": "Assign selected",
+    "BULK_ASSIGN_TITLE": "Assign {{count}} issues",
+    "BULK_ASSIGN_DONE": "Assigned {{count}} issues",
+    "BULK_ASSIGN_FAILED": "Could not assign some issues",
+    "CLEAR_SELECTION": "Clear selection"
   },
   "REPORT": {
     "TITLE": "Generate Report",
@@ -606,11 +619,12 @@
     "COMMENTS": "Comments",
     "REPLY": "Reply",
     "NO_COMMENTS_YET": "No comments yet. Be the first to share your thoughts!",
-    "REPLYING_TO": "Replying to",
+    "REPLYING_TO": "Replying to {{name}}",
     "CANCEL": "Cancel",
     "WRITE_COMMENT_PLACEHOLDER": "Write a comment...",
     "WRITE_COMMENT_TOOLTIP": "Write your comment",
-    "POST_COMMENT_TOOLTIP": "Post comment"
+    "POST_COMMENT_TOOLTIP": "Post comment",
+    "CANCEL_REPLY": "Cancel reply"
   },
   "ISSUE_MODAL": {
     "CHANGE_ASSIGNMENT": "Change Assignment",
@@ -653,7 +667,7 @@
     "NO_HOT_ISSUES": "No Top Security Issues found",
     "VIEW_ALL_ISSUES": "View All Security Issues",
     "LOADING_TREND": "Loading trend data...",
-    "TREND_TITLE": "Security Trend (7 Days)",
+    "TREND_TITLE": "Security trend",
     "RISK_SAFE": "Safe",
     "RISK_LOW": "Low",
     "RISK_MEDIUM": "Medium",
@@ -662,7 +676,11 @@
     "SEVERITY_CRITICAL": "Critical",
     "SEVERITY_HIGH": "High",
     "SEVERITY_MEDIUM": "Medium",
-    "SEVERITY_LOW": "Low"
+    "SEVERITY_LOW": "Low",
+    "TREND_SUBTITLE": "Vulnerabilities and hotspots over recent scans",
+    "TREND_VULNERABILITIES": "Vulnerabilities",
+    "TREND_HOTSPOTS": "Security hotspots",
+    "TREND_EMPTY": "Not enough scan data yet"
   },
   "TECHNICAL_DEBT": {
     "TITLE": "Technical Debt Analysis",
@@ -674,7 +692,7 @@
     "DEBT_DISTRIBUTION_BY_PROJECT": "Debt Distribution by Project",
     "PER_DAY": "day",
     "DEBT_BY_CATEGORY": "Debt by Category",
-    "DEBT_TREND_MONTHLY": "Debt Trend (Monthly)",
+    "DEBT_TREND_MONTHLY": "Technical debt by month (days)",
     "TOP_DEBT_PROJECT": "Top Debt Project",
     "TABLE_CAPTION": "Technical Debt Metrics",
     "COL_PRIORITY": "Priority",
@@ -683,7 +701,7 @@
     "COL_COST": "Cost (THB)",
     "GENERATE_DEBT_REPORT": "Generate Debt Report",
     "EXPORT_TO_EXCEL": "Export to Excel",
-    "ACTION_PLAN_DRAFT": "Action Plan (Draft)",
+    "ACTION_PLAN_DRAFT": "Action plan draft",
     "CLOSE": "Close",
     "SAVE_PLAN": "Save Plan",
     "CAT_DOCUMENTATION": "Documentation",
@@ -691,7 +709,13 @@
     "CAT_CODE_QUALITY": "Code Quality",
     "CAT_TEST_COVERAGE": "Test Coverage",
     "CAT_SECURITY": "Security",
-    "TREND_TITLE": "Cumulative Debt Growth (New Projects - Last 60 Days)"
+    "TREND_TITLE": "Debt trend",
+    "TREND_EMPTY": "Not enough scan data yet",
+    "ACTION_PLAN": "Action plan",
+    "COPY_PLAN": "Copy",
+    "DOWNLOAD_PLAN": "Download",
+    "PLAN_COPIED": "Action plan copied",
+    "PLAN_EMPTY": "No debt items to plan for"
   },
   "FORGOT_PASSWORD": {
     "TITLE": "Forgot Password?",
@@ -976,5 +1000,33 @@
     "VERIFICATION_PENDING": "Verification pending",
     "EMAIL_UNVERIFIED": "Email unverified",
     "NEW_COMMENT": "New comment received"
+  },
+  "ACCOUNT": {
+    "MENU": "Account menu",
+    "VERIFIED": "Verified",
+    "UNVERIFIED": "Unverified",
+    "CHANGE_PASSWORD": "Change password",
+    "OLD_PASSWORD": "Current password",
+    "NEW_PASSWORD": "New password",
+    "CONFIRM_PASSWORD": "Confirm new password",
+    "OLD_PASSWORD_REQUIRED": "Please enter your current password",
+    "CONFIRM_PASSWORD_REQUIRED": "Please confirm your new password",
+    "PASSWORD_MISMATCH": "Passwords do not match",
+    "PASSWORD_WEAK": "New password does not meet all requirements",
+    "OLD_PASSWORD_WRONG": "Current password is incorrect",
+    "PASSWORD_CHANGED": "Password changed",
+    "RULE_MINLENGTH": "At least 8 characters",
+    "RULE_UPPERCASE": "One uppercase letter",
+    "RULE_LOWERCASE": "One lowercase letter",
+    "RULE_NUMBER": "One number",
+    "RULE_SPECIAL": "One special character",
+    "SHOW_PASSWORD": "Show password",
+    "HIDE_PASSWORD": "Hide password",
+    "SEND_VERIFY_EMAIL": "Resend verification email",
+    "VERIFY_EMAIL_SENT": "Verification email sent",
+    "VERIFY_EMAIL_FAILED": "Could not send verification email",
+    "LOGOUT_CONFIRM_TITLE": "Log out?",
+    "LOGOUT_CONFIRM_TEXT": "You will need to sign in again to continue.",
+    "LOGOUT_FAILED": "Logout failed"
   }
 }

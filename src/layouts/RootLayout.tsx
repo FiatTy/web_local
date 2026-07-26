@@ -10,7 +10,6 @@ import {
   FolderGit2,
   LayoutDashboard,
   LineChart,
-  LogOut,
   type LucideIcon,
   Menu,
   ScanLine,
@@ -25,6 +24,7 @@ import { BrandMark } from '@/components/common/BrandMark';
 import { LanguageSwitcher } from '@/components/common/LanguageSwitcher';
 import { ThemeToggle } from '@/components/common/ThemeToggle';
 import { NotificationBell } from '@/features/notification/components/NotificationBell';
+import { ProfileMenu } from '@/features/user/components/ProfileMenu';
 
 interface NavItemConfig {
   to: string;
@@ -133,10 +133,9 @@ const NAV_SECTIONS: NavSection[] = [
 
 export function RootLayout() {
   const { t } = useTranslation();
-  const { user, logout } = useAuth();
+  const { user } = useAuth();
   const [mobileOpen, setMobileOpen] = useState(false);
   const isAdmin = user?.role === 'ADMIN';
-  const initial = user?.username?.charAt(0).toUpperCase() ?? '?';
 
   return (
     <div className="flex min-h-screen bg-bg text-fg">
@@ -231,26 +230,7 @@ export function RootLayout() {
           <ThemeToggle />
           <NotificationBell />
 
-          <div className="flex items-center gap-2 pl-1">
-            <div className="hidden text-right leading-tight sm:block">
-              <div className="text-xs font-medium text-fg">{user?.username}</div>
-              <div className="font-mono text-[10px] uppercase tracking-wide text-faint">
-                {user?.role}
-              </div>
-            </div>
-            <div className="flex h-8 w-8 items-center justify-center rounded-full bg-primary-subtle text-sm font-semibold text-primary">
-              {initial}
-            </div>
-            <button
-              type="button"
-              onClick={() => void logout()}
-              title={t('NAV.LOGOUT')}
-              aria-label={t('NAV.LOGOUT')}
-              className="inline-flex h-9 w-9 items-center justify-center rounded-md border border-border text-muted transition-colors hover:text-danger active:scale-95"
-            >
-              <LogOut size={16} />
-            </button>
-          </div>
+          <ProfileMenu />
         </header>
 
         <main className="flex-1 px-4 py-6 lg:px-8">

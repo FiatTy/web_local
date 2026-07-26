@@ -6,12 +6,14 @@ import {
   ChevronLeft,
   ChevronRight,
   FileBarChart,
+  GitCompare,
   Loader2,
   RefreshCw,
   ScanLine,
   ScrollText,
 } from 'lucide-react';
 import { PageHeader } from '@/components/common/PageHeader';
+import { ScanCompareModal } from '@/features/scan/components/ScanCompareModal';
 import { useScanHistory } from '@/features/scan/hooks/useScanHistory';
 import type { Scan } from '@/features/scan/types';
 
@@ -94,6 +96,8 @@ export function ScanHistoryPage() {
   const [startDate, setStartDate] = useState('');
   const [endDate, setEndDate] = useState('');
   const [page, setPage] = useState(1);
+  const [selectedIds, setSelectedIds] = useState<string[]>([]);
+  const [showCompare, setShowCompare] = useState(false);
 
   const scans = useMemo(() => data ?? [], [data]);
 
@@ -117,12 +121,28 @@ export function ScanHistoryPage() {
   const currentPage = Math.min(page, totalPages);
   const pageRows = filtered.slice((currentPage - 1) * PAGE_SIZE, currentPage * PAGE_SIZE);
 
+  const selectedScans = useMemo(
+    () => scans.filter((scan) => selectedIds.includes(scan.id)),
+    [scans, selectedIds],
+  );
+
   function resetFilters() {
     setProject('all');
     setStatus('all');
     setStartDate('');
     setEndDate('');
+    setSelectedIds([]);
     setPage(1);
+  }
+
+  function toggleSelected(scanId: string) {
+    setSelectedIds((current) =>
+      current.includes(scanId)
+        ? current.filter((id) => id !== scanId)
+        : current.length >= 3
+          ? current
+          : [...current, scanId],
+    );
   }
 
   const selectClass =
@@ -211,6 +231,23 @@ export function ScanHistoryPage() {
           <RefreshCw size={14} />
           {t('SCAN.CLEAR_FILTER')}
         </button>
+
+        <div className="ml-auto flex items-center gap-3">
+          <span className="text-xs text-faint">
+            {selectedIds.length > 0
+              ? t('SCAN.COMPARE_SELECTED', { count: selectedIds.length })
+              : t('SCAN.COMPARE_HINT')}
+          </span>
+          <button
+            type="button"
+            onClick={() => setShowCompare(true)}
+            disabled={selectedIds.length < 2}
+            className="inline-flex h-10 items-center gap-1.5 rounded-lg bg-primary px-3.5 text-sm font-semibold text-primary-fg transition hover:bg-primary-hover active:scale-[0.99] disabled:cursor-not-allowed disabled:opacity-50"
+          >
+            <GitCompare size={14} />
+            {t('SCAN.COMPARE_SCANS')}
+          </button>
+        </div>
       </div>
 
       {isPending ? (
@@ -240,6 +277,9 @@ export function ScanHistoryPage() {
             <table className="w-full min-w-[720px] text-sm">
               <thead>
                 <tr className="border-b border-border bg-surface-2/50 text-left">
+                  <th className="w-10 px-4 py-3">
+                    <span className="sr-only">{t('SCAN.COL_SELECT')}</span>
+                  </th>
                   <th className="px-4 py-3 font-mono text-[10px] font-semibold uppercase tracking-wide text-faint">
                     {t('SCAN.COL_DATE_TIME')}
                   </th>
@@ -266,6 +306,16 @@ export function ScanHistoryPage() {
                     key={scan.id}
                     className="border-b border-border last:border-0 transition-colors hover:bg-surface-2/40"
                   >
+                    <td className="px-4 py-3">
+                      <input
+                        type="checkbox"
+                        aria-label={`${t('SCAN.COL_SELECT')} ${scan.projectName}`}
+                        checked={selectedIds.includes(scan.id)}
+                        disabled={!selectedIds.includes(scan.id) && selectedIds.length >= 3}
+                        onChange={() => toggleSelected(scan.id)}
+                        className="h-4 w-4 cursor-pointer accent-[var(--color-primary)] disabled:cursor-not-allowed disabled:opacity-40"
+                      />
+                    </td>
                     <td className="whitespace-nowrap px-4 py-3 text-muted">
                       {formatDateTime(scan.startedAt)}
                     </td>
@@ -327,6 +377,10 @@ export function ScanHistoryPage() {
           </div>
         </div>
       )}
+
+      {showCompare && selectedScans.length >= 2 ? (
+        <ScanCompareModal scans={selectedScans} onClose={() => setShowCompare(false)} />
+      ) : null}
     </div>
   );
 }

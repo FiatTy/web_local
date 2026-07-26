@@ -5,6 +5,7 @@ import {
   ArrowLeft,
   Check,
   Copy,
+  CornerDownRight,
   Download,
   Loader2,
   MessageSquare,
@@ -112,7 +113,16 @@ function CodeBlock({
   );
 }
 
-function CommentItem({ comment, replies }: { comment: IssueComment; replies: IssueComment[] }) {
+function CommentItem({
+  comment,
+  replies,
+  onReply,
+}: {
+  comment: IssueComment;
+  replies: IssueComment[];
+  onReply: (comment: IssueComment) => void;
+}) {
+  const { t } = useTranslation();
   const initial = comment.username?.charAt(0).toUpperCase() || '?';
   return (
     <li className="px-5 py-4">
@@ -126,6 +136,14 @@ function CommentItem({ comment, replies }: { comment: IssueComment; replies: Iss
             <span className="font-mono text-[11px] text-faint">
               {formatDateTime(comment.createdAt)}
             </span>
+            <button
+              type="button"
+              onClick={() => onReply(comment)}
+              className="ml-auto inline-flex items-center gap-1 text-[11px] font-medium text-primary transition-opacity hover:underline"
+            >
+              <CornerDownRight size={11} />
+              {t('ISSUE_DETAIL.REPLY')}
+            </button>
           </div>
           <p className="mt-1 whitespace-pre-wrap break-words text-sm text-muted">
             {comment.comment}
@@ -173,6 +191,7 @@ export function IssueDetailPage() {
 
   const [modalMode, setModalMode] = useState<'assign' | 'status' | null>(null);
   const [commentText, setCommentText] = useState('');
+  const [replyTo, setReplyTo] = useState<{ id: string; username: string } | null>(null);
   const [copied, setCopied] = useState(false);
 
   const issue = issueQuery.data;
@@ -239,11 +258,23 @@ export function IssueDetailPage() {
       return;
     }
     try {
-      await addComment.mutateAsync({ issueId: issue.id, userId: user.id, comment: text });
+      await addComment.mutateAsync({
+        issueId: issue.id,
+        userId: user.id,
+        comment: text,
+        parentCommentId: replyTo?.id,
+      });
       setCommentText('');
+      setReplyTo(null);
     } catch {
       showToast({ tone: 'error', title: t('COMMON.ERROR') });
     }
+  }
+
+  function startReply(comment: IssueComment) {
+    setReplyTo({ id: comment.parentCommentId || comment.id, username: comment.username });
+    setCommentText(comment.username ? `@${comment.username} ` : '');
+    document.getElementById('newComment')?.focus();
   }
 
   if (issueQuery.isLoading) {
@@ -410,6 +441,7 @@ export function IssueDetailPage() {
                     key={comment.id}
                     comment={comment}
                     replies={repliesByParent.get(comment.id) ?? []}
+                    onReply={startReply}
                   />
                 ))}
               </ul>
@@ -419,6 +451,24 @@ export function IssueDetailPage() {
               <label htmlFor="newComment" className="sr-only">
                 {t('ISSUE_DETAIL.WRITE_COMMENT_TOOLTIP')}
               </label>
+              {replyTo ? (
+                <div className="mb-2 flex items-center gap-2 rounded-lg bg-primary-subtle px-3 py-1.5">
+                  <CornerDownRight size={12} className="text-primary" />
+                  <span className="flex-1 truncate text-xs text-primary">
+                    {t('ISSUE_DETAIL.REPLYING_TO', { name: replyTo.username || '—' })}
+                  </span>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setReplyTo(null);
+                      setCommentText('');
+                    }}
+                    className="text-xs font-medium text-primary hover:underline"
+                  >
+                    {t('ISSUE_DETAIL.CANCEL_REPLY')}
+                  </button>
+                </div>
+              ) : null}
               <div className="flex items-end gap-2">
                 <textarea
                   id="newComment"
