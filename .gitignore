@@ -1,6 +1,7 @@
 node_modules
 dist
 dist-ssr
+*.tsbuildinfo
 *.local
 *.log
 .env
@@ -8,6 +9,8 @@ dist-ssr
 !.env.example
 .DS_Store
 Thumbs.db
+.playwright-mcp
+landing*.png
 .vscode/*
 !.vscode/extensions.json
 .idea
