@@ -23,6 +23,7 @@ interface RawScan {
   metrics?: Record<string, unknown>;
 }
 
+// ดึงข้อมูลของ Project
 interface RawProject {
   id: string;
   name: string;
