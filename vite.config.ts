@@ -4,7 +4,8 @@ import react from '@vitejs/plugin-react';
 import tailwindcss from '@tailwindcss/vite';
 
 export default defineConfig({
-  base: '/codereview/',
+  base: '/',
+  //base: '/codereview/', กรณี Deploy
   define: {
     global: 'globalThis',
   },

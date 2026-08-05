@@ -6,6 +6,11 @@ import {
 } from '@/features/scan/lib/scan-trends';
 import type { Scan } from '@/features/scan/types';
 
+// Day/month bucketing reads the local calendar day, which is correct for a
+// viewer in the browser but makes these tests depend on the runner's
+// timezone unless it's pinned to match the +07:00 fixtures below.
+process.env.TZ = 'Asia/Bangkok';
+
 const NOW = new Date('2026-07-26T09:00:00+07:00');
 
 function scan(startedAt: string, coverage?: number, projectName = 'demo'): Scan {
